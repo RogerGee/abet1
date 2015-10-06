@@ -1,16 +1,17 @@
-A 5 B
-B 2 C
-C 10 D
-D 2 E F
-E 2 G H I
-F 4 G H I
-G 15 M N
-H 3 J K L
-I 10 L
-J 2 M N
-K 11 M N
-L 6 M N
-M 6 O
-N 12 O
-O 2 P
-P 4
+60
+A 5
+B 2 A
+C 10 B
+D 2 C
+E 2 D
+F 4 D
+G 15 E F
+H 3 E F
+I 10 E F
+J 2 H
+K 11 H
+L 6 H I
+M 6 G J K L
+N 12 G J K L
+O 2 M N
+P 4 O

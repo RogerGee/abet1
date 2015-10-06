@@ -1,9 +1,10 @@
-A 7 B C D
-B 5 G H
-C 6 E
-D 10 F
-E 4 G H
-F 6 G H
-G 4 I
-H 5 I
-I 11
+60
+A 7
+B 5 A
+C 6 A
+D 10 A
+E 4 C
+F 6 D
+G 4 B E F
+H 5 B E F
+I 11 G H

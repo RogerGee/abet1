@@ -4,8 +4,9 @@ import sets
 import operator
 from collections import deque
 
-# max duration of entire project cycle
-DEADLINE = 60
+# max duration of entire project cycle; we ask this value of the user;
+# use 60 as a default
+DEADLINE = 60.0
 
 # represents an edge in the arrow diagram graph
 class Activity:
@@ -24,10 +25,10 @@ class Activity:
 
         # earliest start (ES), earliest finish (EF), latest start (LS)
         # latest finish (LF)
-        self.es = 0
-        self.ef = 0
-        self.ls = 0
-        self.lf = 0
+        self.es = 0.0
+        self.ef = 0.0
+        self.ls = 0.0
+        self.lf = 0.0
 
         Activity.nid += 2
 
@@ -67,7 +68,7 @@ class Activity:
             a = q.popleft()
 
             # ES - latest, earliest finish of prev tasks
-            lef = 0
+            lef = 0.0
             for t in a.prevTasks:
                 if t.ef > lef:
                     lef = t.ef
@@ -107,7 +108,7 @@ class Activity:
     def critical_path(self):
         def f(x):
             ans = x.critical_path()
-            return (self.duration + ans[0],self.name + ans[1])
+            return (self.duration + ans[0],','.join((self.name,ans[1])))
 
         paths = map(f,self.nextTasks)
         if len(paths) == 0:
@@ -116,13 +117,25 @@ class Activity:
 
 # read_activities() - read activity entries from text file
 def read_activities(filename):
+    global DEADLINE
     f = open(filename,'r')
     activities = []
     mapping = {}
 
+    # first line is deadline duration
+    line = f.readline()
+    if line == "":
+        sys.stderr.write("error: expected first line to contain deadline duration\n")
+        exit(1)
+    try:
+        DEADLINE = float(line.strip())
+    except ValueError:
+        sys.stderr.write("error: bad deadline duration value on line 1\n")
+        exit(1)
+
     # read activities from file with the following format:
-    # ACTIVITY-NAME DURATION [NEXT-ACTIVITY, ...]
-    n = 0
+    # ACTIVITY-NAME DURATION [PREV-ACTIVITY, ...]
+    n = 1
     while True:
         line = f.readline()
         if line == "":
@@ -140,25 +153,25 @@ def read_activities(filename):
 
         name = parts[0]
         try:
-            duration = int(parts[1])
+            duration = float(parts[1])
         except ValueError:
             sys.stderr.write("error: expected numeric duration for activity on line "+str(n)+"\n")
             exit(1)
 
         actv = Activity(name,duration)
-        actv.nt = parts[2:]
+        actv.pt = parts[2:]
         mapping[name] = actv
         activities.append(actv)
 
     # perform late bindings
     for a in activities:
-        for t in a.nt:
+        for t in a.pt:
             if not t in mapping:
                 sys.stderr.write("error: reference " + t + " did not map to a defined activity\n")
                 exit(1)
             b = mapping[t]
-            b.prevTasks.append(a)
-            a.nextTasks.append(mapping[t])
+            b.nextTasks.append(a)
+            a.prevTasks.append(mapping[t])
     for a in activities:
         a.correct_verteces()
 
