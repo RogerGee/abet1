@@ -16,8 +16,8 @@ $PIDFILE = null;
 
 // constants
 define('APP_PREFIX',"abet1");
-define('LOG_FILE',"/mnt/tmpdisk/abet1.log");
-define('ERROR_FILE',"/mnt/tmpdisk/abet1.errors");
+define('LOG_FILE',"/var/log/abet1.log");
+define('ERROR_FILE',"/var/log/abet1.errors.log");
 
 // log_message() - log message to standard output; this should go to a log
 // file that the daemon creates
@@ -72,11 +72,21 @@ function daemonize() {
         fclose(STDOUT);
         fclose(STDERR);
         $STDIN = @fopen('/dev/null','r');
+        if (!$STDIN) {
+            fatal_error("fopen() failed (stdin)");
+        }
         $STDOUT = @fopen(LOG_FILE,'a');
+        if (!$STDOUT) {
+            $STDOUT = @fopen('/tmp/abet1.log','a');
+            if (!$STDOUT)
+                fatal_error("fopen() failed (stdout)");
+        }
         $STDERR = @fopen(ERROR_FILE,'a');
-
-        if (!$STDERR || !$STDOUT || !$STDIN)
-            fatal_error("fopen() failed");
+        if (!$STDERR) {
+            $STDERR = @fopen('/tmp/abet1.errors.log','a');
+            if (!$STDERR)
+                fatal_error("fopen() failed (stderr)");
+        }
 
         log_message("process started");
 
