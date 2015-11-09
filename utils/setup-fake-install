@@ -1,0 +1,29 @@
+#!/bin/bash
+# setup symlinks to mimic install for non-root writable locations; this script
+# must be run as the root user
+
+FAKE_ROOT=/var/tmp/abet1-fake-install
+
+# testing server
+WEBGROUP=rogeth
+
+# production server
+#WEBGROUP=www-data
+
+# make FAKE_ROOT with shared permissions for anyone in group 'www-data'
+mkdir $FAKE_ROOT
+chmod g+sw $FAKE_ROOT
+chmod o-wx $FAKE_ROOT
+chown :$WEBGROUP $FAKE_ROOT
+setfacl -m d:u::rwX $FAKE_ROOT
+setfacl -m d:g::rwX $FAKE_ROOT
+echo Made directory $FAKE_ROOT # make sure to delete it later
+
+# make empty config file in fake dir with correct permissions
+touch $FAKE_ROOT/abet1.config
+chown :$WEBGROUP $FAKE_ROOT/abet1.config
+chmod g+w $FAKE_ROOT/abet1.config
+
+ln -s $FAKE_ROOT /usr/local/lib/abet1
+ln -s $FAKE_ROOT/abet1.config /etc/abet1
+echo Created symbolic links to fake install directory
