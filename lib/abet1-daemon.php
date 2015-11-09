@@ -94,8 +94,11 @@ function daemonize() {
         if (array_key_exists(1,$argv)) {
             $PIDFILE = $argv[1];
             if (file_exists($PIDFILE)) {
-                fatal_error("the PID file already exists; this means another "
-                    . "instance may be running; if not, then delete the file $PIDFILE");
+                if (strlen(file_get_contents($PIDFILE)) > 0) {
+                    fatal_error("the PID file already exists and is non-empty; "
+                        . "this means another instance may be running; if not, "
+                        . "then delete the file $PIDFILE");
+                }
             }
             $pf = @fopen($PIDFILE,'w');
             if (!$pf)
