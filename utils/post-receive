@@ -33,10 +33,16 @@ do
         chmod -R g+w $NAME/
 
         # get list of files changed in the commit
-        FILES_CHANGED=$(git diff-tree -r --name-only --no-commit-id $ref)
+        if [ "$oldrev" == "0000000000000000000000000000000000000000" ]; then
+            # list all files in
+            FILES_CHANGED=$(git ls-files)
+        else
+            FILES_CHANGED=$(git diff-tree -r --name-only --no-commit-id $oldrev $newrev)
+        fi
 
         # only sync web root if file under www/ changed or was added
-        if [ ! -z $(echo $FILES_CHANGED | grep "www/") ]; then
+        MODIFIED_WWW=$(echo $FILES_CHANGED | grep "www/")
+        if [ ! -z "$MODIFIED_WWW" ]; then
             # sync the checkout'd directory with the webroot; make sure to exclude
             # the 'resources' subdirectory (holds things not in repo); the slash
             # after '$(NAME)/www' is very important (it changes the behavior of rsync)
@@ -47,34 +53,16 @@ do
 
         # perform fake directory content operations if it exists
         if [ -d $FAKE_DIR ]; then
+            UPDATE_DAEMON=""
+
             # go through each file name; if a certain file was changed, perform
             # an action on the system
             for i in $FILES_CHANGED;
             do
                 if [ ! -z $(echo $i | grep "$DAEMON") ]; then
-                    echo "Updating ABET1 service daemon..."
-
-                    # create pidfile; set to empty; this will cause an existing
-                    # instance of the daemon to abort
-                    if [ ! -f $DAEMON_PIDFILE ]; then
-                        # make sure the file is writable by everyone in the
-                        # webgroup so they can restart the daemon
-                        touch $DAEMON_PIDFILE
-                        chmod g+w $DAEMON_PIDFILE
-                        chown :$WEBGROUP $DAEMON_PIDFILE
-                    fi
-                    cp /dev/null $DAEMON_PIDFILE
-
-                    # copy daemon to fake install dir; then execute it
-                    cp $NAME/$i $FAKE_DIR
-                    pushd $FAKE_DIR > /dev/null
-                    php $DAEMON $DAEMON_PIDFILE
-                    if [ $? -ne 0 ]; then
-                        echo "!!Failed to launch ABET1 service daemon!!"
-                    else
-                        echo "Started new ABET1 service daemon instance"
-                    fi
-                    popd > /dev/null
+                    # we must delay this until the library files have been
+                    # updated (they may be dependencies)
+                    UPDATE_DAEMON=$i
 
                 elif [ ! -z $(echo $i | grep "lib/abet1-[a-z]*\.php") ]; then
                     echo "Updating library file '$i'..."
@@ -100,6 +88,32 @@ do
 
                 fi
             done
+
+            if [ ! -z "$UPDATE_DAEMON" ]; then
+                echo "Updating ABET1 service daemon..."
+
+                # create pidfile; set to empty; this will cause an existing
+                # instance of the daemon to abort
+                if [ ! -f $DAEMON_PIDFILE ]; then
+                    # make sure the file is writable by everyone in the
+                    # webgroup so they can restart the daemon
+                    touch $DAEMON_PIDFILE
+                    chmod g+w $DAEMON_PIDFILE
+                    chown :$WEBGROUP $DAEMON_PIDFILE
+                fi
+                cp /dev/null $DAEMON_PIDFILE
+
+                # copy daemon to fake install dir; then execute it
+                cp $NAME/$UPDATE_DAEMON $FAKE_DIR
+                pushd $FAKE_DIR > /dev/null
+                php $DAEMON $DAEMON_PIDFILE
+                if [ $? -ne 0 ]; then
+                    echo "!!Failed to launch ABET1 service daemon!!"
+                else
+                    echo "Started new ABET1 service daemon instance"
+                fi
+                popd > /dev/null
+            fi
         fi
 
         # remove the temporary copy
