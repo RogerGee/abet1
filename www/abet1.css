@@ -1,0 +1,55 @@
+/* set the body to exactly fill the window, and no more */
+html, body {
+	height:100%;
+	margin: 0;
+	overflow:hidden;
+}
+/* reset header margins globally so they aren't offset */
+h1, h2 {
+	margin: 0px;
+}
+/* set div dimensions to include padding and borders */
+div {
+	box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+}
+/* top navigation bar style */
+.top_bar {
+	width: 100%;
+	height: 10%;
+	padding: 10px;
+	display: table;
+	background-color: #461D7C;
+	color: #FFF;
+}
+/* side navigation bar style */
+.left_bar {
+	width: 20%;
+	height: 90%;
+	padding: 10px;
+	float: left;
+	border: 1px solid black;
+}
+/* make sure content floats in place and is sized properly */
+.content {
+	width: 80%;
+	height: 90%;
+	padding: 10px;
+	float: left;
+	overflow: auto;
+	border: 1px solid black;
+}
+/* custom link for nav_button */
+.nav_button {
+	text-decoration: none;
+	display: table-cell;
+	vertical-align: middle;
+}
+.nav_button:link, .nav_button:visited {
+	color: #EEE;
+}
+.nav_button:hover {
+	color: #FFF;
+}
+
