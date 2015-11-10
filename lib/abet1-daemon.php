@@ -216,8 +216,10 @@ if (is_resource($termfd)) {
     daemonize(); // I normally don't approve of demonizing anyone
 }
 else {
-    // see if a pid file exists and is non-empty; if not, then become a daemon
-    if (!file_exists($PIDFILE) || file_get_contents($PIDFILE) == 0)
+    // see if a pid file exists and contains our pid; if not, then become a
+    // daemon
+    if (!file_exists($PIDFILE) ||
+            intval(file_get_contents($PIDFILE)) != posix_getpid())
         daemonize();
     else // otherwise reuse pid file as an overwrite process
         log_message("overwrite process started");
