@@ -21,6 +21,9 @@
 					loadPage(JSON.parse(data));
 				});
 			}
+			function submit() {
+				$.ajax({type:"POST",url:"",data:JSON.stringify(obj)});
+			}
 			//functions for cache maintenance
 			function saveState() {
 				localStorage.abet1CacheData = JSON.stringify(obj);
@@ -82,7 +85,7 @@
 						<li>
 							<div>inner folder</div>
 							<ul>
-								<li><a href="#">inner content again</a></li>
+								<li><div><a href="#">inner content again</a></div></li>
 							</ul>
 						</li>
 					</ul>
