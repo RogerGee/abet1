@@ -1,3 +1,13 @@
+<?php
+	session_start();
+	//we might also want to validate that the uname and
+	//password match the database entries, not sure if that's necessary
+	if (!array_key_exists('uname'), $_SESSION)
+	{
+		header('Location: /login.php');
+		exit;
+	}
+?>
 <!DOCTYPE html>
 <html>
 	<head>
