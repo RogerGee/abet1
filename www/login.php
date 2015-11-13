@@ -31,11 +31,11 @@
 					<table>
 						<tr>
 							<td>Username</td>
-							<td><input id="uname" type="text"></input></td>
+							<td><input name="uname" type="text"></input></td>
 						</tr>
 						<tr>
 							<td>Password</td>
-							<td><input id="pass" type="password"></input></td>
+							<td><input name="pass" type="password"></input></td>
 						</tr>
 					</table>
 					<input type="submit" value="login"></input>
