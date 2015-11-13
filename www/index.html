@@ -44,11 +44,11 @@
 						clearState();
 				}
 				//notification box code
-				$("#notif").click(function() {
+				$("#notif").click(function(event) {
 					$("#notifications").fadeToggle(300);
 					event.stopPropagation();
 				});
-				$("#notifications").click(function() {
+				$("#notifications").click(function(event) {
 					event.stopPropagation();
 				});
 				$(document).click(function() {
