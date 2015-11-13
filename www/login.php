@@ -1,6 +1,6 @@
 <?php
 	session_start();
-	if (array_key_exists('uname'), $_SESSION)
+	if (array_key_exists('uname', $_SESSION))
 	{
 		header('Location: /');
 		exit;
