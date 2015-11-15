@@ -33,7 +33,8 @@ if (isset($_POST) && array_key_exists('user', $_POST)
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>login</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>ABET - login to site</title>
 		<link rel="stylesheet" href="stylesheets/login.css" />
 	</head>
 	<body>
@@ -56,9 +57,13 @@ if (isset($_POST) && array_key_exists('user', $_POST)
 								</td>
 							</tr>
 						</table>
-						<input class="abet1-login-button" type="submit" value="login"></input>
+						<input class="abet1-login-button" type="submit" value="LOGIN"></input>
 					</div>
 				</form>
+				<p>
+					For security reasons, make sure to log out once you have
+					finished using the system.
+				</p>
 <?php
 // if 'login' was set to 1 then the user failed a login attempt; we produce a
 // failed login message only if the session had a record of the user login attempt
