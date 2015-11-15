@@ -1,12 +1,21 @@
 <?php
-	session_start();
-	//we might also want to validate that the uname and
-	//password match the database entries, not sure if that's necessary
-	if (!array_key_exists('uname', $_SESSION))
-	{
-		header('Location: /login.php');
-		exit;
-	}
+
+// include needed files; update the include path to find the libraries
+$paths = array(
+	'/usr/lib/abet1',
+	'/usr/local/lib/abet1',
+	'../lib',
+	get_include_path()
+);
+set_include_path(implode(PATH_SEPARATOR,$paths));
+require_once 'abet1-login.php';
+
+// check authentication; if none found then redirect to the login page
+if (!abet_is_authenticated()) {
+	header('Location: /login.php'); // returns 302 to client
+	exit;
+}
+
 ?>
 <!DOCTYPE html>
 <html>

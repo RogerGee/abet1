@@ -1,0 +1,59 @@
+/* login.css - ABET1 */
+
+* {
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+}
+
+html, body {
+    background-color: #f0f0f2;
+    margin: 0;
+    font-family: monospace;
+    height: 100%;
+    overflow: hidden;
+}
+
+/* format login page region */
+.abet1-login {
+    background-color: #fff;
+    width: 60%;
+    height: 60%;
+    border-radius: 1em;
+    position: absolute;
+    float: none;
+    margin-left: 20%;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.abet1-login h1 {
+    float: none;
+    font-weight: bold;
+    color: #555;
+}
+
+.abet1-login-content {
+    width: 75%;
+    position: relative;
+}
+
+.abet1-login-table {
+    width: 100%;
+}
+
+.abet1-login-table tr > td:first-child {
+    width: 20%;
+}
+
+.abet1-login-table tr > td:nth-child(2) {
+    width: 80%;
+}
+
+.abet1-login tr > td:nth-child(2) > input {
+    width: 100%;
+}
+
+.abet1-login-button {
+    width: 100%;
+}

@@ -1,45 +1,79 @@
 <?php
-	session_start();
-	if (array_key_exists('uname', $_SESSION))
-	{
-		header('Location: /');
+
+// include needed files; update the include path to find the libraries
+$paths = array(
+	'/usr/lib/abet1',
+	'/usr/local/lib/abet1',
+	'../lib',
+	get_include_path()
+);
+set_include_path(implode(PATH_SEPARATOR,$paths));
+require_once 'abet1-login.php';
+
+// if the user is already authenticated, then redirect to the main page
+if (abet_is_authenticated()) {
+	header('Location: /'); // returns 302 to client
+	exit;
+}
+
+// if the page is responding to a POST request, then
+if (isset($_POST) && array_key_exists('user', $_POST)
+	&& array_key_exists('passwd',$_POST))
+{
+	if (!abet_login($_POST['user'],$_POST['passwd'])) {
+		header('Location: /login.php?login=1'); // returns 302 to client
 		exit;
 	}
-	if (array_key_exists('uname', $_POST))
-	{
-		//we'll need to validate at some point, but for now,
-		//just pretend to log someone in
-		
-		// VALIDATE FROM SQL //
-		
-		$_SESSION['uname'] = $_POST['uname'];
-		$_SESSION['pass'] = $_POST['pass'];
-		header('Location: /');
-		exit;
-	}
+
+	header('Location: /'); // returns 302 to client
+	exit;
+}
+
 ?>
 <!DOCTYPE html>
 <html>
 	<head>
 		<title>login</title>
+		<link rel="stylesheet" href="stylesheets/login.css" />
 	</head>
 	<body>
 		<center>
-			<div>
-				Login:<br/>
+			<div class="abet1-login">
+				<h1>Login to ABET</h1>
 				<form method="POST" action="login.php">
-					<table>
-						<tr>
-							<td>Username</td>
-							<td><input name="uname" type="text"></input></td>
-						</tr>
-						<tr>
-							<td>Password</td>
-							<td><input name="pass" type="password"></input></td>
-						</tr>
-					</table>
-					<input type="submit" value="login"></input>
+					<div class="abet1-login-content">
+						<table class="abet1-login-table">
+							<tr>
+								<td>Username</td>
+								<td>
+									<input name="user" type="text"></input>
+								</td>
+							</tr>
+							<tr>
+								<td>Password</td>
+								<td>
+									<input name="passwd" type="password"></input>
+								</td>
+							</tr>
+						</table>
+						<input class="abet1-login-button" type="submit" value="login"></input>
+					</div>
 				</form>
+<?php
+// if 'login' was set to 1 then the user failed a login attempt; we produce a
+// failed login message only if the session had a record of the user login attempt
+if (isset($_GET) && array_key_exists('login',$_GET)
+	&& intval($_GET['login']) == 1 && isset($_SESSION)
+	&& array_key_exists('user',$_SESSION))
+	{
+		echo '<p class="abet-failed-login-message">Login unsuccessful. Please try again.</p>';
+
+		// clear the session so the URL /login.php?login=1 doesn't generate future login failure
+		// messages
+		session_unset();
+		session_destroy();
+	}
+?>
 			</div>
 		</center>
 	</body>
