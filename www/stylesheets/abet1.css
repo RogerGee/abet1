@@ -60,11 +60,11 @@ div {
 .top_icons {
 	right: 20px;
 }
-.notif {
+.icon {
 	width: 25px;
 	cursor: pointer;
 }
-.notifpopup {
+.popup {
 	background-color: #EEE;
 	padding: 4px;
 	word-wrap: break-word;

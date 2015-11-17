@@ -62,17 +62,28 @@ if (!abet_is_authenticated()) {
 					else
 						clearState();
 				}
-				//notification box code
+				//popup box code
 				$("#notif").click(function(event) {
 					$("#notifications").fadeToggle(300);
+				});
+				$("#sett").click(function(event) {
+					$("#settings").fadeToggle(300);
+				});
+				$(".popup").click(function(event) {
 					event.stopPropagation();
 				});
-				$("#notifications").click(function(event) {
-					event.stopPropagation();
-				});
-				$(document).click(function() {
-					if ($("#notifications").css("display") != "none")
+				$(document).click(function(event) {
+					if (event.target.id != "notif" &&
+						$("#notifications").css("display") != "none")
 						$("#notifications").fadeToggle(300);
+					if (event.target.id != "sett" &&
+						$("#settings").css("display") != "none")
+						$("#settings").fadeToggle(300);
+				});
+				//hijack internal hrefs
+				$(".internal").click(function(event) {
+					event.preventDefault();
+					//ajax get data
 				});
 			});
 		</script>
@@ -81,12 +92,19 @@ if (!abet_is_authenticated()) {
 		<div class="top_bar">
 			<a href="/" class="nav_button"><h1>ABET</h1></a>
 			<div class="top_icons">
-				<img id="notif" src="resources/notif.png" class="notif"></img>
+				<img id="notif" src="resources/notif.png" class="icon"></img>
+				<img id="sett" src="resources/settings.png" class="icon"></img>
 			</div>
-			<div id="notifications" class="notifpopup">
+			<div id="notifications" class="popup">
 				This is where I would put my notifications
 				<br /><br /><br /><br /><br />
 				If I had any!<br />
+			</div>
+			<div id="settings" class="popup">
+				<ul>
+					<li><a href="/" class="internal">Edit Profile</a></li>
+					<li><a href="/logout.php" class="internal">Logout</a></li>
+				</ul>
 			</div>
 		</div>
 		<div class="left_bar">
