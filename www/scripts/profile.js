@@ -1,9 +1,7 @@
 //assuming profile object obtained is just the table columns from schema
 
 function getProfile() {
-	$.ajax({url:"fake_profile.php",dataType:"json"}).done(function(data) {
-		//parse the profile object
-		var profile = JSON.parse(data);
+	$.ajax({url:"fake_profile.php",dataType:"json"}).done(function(profile) {
 		//wipe and replace content div
 		var content = $("#content");
 		content.html("");
