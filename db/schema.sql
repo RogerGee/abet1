@@ -15,10 +15,10 @@ USE abet1;
 --  passwords and system role.
 CREATE TABLE userauth (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    passwd VARCHAR(32), /* one-way encryption */
-    old_passwd VARCHAR(32),
+    passwd VARCHAR(256), /* one-way encryption */
+    old_passwd VARCHAR(256),
     role ENUM('admin','faculty','staff','observer'),
-    last_touch TIMESTAMP
+    last_touch TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 
 -- create table `userprofile`
@@ -35,8 +35,8 @@ CREATE TABLE userprofile (
     email_addr VARCHAR(32),
     office_phone VARCHAR(32),
     mobile_phone VARCHAR(32),
-    created TIMESTAMP,
-    last_touch TIMESTAMP,
+    created TIMESTAMP DEFAULT 0,
+    last_touch TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
     FOREIGN KEY (fk_userauth) REFERENCES userauth (id)
 ) ENGINE=InnoDB;
@@ -50,7 +50,7 @@ CREATE TABLE course (
     description VARCHAR(512),
     textbook VARCHAR(512),
     credit_hours ENUM('1','2','3'),
-    last_touch TIMESTAMP,
+    last_touch TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
     FOREIGN KEY (fk_coordinator) REFERENCES userprofile (id)
 ) ENGINE=InnoDB;
@@ -77,8 +77,8 @@ CREATE TABLE notification (
     fk_recipient_list INT NOT NULL,
     message VARCHAR(4096), /* HTML message content */
     kind ENUM('email','system','both'), /* 'system' messages sent internally */
-    send_time TIMESTAMP,
-    intended_time TIMESTAMP,
+    sent_time TIMESTAMP DEFAULT 0,
+    intended_time TIMESTAMP DEFAULT 0,
 
     FOREIGN KEY (fk_recipient_list) REFERENCES recipient_list (id)
 ) ENGINE=InnoDB;
@@ -95,7 +95,7 @@ CREATE TABLE abet_criterion (
 -- create table `acl`
 CREATE TABLE acl (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    last_touch TIMESTAMP
+    last_touch TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 
 -- create table `acl_entry`
@@ -116,7 +116,7 @@ CREATE TABLE program (
     year INT,
     description VARCHAR(4096),
     fk_acl INT NOT NULL,
-    last_touch TIMESTAMP,
+    last_touch TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
     FOREIGN KEY (fk_acl) REFERENCES acl (id)
 ) ENGINE=InnoDB;
@@ -128,7 +128,7 @@ CREATE TABLE abet_characteristic (
     program_specifier VARCHAR(8), /* e.g. CS, IT, ETC. */
     short_name VARCHAR(128), /* display name */
     description VARCHAR(4096),
-    last_touch TIMESTAMP
+    last_touch TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 
 -- create table `abet_assessment`
@@ -140,7 +140,7 @@ CREATE TABLE abet_assessment (
     fk_criterion INT NOT NULL, /* must refer to a criterion */
     fk_acl INT NOT NULL, /* who can write to the assessment and its children */
     currency DATE,
-    last_touch TIMESTAMP,
+    last_touch TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
     FOREIGN KEY (fk_program) REFERENCES program (id),
     FOREIGN KEY (fk_characteristic) REFERENCES abet_characteristic (id),
@@ -163,11 +163,11 @@ CREATE TABLE file_upload (
     file_name VARCHAR(256),
     file_contents BLOB,
     file_comment VARCHAR(1024),
-    file_created TIMESTAMP,
-    file_modified TIMESTAMP,
+    file_created TIMESTAMP DEFAULT 0,
+    file_modified TIMESTAMP DEFAULT 0,
     fk_author INT NOT NULL,
     fk_content_set INT NOT NULL,
-    last_touch TIMESTAMP,
+    last_touch TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
     FOREIGN KEY (fk_author) REFERENCES userprofile (id),
     FOREIGN KEY (fk_content_set) REFERENCES general_content (id)
@@ -179,7 +179,8 @@ CREATE TABLE user_comment (
     content VARCHAR(4096), /* HTML content; may include links */
     fk_author INT NOT NULL,
     fk_content_set INT NOT NULL,
-    created TIMESTAMP,
+    created TIMESTAMP DEFAULT 0,
+    last_touch TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
     FOREIGN KEY (fk_author) REFERENCES userprofile (id),
     FOREIGN KEY (fk_content_set) REFERENCES general_content (id)
@@ -191,7 +192,8 @@ CREATE TABLE rubric_description (
     outstanding_desc VARCHAR(1024),
     expected_desc VARCHAR(1024),
     marginal_desc VARCHAR(1024),
-    unacceptable_desc VARCHAR(1024)
+    unacceptable_desc VARCHAR(1024),
+    last_touch TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 
 -- create table `rubric`
@@ -201,10 +203,10 @@ CREATE TABLE rubric (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(512),
     fk_description INT NOT NULL,
-    created TIMESTAMP,
-    last_touch TIMESTAMP,
     threshold DECIMAL(2,2),
     threshold_desc VARCHAR(128),
+    created TIMESTAMP DEFAULT 0,
+    last_touch TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
     FOREIGN KEY (fk_description) REFERENCES rubric_description (id)
 ) ENGINE=InnoDB;
@@ -214,7 +216,7 @@ CREATE TABLE rubric_results (
     id INT NOT NULL PRIMARY KEY,
     action VARCHAR(4096),
     acheivement VARCHAR(4096),
-    last_touch TIMESTAMP
+    last_touch TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 
 -- create table `assessment_worksheet`
@@ -233,8 +235,8 @@ CREATE TABLE assessment_worksheet (
     course_of_action VARCHAR(4096),
     fk_rubric INT NOT NULL,
     fk_rubric_results INT NOT NULL,
-    created TIMESTAMP,
-    last_touch TIMESTAMP,
+    created TIMESTAMP DEFAULT 0,
+    last_touch TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
     FOREIGN KEY (fk_program) REFERENCES program (id),
     FOREIGN KEY (fk_profile) REFERENCES userprofile (id),
@@ -248,8 +250,8 @@ CREATE TABLE assessment_worksheet (
 CREATE TABLE competency (
     id INT NOT NULL PRIMARY KEY,
     description VARCHAR(1024),
-    created TIMESTAMP,
-    last_touch TIMESTAMP
+    created TIMESTAMP DEFAULT 0,
+    last_touch TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 
 -- create intersection table rubric_competency; creates a many-to-many
@@ -273,9 +275,34 @@ CREATE TABLE competency_results (
     comment VARCHAR(4096),
     fk_rubric_results INT NOT NULL,
     fk_competency INT NOT NULL,
-    created TIMESTAMP,
-    last_touch TIMESTAMP,
+    created TIMESTAMP DEFAULT 0,
+    last_touch TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
     FOREIGN KEY (fk_rubric_results) REFERENCES rubric_results (id),
     FOREIGN KEY (fk_competency) REFERENCES competency (id)
 ) ENGINE=InnoDB;
+
+-- -----------------------------------------------------------------------------
+-- create default entities for any new instantiation of the database
+-- -----------------------------------------------------------------------------
+
+-- create admin user
+INSERT INTO userauth (passwd,role)
+VALUES /* this password is the hash of 'password' */
+    ("$2y$10$7jgC2AF5smg8j8uLPiZ6nuhGw8d.x9IkYL9wMea7aDAzilJx4VdH6",'admin');
+INSERT INTO userprofile (username,fk_userauth,created)
+SELECT 'root', id, now() FROM userauth
+WHERE role = 'admin'
+LIMIT 1;
+
+-- create abet criterion categories
+INSERT INTO abet_criterion (rank,description)
+VALUES
+    (1,'Students'),
+    (2,'PEOs'),
+    (3,'Student Outcomes'),
+    (4,'Continuous Improvement'),
+    (5,'Curriculum'),
+    (6,'Faculty'),
+    (7,'Facilities'),
+    (8,'Institutional Support');

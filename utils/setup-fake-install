@@ -25,5 +25,5 @@ chown :$WEBGROUP $FAKE_ROOT/abet1.config
 chmod g+w $FAKE_ROOT/abet1.config
 
 ln -s $FAKE_ROOT /usr/local/lib/abet1
-ln -s $FAKE_ROOT/abet1.config /etc/abet1
+ln -s $FAKE_ROOT /etc/abet1
 echo Created symbolic links to fake install directory

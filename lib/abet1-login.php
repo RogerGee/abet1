@@ -24,6 +24,15 @@ function abet_is_authenticated() {
     return false;
 }
 
+// abet_is_admin_authenticated() - determine if user is authenticated admin
+function abet_is_admin_authenticated() {
+    if (abet_is_authenticated()) {
+        return $_SESSION['role'] == 'admin';
+    }
+
+    return false;
+}
+
 // abet_login() - perform login authentication with the specified
 // user:passwd pair and save the session
 function abet_login($user,$passwd) {
@@ -35,9 +44,12 @@ function abet_login($user,$passwd) {
     $_SESSION['user'] = $user;
 
     // attempt authentication verification
-    if (abet_verify($user,$encrypted)) {
-        // authentication was successful: place encrypted password in session
+    if (abet_verify($user,$encrypted,$id,$role)) {
+        // authentication was successful: place encrypted password, id and
+        // user role into session
         $_SESSION['passwd'] = $encrypted;
+        $_SESSION['id'] = $id;
+        $_SESSION['role'] = $role;
         return true;
     }
 
@@ -47,6 +59,24 @@ function abet_login($user,$passwd) {
 // abet_verify() - verifies username and password pair; the password should be
 // a one-way hash of the plain-text password; the database stores this encrypted
 // password as a string
-function abet_verify($user,$passwd) {
+function abet_verify($user,$passwd,&$id,&$role) {
+    $info = array(
+        'tables' => array(
+            'userauth' => array('passwd','role'),
+            'userprofile' => array('id')
+        ),
+        'joins' => array(
+            'INNER JOIN userprofile ON userauth.id = userprofile.fk_userauth'
+        ),
+        'where' => "userprofile.username = '$user'"
+    );
+
+    $result = (new Query(new QueryBuilder(SELECT_QUERY,$info)))->get_row_assoc(1);
+    if (!is_null($result) && $result['passwd'] === $passwd) {
+        $id = $result['id'];
+        $role = $result['role'];
+        return true;
+    }
+
     return false;
 }

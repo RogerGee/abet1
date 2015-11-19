@@ -47,7 +47,9 @@ class Query {
         $con = self::connect_db();
         $this->result = $con->query($queryString);
         if ($this->result === FALSE) {
-            throw new Exception("database query failed");
+            // we throw QueryException only when a query fails so the implementation
+            // can decide what to do; everything else is truly exceptional
+            throw new Exception("database query failed: $con->error");
         }
     }
 
@@ -55,6 +57,15 @@ class Query {
         if (is_a($this->result,'mysqli_result')) {
             $this->result->close();
         }
+    }
+
+    // is_empty() - determines if result had no rows
+    function is_empty() {
+        if (is_a($this->result,'mysqli_result')) {
+            return $this->result->num_rows == 0;
+        }
+        throw new Exception("call to " . __FUNCTION__ . " is illegal for "
+            . "non-result queries");
     }
 
     // get_result() - returns the wrapped object; this will be boolean(true) if
@@ -81,8 +92,9 @@ class Query {
     // row; the row must be a 1-based row number; the result array is associative
     function get_row_assoc($rowNumber) {
         if (is_a($this->result,'mysqli_result')) {
-            $this->result->dataSeek($rowNumber-1);
-            return $this->fetch_assoc();
+            if ($this->result->data_seek($rowNumber-1))
+                return $this->result->fetch_assoc();
+            return null;
         }
         throw new Exception("call to " . __FUNCTION__ . " is illegal for "
             . "non-result queries");
@@ -92,13 +104,13 @@ class Query {
     // with fields keyed to indeces in the order specified by the query
     function get_row_ordered($rowNumber) {
         if (is_a($this->result,'mysqli_result')) {
-            $this->result->dataSeek($rowNumber-1);
-            return $this->fetch_row();
+            if ($this->result->data_seek($rowNumber-1))
+                return $this->result->fetch_row();
+            return null;
         }
         throw new Exception("call to " . __FUNCTION__ . " is illegal for "
             . "non-result queries");
     }
-
 
     // get_row_json() - obtain JSON-encoded database row; this is just a trivial
     // wrapper for 'get_row_assoc()' with 'json_encode'
@@ -169,5 +181,195 @@ class Query {
         }
         throw new Exception("call to " . __FUNCTION__ . " is illegal for "
             . "non-result queries");
+    }
+}
+
+define('INSERT_QUERY','insert');
+define('UPDATE_QUERY','update');
+define('SELECT_QUERY','select');
+define('DELETE_QUERY','delete');
+
+class QueryBuilder {
+    private $qstring;
+
+    /*
+        The QueryBuilder supports the following keys for the 'info' parameter:
+            [insert]
+                'fields': array of field names for update
+                'values': array of arrays of values
+                'table': the table into which to insert
+
+            [update]
+                'updates': array of column-name => value
+                'table': the table to update
+                'where': where clause for update (sql) [optional]
+                'limit': limit (sql) [optional: default value is 1]
+
+            [select]
+                'tables': array of table-name => (array of field-name)
+                'aliases': array of 'table.field' => alias-name [optional]
+                'joins': array of table-name => sql [optional]
+                'where': where clause (sql) [optional]
+                'orderby': order by clause (sql) [optional]
+                'limit': limit (sql) [optional]
+
+                notes: the order of the elements in 'tables' determines order
+                of columns; 'joins' should specify joins for all tables except
+                the first one; 'joins' must specify the sql statement (e.g.
+                INNER JOIN a ON a.id = b.id) using table-qualified field names;
+                'orderby' just needs to specify the condition using
+                table-qualified field names
+
+            [delete]
+                'tables': the tables from which to delete
+                'where': where clause for the delete (sql) using table-qualified
+                         field names
+    */
+
+    function __construct($kind,array $info) {
+        try {
+            switch ($kind) {
+            case 'insert':
+                $this->qstring = self::insert_string($info);
+                break;
+            case 'update':
+                $this->qstring = self::update_string($info);
+                break;
+            case 'select':
+                $this->qstring = self::select_string($info);
+                break;
+            case 'delete':
+                $this->qstring = self::delete_string($info);
+                break;
+            default:
+                throw new Exception("parameter 'kind' was incorrect in call "
+                    . "to " . __FUNCTION__);
+            }
+        } catch (Exception $e) {
+            if (strlen($e->getMessage()) == 0) {
+                // create generic exception
+                throw new Exception("parameters were not correct for "
+                        . "'$kind' operation in call to " . __FUNCTION__);
+            }
+            else {
+                // pass the exception along
+                throw $e;
+            }
+        }
+
+        $this->qstring .= ";";
+    }
+
+    // this allows the language to automatically cast to string
+    function __toString() {
+        return $this->qstring;
+    }
+
+    static private function insert_string($info) {
+        if (!array_key_exists('fields',$info) || !array_key_exists('values',$info)
+            || !array_key_exists('table',$info)) throw new Exception("");
+
+        $q = "INSERT INTO $info[table] (" .
+            implode(',',$info['fields']) . ") VALUES ";
+        $s = '';
+        foreach ($info['values'] as $a) {
+            if (!is_array($a)) throw new Exception("");
+
+            $q .= "$s(" . implode(',',$a) . ")";
+            $s = ", ";
+        }
+
+        return $q;
+    }
+
+    static private function update_string($info) {
+        if (!array_key_exists('updates',$info) || !array_key_exists('table',$info))
+            throw new Exception("");
+
+        $q = "UPDATE " . $info['table'] . " SET ";
+        $s = '';
+        foreach ($updates as $f => $v) {
+            $q .= "$s$f=$v";
+            $s = ', ';
+        }
+
+        if (array_key_exists('where',$info)) {
+            $q .= "WHERE " . $info['where'];
+        }
+
+        $l = array_key_exists('limit',$info) ? $info['limit'] : 1;
+        $q .= "LIMIT $l";
+
+        return $q;
+    }
+
+    static private function select_string($info) {
+        // 'tables': array of table-name => (array of field-name)
+        // 'aliases': array of 'table.field' => alias-name [optional]
+        // 'joins': array of table-name => sql [optional]
+        // 'orderby': order by clause (sql) [optional]
+        // 'limit': limit (sql) [optional]
+
+        if (!array_key_exists('tables',$info) || !is_array($info['tables']))
+            throw new Exception("");
+
+        // get lists of tables and fields; qualify each field name
+        // with its table name
+        $fields = array();
+        $tables = array();
+        foreach ($info['tables'] as $tbl => $a) {
+            if (!is_array($a))
+                throw new Exception("");
+            $tables[] = $tbl;
+            foreach ($a as $fld) {
+                $fields[] = "$tbl.$fld";
+            }
+        }
+
+        // apply any aliases
+        if (array_key_exists('aliases',$info)) {
+            if (!is_array($info['aliases']))
+                throw new Exception("");
+            foreach ($info['aliases'] as $name => $alias) {
+                $k = array_search($name,$fields);
+                if ($k !== false) {
+                    $fields[$k] .= " $alias";
+                }
+            }
+        }
+
+        // create first part of select string
+        $q = "SELECT " . implode(', ',$fields) . " FROM $tables[0]";
+
+        // handle joins: they should be specified for all tables except first
+        if (array_key_exists('joins',$info)) {
+            if (!is_array($info['joins']))
+                throw new Exception("");
+            foreach ($info['joins'] as $join) {
+                $q .= " $join";
+            }
+        }
+        else {
+            // specify all tables in comma-separated list
+            $list = implode(', ',array_slice($tables,1));
+            $q .= ", $list";
+        }
+
+        // handle order by, where and limit
+        if (array_key_exists('orderby',$info)) {
+            $q .= " ORDER BY $info[orderby]";
+        }
+        if (array_key_exists('where',$info)) {
+            $q .= " WHERE $info[where]";
+        }
+        if (array_key_exists('limit',$info)) {
+            $q .= " LIMIT $info[limit]";
+        }
+
+        return $q;
+    }
+
+    static private function delete_string($info) {
+
     }
 }
