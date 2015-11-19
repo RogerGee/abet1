@@ -23,22 +23,21 @@ if (!abet_is_authenticated()) {
 		<title>ABET</title>
 		<script src="scripts/jquery.min.js" type="text/javascript"></script>
 		<script src="scripts/jquery-ui.min.js" type="text/javascript"></script>
+		<script src="scripts/abet.js" type="text/javascript"></script>
+		<script src="scripts/profile.js" type="text/javascript"></script>
 		<script src="scripts/tree.js" type="text/javascript"></script>
 		<link rel="stylesheet" href="stylesheets/abet1.css" />
 		<link rel="stylesheet" href="stylesheets/tree.css" />
 		<script type="text/javascript">
 			//current global user object
 			var obj;
-			//function to build a page based on user object
-			function loadPage(data) {
-				obj = data;
-				//switch for view, then build page
-			}
 			//handle internal "navigation"
 			function navigateInternal(href) {
-				$.ajax({url:href,dataType:"json"}).done(function(data) {
-					loadPage(JSON.parse(data));
-				});
+				switch(href) {
+					case "profile":
+						getProfile();
+						break;
+				}
 			}
 			function submit() {
 				$.ajax({type:"POST",url:"",data:JSON.stringify(obj)});
@@ -83,7 +82,7 @@ if (!abet_is_authenticated()) {
 				//hijack internal hrefs
 				$(".internal").click(function(event) {
 					event.preventDefault();
-					//ajax get data
+					navigateInternal($(this).attr("href"));
 				});
 			});
 		</script>
@@ -102,7 +101,7 @@ if (!abet_is_authenticated()) {
 			</div>
 			<div id="settings" class="popup">
 				<ul>
-					<li><a href="/" class="internal">Edit Profile</a></li>
+					<li><a href="profile" class="internal">Edit Profile</a></li>
 					<li><a href="/logout.php" class="internal">Logout</a></li>
 				</ul>
 			</div>
