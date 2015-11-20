@@ -64,3 +64,4 @@ function submitProfile() {
 	//scrub the cache
 	clearState();
 }
+

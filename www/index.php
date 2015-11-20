@@ -28,78 +28,6 @@ if (!abet_is_authenticated()) {
 		<script src="scripts/tree.js" type="text/javascript"></script>
 		<link rel="stylesheet" href="stylesheets/abet1.css" />
 		<link rel="stylesheet" href="stylesheets/tree.css" />
-		<script type="text/javascript">
-			//current global user object
-			var obj;
-			//handle internal "navigation"
-			function navigateInternal(href) {
-				switch (href) {
-					case "profile":
-						obj = getProfile();
-						break;
-				}
-			}
-			//functions for cache maintenance
-			function saveState() {
-				localStorage.abet1CacheData = JSON.stringify(obj);
-			}
-			function loadState() {
-				return JSON.parse(localStorage.abet1CacheData);
-			}
-			function clearState() {
-				delete localStorage.abet1CacheData;
-			}
-			function reloadPage() {
-				obj = loadState();
-				switch (obj.object_name) {
-					case "profile":
-						loadProfile(obj);
-						break;
-				}
-			}
-			//check on document ready for any previous unsaved work
-			$(document).ready(function() {
-				if (localStorage.abet1CacheData) {
-					if (confirm("It seems you left before submitting data.\n" +
-						"Would you like to reload your progress?"))
-						reloadPage();
-					else
-						clearState();
-				}
-				//popup box code
-				$("#notif").click(function(event) {
-					$("#notifications").fadeToggle(300);
-				});
-				$("#sett").click(function(event) {
-					$("#settings").fadeToggle(300);
-				});
-				$(".popup").click(function(event) {
-					event.stopPropagation();
-				});
-				$(document).click(function(event) {
-					if (event.target.id != "notif" &&
-						$("#notifications").css("display") != "none")
-						$("#notifications").fadeToggle(300);
-					if (event.target.id != "sett" &&
-						$("#settings").css("display") != "none")
-						$("#settings").fadeToggle(300);
-				});
-				//hijack internal hrefs
-				$(".internal").click(function(event) {
-					event.preventDefault();
-					navigateInternal($(this).attr("href"));
-				});
-			});
-			//set handlers on inputs after we load content
-			$(document).ajaxComplete(function() {
-				$("#content input").on("change", function() {
-					if (typeof(obj[this.id]) !== "undefined") {
-						obj[this.id] = $(this).val();
-						saveState();
-					}
-				});
-			});
-		</script>
 	</head>
 	<body>
 		<div class="top_bar">
@@ -168,3 +96,4 @@ if (!abet_is_authenticated()) {
 		</div>
 	</body>
 </html>
+
