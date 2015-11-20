@@ -39,6 +39,7 @@ if (!abet_is_authenticated()) {
 						break;
 				}
 				//set up input handling
+				initInput();
 			}
 			function initInput() {
 				$("#content input").on("change", function() {
