@@ -14,6 +14,10 @@ div {
 	-webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box;
 }
+/* set links to be the same regardless of visited/not-visited */
+a:link, a:visited {
+	color: #00F;
+}
 /* top navigation bar style */
 .top_bar {
 	position: relative;

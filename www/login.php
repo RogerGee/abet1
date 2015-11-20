@@ -33,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && array_key_exists('user', $_POST)
 <!DOCTYPE html>
 <html>
 	<head>
-		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="viewport" content="minimal-ui, width=device-width, initial-scale=1">
 		<title>ABET - login to site</title>
 		<link rel="stylesheet" href="stylesheets/login.css" />
 	</head>
