@@ -56,11 +56,12 @@ function abet_verify($user,$passwd,&$id,&$role) {
         'joins' => array(
             'INNER JOIN userprofile ON userauth.id = userprofile.fk_userauth'
         ),
-        'where' => "userprofile.username = '$user'"
+        'where' => 'userprofile.username = ?',
+        'where-params' => array("s:$user")
     );
 
     // run query and verify password
-    $result = (new Query(new QueryBuilder(SELECT_QUERY,$info)))->get_row_assoc(1);
+    $result = (new Query(new QueryBuilder(SELECT_QUERY,$info)))->get_row_assoc();
     if (!is_null($result) && password_verify($passwd,$result['passwd'])) {
         $id = $result['id'];
         $role = $result['role'];

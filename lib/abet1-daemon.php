@@ -65,13 +65,22 @@ function fatal_error($why) {
     exit(1);
 }
 
+function process_arguments() {
+    global $argv;
+    global $PIDFILE;
+
+    // process optional arguments: the first argument is a pidfile
+    if (array_key_exists(1,$argv)) {
+        $PIDFILE = $argv[1];
+    }
+}
+
 // daemonize() - become a system daemon
 function daemonize() {
     global $STDIN;
     global $STDOUT;
     global $STDERR;
     global $PIDFILE;
-    global $argv;
 
     // become a daemon: keep the current directory the same so that we can
     // potentially restart ourself later
@@ -110,9 +119,8 @@ function daemonize() {
 
         log_message("process started");
 
-        // process optional arguments: the first argument is a pidfile
-        if (array_key_exists(1,$argv)) {
-            $PIDFILE = $argv[1];
+        // create PID file if specified
+        if (!is_null($PIDFILE)) {
             if (file_exists($PIDFILE)) {
                 if (strlen(file_get_contents($PIDFILE)) > 0) {
                     fatal_error("the PID file already exists and is non-empty; "
@@ -129,7 +137,7 @@ function daemonize() {
         }
     }
     else {
-        fwrite($STDOUT,"abet-daemon: process started\n");
+        fwrite($STDOUT,"abet-daemon: process started [$pid]\n");
         exit(0);
     }
 }
@@ -184,7 +192,8 @@ function terminate($signo = -1) {
 
         log_message("restarting this process");
 
-        // spawn new daemon instance that overrides this instance
+        // spawn new daemon instance that overrides this instance; this all
+        // occurs within the same process (meaning it keeps its PID)
         if (!pcntl_exec(PHP_BINARY,$argv))
             fatal_error("fail pcntl_exec() on process restart");
 
@@ -209,6 +218,7 @@ function terminate($signo = -1) {
 // main program operation //////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
+process_arguments();
 $termfd = @fopen(posix_ctermid(),'r');
 if (is_resource($termfd)) {
     // this process is hooked up to a terminal; become a daemon to detach
@@ -218,7 +228,7 @@ if (is_resource($termfd)) {
 else {
     // see if a pid file exists and contains our pid; if not, then become a
     // daemon
-    if (!file_exists($PIDFILE) ||
+    if (is_null($PIDFILE) || !file_exists($PIDFILE) ||
             intval(file_get_contents($PIDFILE)) != posix_getpid())
         daemonize();
     else // otherwise reuse pid file as an overwrite process

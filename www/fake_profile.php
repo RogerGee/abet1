@@ -1,4 +1,6 @@
 <?php
+	header('Content-Type: application/json');
+
 	$arr = array(
 		"username"=>"poopie",
 		"first_name"=>"Doof",

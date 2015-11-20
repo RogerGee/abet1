@@ -17,7 +17,7 @@ if (abet_is_authenticated()) {
 }
 
 // if the page is responding to a POST request, then
-if (isset($_POST) && array_key_exists('user', $_POST)
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && array_key_exists('user', $_POST)
 	&& array_key_exists('passwd',$_POST))
 {
 	if (!abet_login($_POST['user'],$_POST['passwd'])) {
@@ -67,9 +67,10 @@ if (isset($_POST) && array_key_exists('user', $_POST)
 <?php
 // if 'login' was set to 1 then the user failed a login attempt; we produce a
 // failed login message only if the session had a record of the user login attempt
-if (isset($_GET) && array_key_exists('login',$_GET)
-	&& intval($_GET['login']) == 1 && isset($_SESSION)
-	&& array_key_exists('user',$_SESSION))
+if ($_SERVER['REQUEST_METHOD'] == 'GET') {
+	if (array_key_exists('login',$_GET)
+		&& intval($_GET['login']) == 1 && isset($_SESSION)
+		&& array_key_exists('user',$_SESSION))
 	{
 		echo '<p class="abet-failed-login-message">Login unsuccessful. Please try again.</p>';
 
@@ -78,6 +79,10 @@ if (isset($_GET) && array_key_exists('login',$_GET)
 		session_unset();
 		session_destroy();
 	}
+	else if (array_key_exists('logout',$_GET) && intval($_GET['logout']) == 1) {
+		echo '<p>You have been logged out. We\'ll leave the light on for you!</p>';
+	}
+}
 ?>
 			</div>
 		</center>
