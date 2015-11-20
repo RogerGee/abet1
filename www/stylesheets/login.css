@@ -18,19 +18,17 @@ html, body {
 .abet1-login {
     background-color: #fff;
     width: 40%;
-    height: auto;
+	min-width: 400px;
     padding: 5px;
     border-radius: 1em;
     position: absolute;
-    float: none;
-    margin-left: 30%;
-    top: 35%;
-    transform: translateY(-65%);
+    top: 10%;
+	left: 50%;
+    transform: translateX(-50%);
     text-align: left;
 }
 
 .abet1-login h1 {
-    float: none;
     font-weight: bold;
     color: #555;
     text-align: center;
