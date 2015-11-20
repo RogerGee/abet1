@@ -44,7 +44,7 @@ if (!abet_is_authenticated()) {
 			function initInput() {
 				$("#content input").on("change", function() {
 					if (typeof(obj[this.id]) !== "undefined") {
-						obj[this.id] = this.val();
+						obj[this.id] = $(this).val();
 						saveState();
 					}
 				});
