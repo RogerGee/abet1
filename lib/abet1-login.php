@@ -9,15 +9,9 @@ session_start();
 // the credentials exist in the database
 function abet_is_authenticated() {
     if (array_key_exists('user',$_SESSION)
-        && array_key_exists('passwd',$_SESSION))
+        && array_key_exists('role',$_SESSION)
+        && array_key_exists('id',$_SESSION))
     {
-        // verify the credentials again
-        if (!abet_verify($_SESSION['user'],$_SESSION['passwd'])) {
-            // the session is bad so unset everything
-            session_unset();
-            return false;
-        }
-
         return true;
     }
 
@@ -36,18 +30,12 @@ function abet_is_admin_authenticated() {
 // abet_login() - perform login authentication with the specified
 // user:passwd pair and save the session
 function abet_login($user,$passwd) {
-    // create a one-way hash of the password
-    $encrypted = password_hash($passwd,PASSWORD_DEFAULT);
-    unset($passwd);
-
     // place the username in the session so we can remember the login attempt
     $_SESSION['user'] = $user;
 
     // attempt authentication verification
-    if (abet_verify($user,$encrypted,$id,$role)) {
-        // authentication was successful: place encrypted password, id and
-        // user role into session
-        $_SESSION['passwd'] = $encrypted;
+    if (abet_verify($user,$passwd,$id,$role)) {
+        // authentication was successful: place id and user role into session
         $_SESSION['id'] = $id;
         $_SESSION['role'] = $role;
         return true;
@@ -57,8 +45,8 @@ function abet_login($user,$passwd) {
 }
 
 // abet_verify() - verifies username and password pair; the password should be
-// a one-way hash of the plain-text password; the database stores this encrypted
-// password as a string
+// the plain-text password; the database stores the one-way hash (plus Salt) for
+// the password as a string
 function abet_verify($user,$passwd,&$id,&$role) {
     $info = array(
         'tables' => array(
@@ -71,8 +59,9 @@ function abet_verify($user,$passwd,&$id,&$role) {
         'where' => "userprofile.username = '$user'"
     );
 
+    // run query and verify password
     $result = (new Query(new QueryBuilder(SELECT_QUERY,$info)))->get_row_assoc(1);
-    if (!is_null($result) && $result['passwd'] === $passwd) {
+    if (!is_null($result) && password_verify($passwd,$result['passwd'])) {
         $id = $result['id'];
         $role = $result['role'];
         return true;
