@@ -38,16 +38,6 @@ if (!abet_is_authenticated()) {
 						obj = getProfile();
 						break;
 				}
-				//set up input handling
-				initInput();
-			}
-			function initInput() {
-				$("#content input").on("change", function() {
-					if (typeof(obj[this.id]) !== "undefined") {
-						obj[this.id] = $(this).val();
-						saveState();
-					}
-				});
 			}
 			//functions for cache maintenance
 			function saveState() {
@@ -98,6 +88,15 @@ if (!abet_is_authenticated()) {
 				$(".internal").click(function(event) {
 					event.preventDefault();
 					navigateInternal($(this).attr("href"));
+				});
+			});
+			//set handlers on inputs after we load content
+			$(document).ajaxComplete(function() {
+				$("#content input").on("change", function() {
+					if (typeof(obj[this.id]) !== "undefined") {
+						obj[this.id] = $(this).val();
+						saveState();
+					}
 				});
 			});
 		</script>
