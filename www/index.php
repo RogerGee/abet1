@@ -33,14 +33,20 @@ if (!abet_is_authenticated()) {
 			var obj;
 			//handle internal "navigation"
 			function navigateInternal(href) {
-				switch(href) {
+				switch (href) {
 					case "profile":
-						getProfile();
+						obj = getProfile();
 						break;
 				}
+				//set up input handling
 			}
-			function submit() {
-				$.ajax({type:"POST",url:"",data:JSON.stringify(obj)});
+			function initInput() {
+				$("#content input").on("change", function() {
+					if (typeof(obj[this.id]) !== "undefined") {
+						obj[this.id] = this.val();
+						saveState();
+					}
+				});
 			}
 			//functions for cache maintenance
 			function saveState() {
@@ -52,12 +58,20 @@ if (!abet_is_authenticated()) {
 			function clearState() {
 				delete localStorage.abet1CacheData;
 			}
+			function reloadPage() {
+				obj = loadState();
+				switch (obj.object_name) {
+					case "profile":
+						loadProfile(obj);
+						break;
+				}
+			}
 			//check on document ready for any previous unsaved work
 			$(document).ready(function() {
 				if (localStorage.abet1CacheData) {
 					if (confirm("It seems you left before submitting data.\n" +
 						"Would you like to reload your progress?"))
-						loadPage(loadState());
+						reloadPage();
 					else
 						clearState();
 				}
