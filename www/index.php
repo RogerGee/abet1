@@ -102,7 +102,7 @@ if (!abet_is_authenticated()) {
 			<div id="settings" class="popup">
 				<ul>
 					<li><a href="profile" class="internal">Edit Profile</a></li>
-					<li><a href="/logout.php" class="internal">Logout</a></li>
+					<li><a href="/logout.php">Logout</a></li>
 				</ul>
 			</div>
 		</div>
