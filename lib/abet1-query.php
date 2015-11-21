@@ -45,6 +45,18 @@ class Query {
         return $connection;
     }
 
+    static function perform_transaction(callable $func) {
+        $con = self::connect_db();
+        $doRollback = false;
+        $con->query("START TRANSACTION");
+        $ret = call_user_func($func,$doRollback);
+        if ($doRollback)
+            $con->query("ROLLBACK");
+        else
+            $con->query("COMMIT");
+        return $ret;
+    }
+
     function __construct(QueryBuilder $builder) {
         $con = self::connect_db();
 
@@ -78,6 +90,12 @@ class Query {
     // get_stmt() - gets the underlying mysqli_stmt object
     function get_stmt() {
         return $this->stmt;
+    }
+
+    // validate_update() - determines if a query modified the specified
+    // number of rows
+    function validate_update($numRows = 1) {
+        return $this->stmt->affected_rows == $numRows;
     }
 
     // is_empty() - determines if result had no rows

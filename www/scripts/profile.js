@@ -1,7 +1,7 @@
 //assuming profile object obtained is just the table columns from schema
 
 function getProfile() {
-	$.ajax({url:"fake_profile.php",dataType:"json"}).done(function(profile) {
+	$.ajax({url:"profile.php",dataType:"json"}).done(function(profile) {
 		obj = profile;
 		obj.load_func = "loadProfile";
 		loadProfile(profile);
@@ -65,4 +65,3 @@ function submitProfile() {
 	//scrub the cache
 	clearState();
 }
-
