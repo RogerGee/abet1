@@ -1,0 +1,42 @@
+.confirm_wrapper * {
+	box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+}
+.confirm_wrapper .overlay{
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	top: 0;
+	left: 0;
+	background-color: #AAA;
+	opacity: .5;
+}
+.confirm_wrapper .box {
+	position: absolute;
+	width: 20em;
+	max-width: 100%;
+	top: 25%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	background-color: #EEEEEE;
+	border: 1px solid black;
+}
+.confirm_wrapper .title {
+	font-size: 16pt;
+	border-bottom: 1px solid black;
+	width: 100%;
+	padding: 5px;
+}
+.confirm_wrapper .message {
+	padding: 5px;
+}
+.confirm_wrapper .buttons {
+	padding: 5px;
+}
+.confirm_wrapper input {
+	min-width: 40px;
+	margin-left: 10px;
+	margin-bottom: 5px;
+}
+

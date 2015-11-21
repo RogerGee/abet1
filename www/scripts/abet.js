@@ -55,11 +55,9 @@ function hijackAnchors() {
 //check on document ready for any previous unsaved work
 $(document).ready(function() {
 	if (localStorage.abet1CacheData) {
-		if (confirm("It seems you left before submitting data.\n" +
-			"Would you like to reload your progress?"))
-			reloadPage();
-		else
-			clearState();
+		$.confirm("Unsaved Data", "It seems you left before submitting data.\n" +
+			"Would you like to reload your progress?", "Yes", "No")
+			.accept(reloadPage).decline(clearState);
 	}
 	//popup box code
 	$("#notif").click(function(event) {
