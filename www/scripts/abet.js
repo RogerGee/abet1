@@ -1,5 +1,4 @@
-//here goes all general use javascript
-
+/* here goes all general use javascript */
 //function which can generate html from a nested javascript object
 function gen(obj) {
 	var ret = "<" + obj.tag;
@@ -49,7 +48,14 @@ function reloadPage() {
 function hijackAnchors() {
 	$(".internal").click(function(event) {
 		event.preventDefault();
-		navigateInternal($(this).attr("href"));
+		var href = $(this).attr("href");
+		if (!localStorage.abet1CacheData) {
+			navigateInternal(href);
+		} else {
+			$.confirm("Unsubmited Work", "You have unsubmited data on this page.\n" +
+				"Are you sure you wish to leave? All changes will be lost",
+				"Leave", "Stay").accept(function() {navigateInternal(href);});
+		}
 	});
 }
 //check on document ready for any previous unsaved work
