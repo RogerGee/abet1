@@ -20,11 +20,7 @@ function gen(obj) {
 var obj;
 //handle internal "navigation"
 function navigateInternal(href) {
-	switch (href) {
-		case "profile":
-			obj = getProfile();
-			break;
-	}
+	obj = window[href]();
 }
 //functions for cache maintenance
 function saveState() {
@@ -38,11 +34,20 @@ function clearState() {
 }
 function reloadPage() {
 	obj = loadState();
-	switch (obj.object_name) {
-		case "profile":
-			loadProfile(obj);
-			break;
-	}
+	window[obj.load_func](obj);
+}
+//bit of js to make inputs for telephone numbers
+function initPhone() {
+	$("input[type=phone]").on("input", function() {
+		var string = $(this).val().replace(/\D/g,'');
+		if (string.length > 3)
+			string = string.slice(0,3) + "-" + string.slice(3);
+		if (string.length > 8)
+			string = string.slice(0,7) + "-" + string.slice(7);
+		if (string.length > 12)
+			string = string.slice(0, 12)
+		$(this).val(string);
+	});
 }
 //hijack internal hrefs
 function hijackAnchors() {

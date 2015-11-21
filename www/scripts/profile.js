@@ -3,7 +3,7 @@
 function getProfile() {
 	$.ajax({url:"fake_profile.php",dataType:"json"}).done(function(profile) {
 		obj = profile;
-		obj.object_name = "profile";
+		obj.load_func = "loadProfile";
 		loadProfile(profile);
 	});
 }
@@ -47,20 +47,21 @@ function loadProfile(profile) {
 		]},
 		{tag:"tr", children:[
 			{tag:"td", children:["Office Phone"]},
-			{tag:"td", children:[{tag:"input", type:"tel", id:"office_phone", value:profile.office_phone}]}
+			{tag:"td", children:[{tag:"input", type:"phone", id:"office_phone", value:profile.office_phone}]}
 		]},
 		{tag:"tr", children:[
 			{tag:"td", children:["Mobile Phone"]},
-			{tag:"td", children:[{tag:"input", type:"tel", id:"mobile_phone", value:profile.mobile_phone}]}
+			{tag:"td", children:[{tag:"input", type:"phone", id:"mobile_phone", value:profile.mobile_phone}]}
 		]}
 	]}));
 	content.append(gen({tag:"input", id:"submit", type:"button", value:"Submit"}));
 	$("#submit").on("click", submitProfile());
+	initPhone();
 }
 
 function submitProfile() {
 	//here we would submit back the profile using ajax, and print status message
-	$.ajax({method:"post",url:"fake_profile.php",dataType:"json"});
+	$.ajax({method:"post",url:"profile.php",dataType:"json", data:obj});
 	//scrub the cache
 	clearState();
 }
