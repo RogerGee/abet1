@@ -39,7 +39,7 @@ function loadProfile(profile) {
 		]},
 		{tag:"tr", children:[
 			{tag:"td", children:["Bio"]},
-			{tag:"td", children:[{tag:"input", type:"text", id:"bio", value:profile.bio}]}
+			{tag:"td", children:[{tag:"textarea", id:"bio", children:[profile.bio]}]}
 		]},
 		{tag:"tr", children:[
 			{tag:"td", children:["Email"]},

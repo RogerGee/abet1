@@ -93,7 +93,8 @@ class Query {
     }
 
     // validate_update() - determines if a query modified the specified
-    // number of rows
+    // number of rows; note that updates that don't change an existing database
+    // value will not modify the row
     function validate_update($numRows = 1) {
         return $this->stmt->affected_rows == $numRows;
     }

@@ -139,12 +139,8 @@ else if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     if (count($info['updates']) > 0) {
+        // run an update query to update the user-profile
         $query = new Query(new QueryBuilder(UPDATE_QUERY,$info));
-        if ($query->validate_update()) {
-            echo '{"success":false}';
-            http_response_code(500); // Server Error
-            exit;
-        }
     }
 
     echo '{"success":true}';
