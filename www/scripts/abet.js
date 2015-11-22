@@ -38,15 +38,34 @@ function reloadPage() {
 }
 //bit of js to make inputs for telephone numbers
 function initPhone() {
-	$("input[type=phone]").on("input", function() {
-		var string = $(this).val().replace(/\D/g,'');
+	$("input[type=phone]").on("input", function(event) {
+		var start = this.selectionStart;
+		var string = $(this).val();
+		string = string.replace(/[^0-9\-]/g, '');
+		if (string.indexOf('-') !== -1) {
+			start -= (start > 4) ? (start > 8 && string.length > 9) ? 2 : 1 : 0;
+			string = string.replace(/\D/g,'');
+		}
 		if (string.length > 3)
 			string = string.slice(0,3) + "-" + string.slice(3);
 		if (string.length > 8)
 			string = string.slice(0,7) + "-" + string.slice(7);
 		if (string.length > 12)
 			string = string.slice(0, 12)
+		start += (start > 3) ? (start > 6) ? 2 : 1 : 0;
 		$(this).val(string);
+		this.setSelectionRange(start, start);
+	});
+	$("input[type=phone]").on("keydown", function(event) {
+		var key = event.keyCode || event.charCode;
+		var length = $(this).val().length;
+		var start = this.selectionStart, end = this.selectionEnd;
+		start -= (start > 3) ? (start > 7 && length > 8) ? 2 : 1 : 0;
+		end -= (end > 3) ? (end > 7 && length > 8) ? 2 : 1 : 0;
+		if (key == 8 || key == 46) {
+			$(this).val($(this).val().replace(/\D/g,''));
+			this.setSelectionRange(start, end);
+		}
 	});
 }
 //hijack internal hrefs

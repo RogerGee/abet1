@@ -60,8 +60,18 @@ function loadProfile(profile) {
 }
 
 function submitProfile() {
-	//here we would submit back the profile using ajax, and print status message
-	$.ajax({method:"post",url:"profile.php",dataType:"json", data:obj});
+	//submit back the profile using ajax, and print status message
+	$("#success").remove();
+	$.ajax({method:"post",url:"profile.php",dataType:"json", data:obj,
+		statusCode: {
+			200: function() {
+				content.append(gen({tag:"p", id:"success", children:["success!"]}));
+			},
+			400: function(data) {
+				$("#"+data.errField).after(data.error);
+			}
+		}
+	});
 	//scrub the cache
 	clearState();
 }
