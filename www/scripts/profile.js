@@ -62,16 +62,17 @@ function loadProfile(profile) {
 function submitProfile() {
 	//submit back the profile using ajax, and print status message
 	$("#success").remove();
-	$.ajax({method:"post",url:"profile.php",dataType:"json", data:obj,
-		statusCode: {
+	$.ajax({method:"post",url:"profile.php",dataType:"json",data:obj,
+		statusCode:{
 			200: function() {
-				content.append(gen({tag:"p", id:"success", children:["success!"]}));
+				$("$content").append(gen({tag:"p",id:"success",children:["success!"]}));
+				//scrub the cache, but only on successful submit
+				clearState();
 			},
 			400: function(data) {
+				data = data.responseJSON;
 				$("#"+data.errField).after(data.error);
 			}
 		}
 	});
-	//scrub the cache
-	clearState();
 }
