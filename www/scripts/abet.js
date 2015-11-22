@@ -109,8 +109,8 @@ $(document).ready(function() {
 	});
 	hijackAnchors();
 });
-//set handlers on inputs after we load content
-$(document).ajaxComplete(function() {
+//set handlers on inputs and textareas
+function initInputs() {
 	$("#content input, #content textarea").on("change", function() {
 		if (typeof(obj[this.id]) !== "undefined") {
 			obj[this.id] = $(this).val();
@@ -118,5 +118,5 @@ $(document).ajaxComplete(function() {
 		}
 	});
 	hijackAnchors();
-});
+}
 
