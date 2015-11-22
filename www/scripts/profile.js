@@ -66,7 +66,7 @@ function submitProfile() {
 	$.ajax({method:"post",url:"profile.php",dataType:"json",data:obj,
 		statusCode:{
 			200: function() {
-				$("$content").append(gen(
+				$("#content").append(gen(
 					{tag:"p","class":"submit_success",children:["success!"]}
 				));
 				//scrub the cache, but only on successful submit
@@ -74,8 +74,8 @@ function submitProfile() {
 			},
 			400: function(data) {
 				data = data.responseJSON;
-				$("#"+data.errField).after(gen(
-					{tag:"p","class":"submit_error",children:[data.error]}
+				$("#"+data.errField).parent().after(gen(
+					{tag:"td","class":"submit_error",children:[data.error]}
 				));
 			}
 		}
