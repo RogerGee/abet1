@@ -55,7 +55,7 @@ function loadProfile(profile) {
 		]}
 	]}));
 	content.append(gen({tag:"input", id:"submit", type:"button", value:"Submit"}));
-	$("#submit").on("click", submitProfile());
+	$("#submit").on("click", submitProfile);
 	initPhone();
 }
 
