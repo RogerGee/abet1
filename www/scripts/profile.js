@@ -64,7 +64,7 @@ function submitProfile() {
 	$(".submit_success").remove();
 	$(".submit_error").remove();
 	$.ajax({method:"post",url:"profile.php",dataType:"json",data:obj,
-		statusCode:{
+		global:false, statusCode:{
 			200: function() {
 				$("#content").append(gen(
 					{tag:"p","class":"submit_success",children:["success!"]}

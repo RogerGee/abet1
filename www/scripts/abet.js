@@ -111,7 +111,7 @@ $(document).ready(function() {
 });
 //set handlers on inputs after we load content
 $(document).ajaxComplete(function() {
-	$("#content input").on("change", function() {
+	$("#content input, #content textarea").on("change", function() {
 		if (typeof(obj[this.id]) !== "undefined") {
 			obj[this.id] = $(this).val();
 			saveState();
