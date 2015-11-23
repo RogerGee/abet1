@@ -10,7 +10,7 @@ function gen(obj) {
 		for (var child in obj.children) {
 			if (typeof(obj.children[child]) === 'string')
 				html += obj.children[child];
-			else if (typeof(obj.chilren[child]) === 'object')
+			else if (typeof(obj.children[child]) === 'object')
 				html += gen(obj.children[child]);
 		}
 	}
