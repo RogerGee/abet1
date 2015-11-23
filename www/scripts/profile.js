@@ -1,5 +1,4 @@
-//assuming profile object obtained is just the table columns from schema
-
+/* functions for editing profile */
 function getProfile() {
 	$.ajax({url:"profile.php",dataType:"json"}).done(function(profile) {
 		obj = profile;
@@ -65,7 +64,7 @@ function submitProfile() {
 	$(".submit_success").remove();
 	$(".submit_error").remove();
 	$.ajax({method:"post",url:"profile.php",dataType:"json",data:obj,
-		global:false, statusCode:{
+		statusCode:{
 			200: function() {
 				$("#content").append(gen(
 					{tag:"p","class":"submit_success",children:["success!"]}
@@ -79,6 +78,10 @@ function submitProfile() {
 					{tag:"td","class":"submit_error",children:[data.error]}
 				));
 			}
+			401: function(data) {
+				window.location.href = "/login.php";
+			}
 		}
 	});
 }
+

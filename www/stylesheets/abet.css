@@ -18,6 +18,10 @@ div {
 a:link, a:visited {
 	color: #00F;
 }
+/* bleh */
+input[type=phone] {
+	padding: 1px 0px;
+}
 /* top navigation bar style */
 .top_bar {
 	position: relative;
@@ -80,5 +84,12 @@ a:link, a:visited {
 	transform: none;
 	color: black;
 	display: none;
+}
+/* feedback */
+.submit_error {
+	color: red;
+}
+.submit_success {
+	color: green;
 }
 

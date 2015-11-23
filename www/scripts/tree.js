@@ -1,4 +1,5 @@
-$(document).ready(function() {
+/* set up tree */
+function initTree() {
 	$.when($(".tree ul").each(function() {
 		var h = parseInt($(this).css("height"));
 		//set a dummy attribute h to the height of folded content
@@ -33,4 +34,5 @@ $(document).ready(function() {
 			});
 		}
 	});
-});
+}
+
