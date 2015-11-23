@@ -10,7 +10,7 @@ function gen(obj) {
 		for (var child in obj.children) {
 			if (typeof(obj.children[child]) === 'string')
 				html += obj.children[child];
-			else
+			else if (typeof(obj.chilren[child]) === 'object')
 				html += gen(obj.children[child]);
 		}
 	}
@@ -119,4 +119,8 @@ function initInputs() {
 	});
 	hijackAnchors();
 }
+$(document).ajaxError(function(event, jqxhr) {
+	if (jqxhr.status == 401)
+		window.location.href = "/login.php";
+});
 

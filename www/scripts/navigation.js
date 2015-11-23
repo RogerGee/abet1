@@ -26,7 +26,11 @@ function loadNavigation() {
 	$.ajax({url:"/nav.php",dataType:"json"}).done(function(data) {
 		$("#left_bar").html("");
 		$("#left_bar").append("Navigation");
-		$("#left_bar").append(gen(decodeNav(data)));
+		$("#left_bar").append(gen(decodeNav(data[0])));
+		if (data.length > 1) {
+			$("#left_bar").append("Admin Tools");
+			$("#left_bar").append(gen(decodeNav(data[1])));
+		}
 		initTree();
 	});
 }

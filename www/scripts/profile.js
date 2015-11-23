@@ -78,9 +78,6 @@ function submitProfile() {
 					{tag:"td","class":"submit_error",children:[data.error]}
 				));
 			},
-			401: function(data) {
-				window.location.href = "/login.php";
-			}
 		}
 	});
 }
