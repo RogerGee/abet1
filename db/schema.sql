@@ -115,10 +115,7 @@ CREATE TABLE program (
     semester ENUM('fall','spring'), /* semester/year describe program cycle (e.g. Fall 2013) */
     year INT,
     description VARCHAR(4096),
-    fk_acl INT NOT NULL,
-    last_touch TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-
-    FOREIGN KEY (fk_acl) REFERENCES acl (id)
+    last_touch TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 
 -- create table `abet_characteristic`
@@ -306,3 +303,7 @@ VALUES
     (6,'Faculty'),
     (7,'Facilities'),
     (8,'Institutional Support');
+
+-- create acl for root; root should always have id=1
+INSERT INTO acl VALUES();
+INSERT INTO acl_entry VALUES(LAST_INSERT_ID(),1);

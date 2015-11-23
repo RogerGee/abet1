@@ -261,6 +261,10 @@ class QueryBuilder {
                 'fields': array of field names for update
                 'values': array of arrays of variables
                 'table': the table into which to insert
+                'select': optional replacement for 'values'; will run select
+                          statement to get values for insertion; if found any
+                          'values' element will be ignored; the parameters are
+                          the same as described under [select]
 
             [update]
                 'updates': array of (column-name => variable)
@@ -361,20 +365,32 @@ class QueryBuilder {
     }
 
     private function insert_string($info) {
-        if (!array_key_exists('fields',$info) || !array_key_exists('values',$info)
-            || !array_key_exists('table',$info)) throw new Exception("");
+        if (!array_key_exists('fields',$info) || (!array_key_exists('values',$info)
+            && !array_key_exists('select',$info)) || !array_key_exists('table',$info))
+                throw new Exception("");
 
         $q = "INSERT INTO $info[table] (" .
-            implode(',',$info['fields']) . ") VALUES ";
+            implode(',',$info['fields']) . ") ";
 
-        $s = '';
-        foreach ($info['values'] as $a) {
-            if (!is_array($a)) throw new Exception("");
+        // if 'values' was specified, then use a VALUES clause to insert values
+        // directly
+        if (array_key_exists('values',$info)) {
+            $s = 'VALUES ';
+            foreach ($info['values'] as $a) {
+                if (!is_array($a)) throw new Exception("");
 
-            // turn each value into a prepared parameter before adding
-            // to the query; this replaces each value with '?'
-            $q .= "$s(" . implode(',',array_map(array($this,'make_prep'),$a)) . ")";
-            $s = ", ";
+                // turn each value into a prepared parameter before adding
+                // to the query; this replaces each value with '?'
+                $q .= "$s(" . implode(',',array_map(array($this,'make_prep'),$a)) . ")";
+                $s = ", ";
+            }
+        }
+
+        // otherwise use a select statement to generate the insert values
+        else /*if (array_key_exists('select',$info))*/ {
+            // just use the QueryBuilder functionality to generate the string
+            $sel = new QueryBuilder(SELECT_QUERY,$info['select']);
+            $q .= substr($sel,0,strlen($sel)-1);
         }
 
         return $q;
@@ -417,11 +433,23 @@ class QueryBuilder {
         $fields = array();
         $tables = array();
         foreach ($info['tables'] as $tbl => $a) {
-            if (!is_array($a))
-                throw new Exception("");
             $tables[] = $tbl;
-            foreach ($a as $fld) {
-                $fields[] = "$tbl.$fld";
+            if (is_array($a)) {
+                foreach ($a as $fld) {
+                    if ($fld[0] == '\'')
+                        // this is a literal value in the select statement; we ignore
+                        // the table in this instance since it probably is just a placeholder
+                        $fields[] = "$fld";
+                    else
+                        $fields[] = "$tbl.$fld";
+                }
+            }
+            else {
+                // for convenience we allow the mapped element to be a string
+                if ($a[0] == '\'')
+                    $fields[] = "$a";
+                else
+                    $fields[] = "$tbl.$a";
             }
         }
 

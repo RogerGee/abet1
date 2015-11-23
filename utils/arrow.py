@@ -148,7 +148,7 @@ def read_activities(filename):
         parts = line.split()
         l = len(parts)
         if l < 2:
-            sys.stderr.write("error: line " + int(n) + ": expected at least two items\n")
+            sys.stderr.write("error: line " + str(n) + ": expected at least two items\n")
             exit(1)
 
         name = parts[0]
@@ -197,7 +197,8 @@ def arrow_info(filename):
     for a in activities:
         if len(a.nextTasks) == 0:
             if not bot is None:
-                sys.stderr.write("error: more than one bottom-level activity found\n")
+                sys.stderr.write("error: more than one bottom-level activity found: '" + a.name
+                                 + "' is bottom-level but already found '" + bot.name + "'.\n")
                 exit(1)
             bot = a
 
