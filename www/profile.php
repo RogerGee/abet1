@@ -93,7 +93,7 @@ else if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			exit;
 		}
 		unset($un);
-		if (!ctyle_alpha($_POST['username'][0])) {
+		if (!ctype_alpha($_POST['username'][0])) {
 			echo json_encode(array("error"=>"username must begin with alphabetic character",
 				"errField"=>"username"));
 			http_response_code(400); // Bad Request
