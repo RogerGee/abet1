@@ -109,9 +109,9 @@ $(document).ready(function() {
 	});
 	hijackAnchors();
 });
-//set handlers on inputs and textareas
+//set handlers on properties of the user object
 function initInputs() {
-	$("#content input, #content textarea").on("change", function() {
+	$("#content .property").on("change", function() {
 		if (typeof(obj[this.id]) !== "undefined") {
 			obj[this.id] = $(this).val();
 			saveState();
@@ -119,6 +119,7 @@ function initInputs() {
 	});
 	hijackAnchors();
 }
+//handle 401 (user not authenticated/logged in) globally, redirect to login
 $(document).ajaxError(function(event, jqxhr) {
 	if (jqxhr.status == 401)
 		window.location.href = "/login.php";
