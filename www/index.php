@@ -4,7 +4,6 @@
 $paths = array(
 	'/usr/lib/abet1',
 	'/usr/local/lib/abet1',
-	'../lib',
 	get_include_path()
 );
 set_include_path(implode(PATH_SEPARATOR,$paths));
@@ -98,4 +97,3 @@ if (!abet_is_authenticated()) {
 		</div>
 	</body>
 </html>
-

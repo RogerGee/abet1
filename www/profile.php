@@ -2,10 +2,9 @@
 
 // include needed files; update the include path to find the libraries
 $paths = array(
-	'/usr/lib/abet1',
-	'/usr/local/lib/abet1',
-	'../lib',
-	get_include_path()
+    '/usr/lib/abet1',
+    '/usr/local/lib/abet1',
+    get_include_path()
 );
 set_include_path(implode(PATH_SEPARATOR,$paths));
 require_once 'abet1-login.php';
@@ -27,7 +26,7 @@ require_once 'abet1-query.php';
     'error' that maps to an error message. Additionally, the member 'errField'
     may be defined which indicates the field to which the error is attributed.
 
-	HTTP 400 always is accompanied by a JSON object with 'error' and 'errField'.
+    HTTP 400 always is accompanied by a JSON object with 'error' and 'errField'.
 
     On success, a POST response will return the JSON object {"success":true}. On
     failure it will return {"success":false}.
@@ -83,22 +82,22 @@ else if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     // handle the fields that require explicit validation
     if (array_key_exists('username',$_POST)) {
-		$un = strtolower($_POST['username']);
-		if ($un != $_POST['username']) {
-			echo json_encode(array(
-				"error" => "username must begin with alphabetic character",
-				"errField"=>"username"
-			));
-			http_response_code(400);
-			exit;
-		}
-		unset($un);
-		if (!ctype_alpha($_POST['username'][0])) {
-			echo json_encode(array("error"=>"username must begin with alphabetic character",
-				"errField"=>"username"));
-			http_response_code(400); // Bad Request
-			exit;
-		}
+        $un = strtolower($_POST['username']);
+        if ($un != $_POST['username']) {
+            echo json_encode(array(
+                "error" => "username must begin with alphabetic character",
+                "errField"=>"username"
+            ));
+            http_response_code(400);
+            exit;
+        }
+        unset($un);
+        if (!ctype_alpha($_POST['username'][0])) {
+            echo json_encode(array("error"=>"username must begin with alphabetic character",
+                "errField"=>"username"));
+            http_response_code(400); // Bad Request
+            exit;
+        }
 
         // make sure username does not already exist in database for
         // another user-profile

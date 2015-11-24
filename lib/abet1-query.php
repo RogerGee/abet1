@@ -49,7 +49,8 @@ class Query {
         $con = self::connect_db();
         $doRollback = false;
         $con->query("START TRANSACTION");
-        $ret = call_user_func($func,$doRollback);
+        $ref = &$doRollback; // must create value of reference to variable
+        $ret = call_user_func($func,$ref);
         if ($doRollback)
             $con->query("ROLLBACK");
         else
@@ -433,20 +434,22 @@ class QueryBuilder {
         $fields = array();
         $tables = array();
         foreach ($info['tables'] as $tbl => $a) {
-            $tables[] = $tbl;
+            if (is_string($tbl))
+                $tables[] = $tbl;
             if (is_array($a)) {
                 foreach ($a as $fld) {
-                    if ($fld[0] == '\'')
+                    if (!is_string($tbl))
                         // this is a literal value in the select statement; we ignore
-                        // the table in this instance since it probably is just a placeholder
+                        // the table in this instance because it is just a placeholder
                         $fields[] = "$fld";
                     else
                         $fields[] = "$tbl.$fld";
                 }
             }
             else {
-                // for convenience we allow the mapped element to be a string
-                if ($a[0] == '\'')
+                // for convenience we allow the mapped element to be a string in
+                // case the user wants to specify a single field
+                if (!is_string($tbl))
                     $fields[] = "$a";
                 else
                     $fields[] = "$tbl.$a";
