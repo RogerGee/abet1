@@ -25,7 +25,7 @@ if (!abet_is_authenticated()) {
 		<script src="scripts/abet.js" type="text/javascript"></script>
 		<script src="scripts/profile.js" type="text/javascript"></script>
 		<?php if(abet_is_admin_authenticated()) { ?>
-		<!--> Admin only scripts go here </!-->
+		<!-- Admin only scripts go here -->
 		<script src="scripts/usercreate.js" type="text/javascript"></script>
 		<?php } ?>
 		<script src="scripts/navigation.js" type="text/javascript"></script>
