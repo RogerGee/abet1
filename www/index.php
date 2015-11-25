@@ -30,6 +30,9 @@ if (!abet_is_authenticated()) {
 		<link rel="stylesheet" href="stylesheets/abet.css" />
 		<link rel="stylesheet" href="stylesheets/tree.css" />
 		<link rel="stylesheet" href="stylesheets/confirm.css" />
+		<script type="text/javascript">
+			user = "<?php echo $_SESSION['user']; ?>";
+		</script>
 	</head>
 	<body>
 		<div class="top_bar">

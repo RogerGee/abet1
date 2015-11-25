@@ -18,19 +18,21 @@ function gen(obj) {
 }
 //current global user object
 var obj;
+//current user's username
+var user;
 //handle internal "navigation"
 function navigateInternal(href) {
 	obj = window[href]();
 }
 //functions for cache maintenance
 function saveState() {
-	localStorage.abet1CacheData = JSON.stringify(obj);
+	localStorage[user] = JSON.stringify(obj);
 }
 function loadState() {
-	return JSON.parse(localStorage.abet1CacheData);
+	return JSON.parse(localStorage[user]);
 }
 function clearState() {
-	delete localStorage.abet1CacheData;
+	delete localStorage[user];
 }
 function reloadPage() {
 	obj = loadState();
@@ -84,7 +86,7 @@ function hijackAnchors() {
 }
 //check on document ready for any previous unsaved work
 $(document).ready(function() {
-	if (localStorage.abet1CacheData) {
+	if (localStorage[user]) {
 		$.confirm("Unsaved Data", "It seems you left before submitting data.\n" +
 			"Would you like to reload your progress?", "Yes", "No")
 			.accept(reloadPage).decline(clearState);

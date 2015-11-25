@@ -90,6 +90,8 @@ function submitProfile() {
 				$("#submit").after(gen(
 					{tag:"p","class":"submit_success",children:["Changes Submitted"]}
 				));
+				//in case user changed their username
+				user = obj.username;
 				//scrub the cache, but only on successful submit
 				clearState();
 			},
