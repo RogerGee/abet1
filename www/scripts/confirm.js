@@ -11,8 +11,8 @@
 			$("body").append(gen({tag:"div", "class":"confirm_wrapper", children:[
 				{tag:"div", "class":"overlay"},
 				{tag:"div", "class":"box", children:[
-					{tag:"div", "class":"title", children:[title]},
-					{tag:"div", "class":"message", children:[message]},
+					{tag:"div", "class":"title", children:title},
+					{tag:"div", "class":"message", children:message},
 					{tag:"div", "class":"buttons", children:[
 						{tag:"input", type:"button", id:"_cy", value:accept},
 						{tag:"input", type:"button", id:"_cn", value:decline}

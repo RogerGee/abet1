@@ -7,11 +7,15 @@ function gen(obj) {
 			ret += " " + prop + "='" + obj[prop] + "'";
 	var html = "";
 	if (obj.children) {
-		for (var child in obj.children) {
-			if (typeof(obj.children[child]) === 'string')
-				html += obj.children[child];
-			else if (obj.children[child] !== null)
-				html += gen(obj.children[child]);
+		if (obj.children instanceof Array || typeof(obj.children) === 'string') {
+			for (var child in obj.children) {
+				if (typeof(obj.children[child]) === 'string')
+					html += obj.children[child];
+				else if (obj.children[child] !== null)
+					html += gen(obj.children[child]);
+			}
+		} else {
+			html += gen(obj.children)
 		}
 	}
 	return ret + ">" + html + "</" + obj.tag + ">";
@@ -21,10 +25,13 @@ var obj;
 //current user's username
 var user;
 //handle internal "navigation"
-function navigateInternal(href) {
-	obj = window[href]();
+function navigateInternal(href, id) {
+	obj = window[href](id);
 }
 //functions for cache maintenance
+function hasState() {
+	return typeof(localStorage[user]) !== 'undefined';
+}
 function saveState() {
 	localStorage[user] = JSON.stringify(obj);
 }
@@ -75,8 +82,9 @@ function hijackAnchors() {
 	$(".internal").click(function(event) {
 		event.preventDefault();
 		var href = $(this).attr("href");
-		if (!localStorage.abet1CacheData) {
-			navigateInternal(href);
+		var id = this.id;
+		if (!hasState()) {
+			navigateInternal(href, id);
 		} else {
 			$.confirm("Unsubmited Work", "You have unsubmited data on this page.\n" +
 				"Are you sure you wish to leave? All changes will be lost",
@@ -86,7 +94,7 @@ function hijackAnchors() {
 }
 //check on document ready for any previous unsaved work
 $(document).ready(function() {
-	if (localStorage[user]) {
+	if (hasState()) {
 		$.confirm("Unsaved Data", "It seems you left before submitting data.\n" +
 			"Would you like to reload your progress?", "Yes", "No")
 			.accept(reloadPage).decline(clearState);

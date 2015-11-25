@@ -6,16 +6,16 @@ function loadUserCreate() {
 	content.append("<h2>Create Profile</h2>");
 	content.append(gen({tag:"table", children:[
 		{tag:"tr", children:[
-			{tag:"td", children:["Username"]},
-			{tag:"td", children:[{tag:"input", type:"text", id:"username"}]}
+			{tag:"td", children:"Username"},
+			{tag:"td", children:{tag:"input", type:"text", id:"username"}}
 		]},
 		{tag:"tr", children:[
-			{tag:"td", children:["Password"]},
-			{tag:"td", children:[{tag:"input", type:"password", id:"passwd"}]}
+			{tag:"td", children:"Password"},
+			{tag:"td", children:{tag:"input", type:"password", id:"passwd"}}
 		]},
 		{tag:"tr", children:[
-			{tag:"td", children:["Role"]},
-			{tag:"td", children:[{tag:"input", type:"text", id:"role"}]}
+			{tag:"td", children:"Role"},
+			{tag:"td", children:{tag:"input", type:"text", id:"role"}}
 		]}
 	]}));
 	content.append(gen({tag:"input", id:"submit", type:"button", value:"Create"}));
@@ -37,13 +37,13 @@ function createUser() {
 				//reset page to empty and add success message
 				loadUserCreate();
 				$("#submit").after(gen(
-					{tag:"p","class":"submit_success",children:["User Created"]}
+					{tag:"p","class":"submit_success",children:"User Created"}
 				));
 			},
 			400: function(data) {
 				data = data.responseJSON;
 				$("#"+data.errField).parent().after(gen(
-					{tag:"td","class":"submit_error",children:[data.error]}
+					{tag:"td","class":"submit_error",children:data.error}
 				));
 			}
 		}
