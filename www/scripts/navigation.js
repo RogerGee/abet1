@@ -15,8 +15,8 @@ function decodeNavInner(data) {
 	return li;
 }
 
-function decodeNav(data) {
-	var ul = {tag:"ul", "class":"tree", children:[]};
+function decodeNav(data, id) {
+	var ul = {tag:"ul", id:id, children:[]};
 	for (i in data)
 		ul.children.push(decodeNavInner(data[i]));
 	return ul;
@@ -26,12 +26,12 @@ function loadNavigation() {
 	$.ajax({url:"/nav.php",dataType:"json"}).done(function(data) {
 		$("#left_bar").html("");
 		$("#left_bar").append("Navigation");
-		$("#left_bar").append(gen(decodeNav(data[0])));
+		$("#left_bar").append(gen(decodeNav(data[0], "navtree")));
 		if (data.length > 1) {
 			$("#left_bar").append("Admin Tools");
-			$("#left_bar").append(gen(decodeNav(data[1])));
+			$("#left_bar").append(gen(decodeNav(data[1], "admintree")));
 		}
-		initTree();
+		$("#navtree, #admintree").tree();
 	});
 }
 

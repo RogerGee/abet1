@@ -37,6 +37,7 @@ if (!abet_is_authenticated()) {
 	<body>
 		<div class="top_bar">
 			<a href="/" class="nav_button"><h1>ABET</h1></a>
+			<input type="text" placeholder="search" class="search"></input>
 			<div class="top_icons">
 				<img id="notif" src="resources/notif.png" class="icon"></img>
 				<img id="sett" src="resources/settings.png" class="icon"></img>

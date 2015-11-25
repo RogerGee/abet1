@@ -68,6 +68,10 @@ textarea {
 .nav_button:hover {
 	color: #FFF;
 }
+/* search bar */
+.search {
+	right: 85px;
+}
 /* icon area */
 .top_icons {
 	right: 20px;
