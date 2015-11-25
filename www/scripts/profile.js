@@ -101,7 +101,7 @@ function submitProfile() {
 				$("#"+data.errField).parent().after(gen(
 					{tag:"td","class":"submit_error",children:[data.error]}
 				));
-			},
+			}
 		}
 	});
 }
