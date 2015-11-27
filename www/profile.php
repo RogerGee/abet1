@@ -2,9 +2,9 @@
 
 // include needed files; update the include path to find the libraries
 $paths = array(
+    get_include_path(),
     '/usr/lib/abet1',
-    '/usr/local/lib/abet1',
-    get_include_path()
+    '/usr/local/lib/abet1'
 );
 set_include_path(implode(PATH_SEPARATOR,$paths));
 require_once 'abet1-login.php';
@@ -160,6 +160,11 @@ else if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // run an update query to update the user-profile
         $query = new Query(new QueryBuilder(UPDATE_QUERY,$info));
     }
+
+    // if the username changed, then update the session
+    if (array_key_exists('username',$info['updates']))
+        abet_update_username();
+
 
     echo '{"success":true}';
 }

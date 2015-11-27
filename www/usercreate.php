@@ -2,9 +2,9 @@
 
 // include needed files; update the include path to find the libraries
 $paths = array(
+    get_include_path(),
     '/usr/lib/abet1',
-    '/usr/local/lib/abet1',
-    get_include_path()
+    '/usr/local/lib/abet1'
 );
 set_include_path(implode(PATH_SEPARATOR,$paths));
 require_once 'abet1-login.php';
@@ -78,8 +78,8 @@ list($code,$json) = Query::perform_transaction(function(&$rollback) {
     // make sure username is not already in use for another user
     $query = new Query(new QueryBuilder(SELECT_QUERY,array(
         'tables' => array('userprofile'=>'username'),
-        'where' => 'username = ?',
-        'where-params' => array("s:$_POST[username]"),
+        'where' => 'username = ? AND id <> ?',
+        'where-params' => array("s:$_POST[username]","s:$_SESSION[id]"),
         'limit' => 1 )));
 
     // check select result

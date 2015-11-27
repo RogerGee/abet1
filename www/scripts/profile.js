@@ -109,8 +109,8 @@ function submitProfile() {
 function checkPass() {
 	$(".submit_success").remove();
 	$(".submit_error").remove();
-	$.ajax({method:"post", url:"checkpass.php", dataType:"json",
-		data:{pass:$(this).val()},
+	$.ajax({method:"post", url:"check-passwd.php", dataType:"json",
+		data:{passwd:$(this).val()},
 		statusCode:{
 			200: function() {
 				//password is correct, unlock the new password fields
@@ -135,8 +135,8 @@ function changePass() {
 			{tag:"td","class":"submit_error",children:"passwords don't match!"}
 		));
 	} else {
-		$.ajax({method:"post", url:"changepass.php", dataType:"json",
-			data:{old_pass:$("#old_pass").val(), new_pass:$("#new_pass").val()},
+		$.ajax({method:"post", url:"change-passwd.php", dataType:"json",
+			data:{old_passwd:$("#old_pass").val(), new_passwd:$("#new_pass2").val()},
 			statusCode:{
 				200: function() {
 					$("#changepass").after(gen(
@@ -153,4 +153,3 @@ function changePass() {
 		});
 	}
 }
-

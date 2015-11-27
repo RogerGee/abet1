@@ -78,7 +78,33 @@ class Query {
         // get field names into array
         $metadata = $this->stmt->result_metadata();
         if ($metadata) {
-            $this->fieldNames = array_map(function($x){return $x->name;},$metadata->fetch_fields());
+            // grab field names
+            $flds = $metadata->fetch_fields();
+            $this->fieldNames = array_map(function($x){return $x->name;},$flds);
+            $tableNames = array_map(function($x){return $x->table;},$flds);
+            unset($flds);
+
+            // if their are duplicates, then we must qualify them with their
+            // table names; we do this for convenience so that if no duplicates
+            // exist the table name is not required
+            $seen = array();
+            for ($i = 0;$i < count($this->fieldNames);$i++) {
+                $name = $this->fieldNames[$i];
+                if (array_key_exists($name,$seen)) {
+                    $seen[$name][] = $i;
+                }
+                else {
+                    $seen[$name] = array($i);
+                }
+            }
+            foreach ($seen as $name => $indexList) {
+                if (count($indexList) > 1) {
+                    foreach ($indexList as $i) {
+                        $this->fieldNames[$i] = "$tableNames[$i].$name";
+                    }
+                }
+            }
+
             $metadata->close();
         }
     }
@@ -127,10 +153,10 @@ class Query {
     // row; the row must be a 1-based row number; the result array is associative
     function get_row_assoc($rowNumber = 1) {
         if ($this->isResultBased) {
-            foreach ($this->fieldNames as $name) {
+            foreach ($this->fieldNames as $__name) {
                 // use variable variables to create unique variables for each field
-                $$name = null;
-                $args[$name] = &$$name;
+                $$__name = null;
+                $args[$__name] = &$$__name;
             }
             call_user_func_array(array($this->stmt,'bind_result'),$args);
 
@@ -151,10 +177,10 @@ class Query {
     // with fields keyed to indeces in the order specified by the query
     function get_row_ordered($rowNumber = 1) {
         if ($this->isResultBased) {
-            foreach ($this->fieldNames as $name) {
+            foreach ($this->fieldNames as $__name) {
                 // use variable variables to create unique variables for each field
-                $$name = null;
-                $args[] = &$$name;
+                $$__name = null;
+                $args[] = &$$__name;
             }
             call_user_func_array(array($this->stmt,'bind_result'),$args);
 
@@ -300,7 +326,7 @@ class QueryBuilder {
 
     public $kind;
     private $qstring; // string
-    private $preps; // array of stdClass
+    private $preps = array(); // array of stdClass
 
     function __construct($kind,array $info) {
         $this->kind = $kind;
@@ -344,12 +370,14 @@ class QueryBuilder {
 
     // this function binds parameters in place for a prepared SQL statement
     function apply_preparations(mysqli_stmt $stmt) {
-        $args = array("");
-        foreach ($this->preps as $prep) {
-            $args[0] .= $prep->type;
-            $args[] = &$prep->value;
+        if (count($this->preps) > 0) {
+            $args = array("");
+            foreach ($this->preps as $prep) {
+                $args[0] .= $prep->type;
+                $args[] = &$prep->value;
+            }
+            call_user_func_array(array($stmt,'bind_param'),$args);
         }
-        call_user_func_array(array($stmt,'bind_param'),$args);
     }
 
     private function make_prep($var) {

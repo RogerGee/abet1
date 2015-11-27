@@ -17,7 +17,7 @@ CREATE TABLE userauth (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     passwd VARCHAR(256), /* one-way encryption */
     old_passwd VARCHAR(256),
-    role ENUM('admin','faculty','staff','observer'),
+    role ENUM('admin','faculty','observer'),
     last_touch TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 
@@ -25,7 +25,7 @@ CREATE TABLE userauth (
 CREATE TABLE userprofile (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     fk_userauth INT NOT NULL,
-    username VARCHAR(32),
+    username VARCHAR(32) UNIQUE,
     first_name VARCHAR(32),
     middle_initial VARCHAR(32),
     last_name VARCHAR(32),
@@ -45,6 +45,7 @@ CREATE TABLE userprofile (
 CREATE TABLE course (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(256),
+    course_number VARCHAR(32), /* e.g. CS 120 */
     fk_coordinator INT NOT NULL, /* the person who created this entry */
     instructor VARCHAR(256),
     description VARCHAR(512),
@@ -110,9 +111,9 @@ CREATE TABLE acl_entry (
 -- create table `program`
 CREATE TABLE program (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(256),
-    number VARCHAR(8),
-    semester ENUM('fall','spring'), /* semester/year describe program cycle (e.g. Fall 2013) */
+    name VARCHAR(32),
+    abbrv VARCHAR(8),
+    semester ENUM('Fall','Spring'), /* semester/year describe program cycle (e.g. Fall 2013) */
     year INT,
     description VARCHAR(4096),
     last_touch TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
@@ -203,14 +204,17 @@ CREATE TABLE rubric (
     threshold DECIMAL(2,2),
     threshold_desc VARCHAR(128),
     created TIMESTAMP DEFAULT 0,
+    fk_last_edit INT,
     last_touch TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
-    FOREIGN KEY (fk_description) REFERENCES rubric_description (id)
+    FOREIGN KEY (fk_description) REFERENCES rubric_description (id),
+    FOREIGN KEY (fk_last_edit) REFERENCES userprofile (id)
 ) ENGINE=InnoDB;
 
 -- create table rubric_results
 CREATE TABLE rubric_results (
-    id INT NOT NULL PRIMARY KEY,
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    total_students INT,
     action VARCHAR(4096),
     acheivement VARCHAR(4096),
     last_touch TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
@@ -222,8 +226,6 @@ CREATE TABLE rubric_results (
 -- `fk_course` - can be NULL in which case `activity` is used
 CREATE TABLE assessment_worksheet (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    fk_program INT NOT NULL,
-    fk_profile INT NOT NULL, /* the profile to whom the worksheet is assigned */
     fk_assessment INT NOT NULL,
     activity VARCHAR(512),
     fk_course INT,
@@ -233,42 +235,46 @@ CREATE TABLE assessment_worksheet (
     fk_rubric INT NOT NULL,
     fk_rubric_results INT NOT NULL,
     created TIMESTAMP DEFAULT 0,
+    fk_last_edit INT,
     last_touch TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
-    FOREIGN KEY (fk_program) REFERENCES program (id),
-    FOREIGN KEY (fk_profile) REFERENCES userprofile (id),
     FOREIGN KEY (fk_assessment) REFERENCES abet_assessment (id),
+    FOREIGN KEY (fk_course) REFERENCES course (id),
     FOREIGN KEY (fk_rubric) REFERENCES rubric (id),
-    FOREIGN KEY (fk_rubric_results) REFERENCES rubric_results (id)
+    FOREIGN KEY (fk_rubric_results) REFERENCES rubric_results (id),
+    FOREIGN KEY (fk_last_edit) REFERENCES userprofile (id)
 ) ENGINE=InnoDB;
 
 -- create table competency; a competency is also called a 'component' of the
 -- assessment rubric
 CREATE TABLE competency (
-    id INT NOT NULL PRIMARY KEY,
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     description VARCHAR(1024),
     created TIMESTAMP DEFAULT 0,
     last_touch TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 
--- create intersection table rubric_competency; creates a many-to-many
--- relationship between rubrics and competencies
-CREATE TABLE rubric_competency (
-    fk_rubric_id INT NOT NULL,
-    fk_competency_id INT NOT NULL,
-
-    FOREIGN KEY (fk_rubric_id) REFERENCES rubric (id),
-    FOREIGN KEY (fk_competency_id) REFERENCES competency (id)
-) ENGINE=InnoDB;
+-- -- create intersection table rubric_competency; creates a many-to-many
+-- -- relationship between rubrics and competencies
+-- CREATE TABLE rubric_competency (
+--     fk_rubric_id INT NOT NULL,
+--     fk_competency_id INT NOT NULL,
+--
+--     FOREIGN KEY (fk_rubric_id) REFERENCES rubric (id),
+--     FOREIGN KEY (fk_competency_id) REFERENCES competency (id)
+-- ) ENGINE=InnoDB;
 
 -- create table competency_results
+--  Note: total_students is obtained via fk_rubric_results since this remains
+--  constant for different competency_results instances belonging to the same
+--  rubric_results instance
 CREATE TABLE competency_results (
-    id INT NOT NULL PRIMARY KEY,
-    total_students INT,
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     outstanding_tally INT,
     expected_tally INT,
     marginal_tally INT,
     unacceptable_tally INT,
+    pass_fail_type BOOLEAN, /* if TRUE then only use outstanding and rubric_results.total_students */
     comment VARCHAR(4096),
     fk_rubric_results INT NOT NULL,
     fk_competency INT NOT NULL,
@@ -285,7 +291,7 @@ CREATE TABLE competency_results (
 
 -- create admin user
 INSERT INTO userauth (passwd,role)
-VALUES /* this password is the hash of 'password' */
+VALUES /* this password is a hash of 'password' */
     ("$2y$10$7jgC2AF5smg8j8uLPiZ6nuhGw8d.x9IkYL9wMea7aDAzilJx4VdH6",'admin');
 INSERT INTO userprofile (username,fk_userauth,created)
 SELECT 'root', id, now() FROM userauth
@@ -303,7 +309,3 @@ VALUES
     (6,'Faculty'),
     (7,'Facilities'),
     (8,'Institutional Support');
-
--- create acl for root; root should always have id=1
-INSERT INTO acl VALUES();
-INSERT INTO acl_entry VALUES(LAST_INSERT_ID(),1);
