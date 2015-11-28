@@ -150,7 +150,8 @@ $qbInfo = array(
         'abet_criterion'=>array('id','rank','description'),
         'abet_characteristic'=>array('id','level','program_specifier','short_name'),
         'assessment_worksheet'=>'id',
-        'general_content'=>'id'
+        'general_content'=>'id',
+        'rubric'=>'id'
     ),
     'joins' => array(
         // join on all the content so we can fetch their ids
