@@ -27,23 +27,23 @@ require_once 'abet1-misc.php';
 */
 
 if (!abet_is_authenticated()) {
-    page_fail(401); // Unauthorized
+    page_fail(UNAUTHORIZED);
 }
 
 if ($_SERVER['REQUEST_METHOD'] != 'POST' || !array_key_exists('old_passwd',$_POST)
         || !array_key_exists('new_passwd',$_POST)) {
-    page_fail(400); // Bad Request
+    page_fail(BAD_REQUEST);
 }
 
 // verify old password
 if (!abet_verify($_SESSION['user'],$_POST['old_passwd'],$id,$role)) {
-    page_fail_on_field(400,"old_passwd","password was incorrect");
+    page_fail_on_field(BAD_REQUEST,"old_passwd","password was incorrect");
 }
 
 // attempt to update passwords; if this fails then the user used one of their
 // old passwords
 if (!abet_change_password($_SESSION['user'],$_POST['new_passwd'])) {
-    page_fail_on_field(400,'new_passwd','password was previously used');
+    page_fail_on_field(BAD_REQUEST,'new_passwd','password was previously used');
 }
 
 echo "{\"success\":true}";

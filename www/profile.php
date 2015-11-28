@@ -9,6 +9,7 @@ $paths = array(
 set_include_path(implode(PATH_SEPARATOR,$paths));
 require_once 'abet1-login.php';
 require_once 'abet1-query.php';
+require_once 'abet1-misc.php';
 
 /* profile.php - JSON transfer specification
     Supports: GET POST
@@ -36,7 +37,7 @@ header('Content-Type: application/json');
 
 if (!abet_is_authenticated()) {
     echo json_encode(array("error"=>"no authentication mode"));
-    http_response_code(401); // Unauthorized
+    http_response_code(UNAUTHORIZED);
     exit;
 }
 
@@ -58,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 
     if (is_null($result)) {
         echo json_encode(array("error"=>"failed to retrieve user-profile"));
-        http_response_code(500); // Server Error
+        http_response_code(SERVER_ERROR);
     }
     else
         // encode selections from database
@@ -88,14 +89,14 @@ else if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 "error" => "username must begin with alphabetic character",
                 "errField"=>"username"
             ));
-            http_response_code(400);
+            http_response_code(BAD_REQUEST);
             exit;
         }
         unset($un);
         if (!ctype_alpha($_POST['username'][0])) {
             echo json_encode(array("error"=>"username must begin with alphabetic character",
                 "errField"=>"username"));
-            http_response_code(400); // Bad Request
+            http_response_code(BAD_REQUEST);
             exit;
         }
 
@@ -117,7 +118,7 @@ else if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 "error" => "the requested username is unavailable",
                 "errField" => "username"
             ));
-            http_response_code(400); // Bad Request
+            http_response_code(BAD_REQUEST);
             exit;
         }
 
@@ -130,7 +131,7 @@ else if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             echo json_encode(array(
                 "error"=>"gender must be either 'male' or 'female'",
                 "errField"=>"gender"));
-            http_response_code(400); // Bad Request
+            http_response_code(BAD_REQUEST);
             exit;
         }
 
@@ -141,7 +142,7 @@ else if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             echo json_encode(array(
                 "error"=>"email address is invalid",
                 "errField"=>"email_addr"));
-            http_response_code(400); // Bad Request
+            http_response_code(BAD_REQUEST);
             exit;
         }
 

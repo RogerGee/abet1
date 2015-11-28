@@ -149,6 +149,30 @@ class Query {
             . "non-result queries");
     }
 
+    // call the callback for each row (associative ordering)
+    function for_each_assoc(callable $func) {
+        if ($this->isResultBased) {
+            for ($i = 0;$i < $this->get_number_of_rows();$i++)
+                call_user_func($func,$this->get_rows_assoc($i));
+        }
+        else {
+            throw new Exception("call to " . __FUNCTION__ . " is illegal for "
+                . "non-result queries");
+        }
+    }
+
+    // call the callback for each row (numeric ordering)
+    function for_each_ordered(callable $func) {
+        if ($this->isResultBased) {
+            for ($i = 0;$i < $this->get_number_of_rows();$i++)
+                call_user_func($func,$this->get_rows_ordered($i));
+        }
+        else {
+            throw new Exception("call to " . __FUNCTION__ . " is illegal for "
+                . "non-result queries");
+        }
+    }
+
     // get_row_assoc() - obtain associative array with field keys for a given
     // row; the row must be a 1-based row number; the result array is associative
     function get_row_assoc($rowNumber = 1) {

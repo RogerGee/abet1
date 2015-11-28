@@ -24,15 +24,15 @@ require_once 'abet1-misc.php';
 */
 
 if (!abet_is_authenticated()) {
-    page_fail(401); // Unauthorized
+    page_fail(UNAUTHORIZED);
 }
 
 if ($_SERVER['REQUEST_METHOD'] != 'POST' || !array_key_exists('passwd',$_POST)) {
-    page_fail(400); // Bad Request
+    page_fail(BAD_REQUEST);
 }
 
 if (!abet_verify($_SESSION['user'],$_POST['passwd'],$id,$role)) {
-    page_fail(400);
+    page_fail(BAD_REQUEST);
 }
 
 echo "{\"success\":true}";

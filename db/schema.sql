@@ -162,7 +162,6 @@ CREATE TABLE file_upload (
     file_contents BLOB,
     file_comment VARCHAR(1024),
     file_created TIMESTAMP DEFAULT 0,
-    file_modified TIMESTAMP DEFAULT 0,
     fk_author INT NOT NULL,
     fk_content_set INT NOT NULL,
     last_touch TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,

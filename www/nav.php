@@ -23,6 +23,8 @@ require_once 'abet1-misc.php';
     *---------------*
     | label type id |
     *---------------*
+    - the total output will be a hierarchy of these data structures defined
+    recursively
 
     This script creates navigation objects, which are recursively defined
     structures that represent the navigation items on the page. Each user can
@@ -90,17 +92,19 @@ function make_characteristic_node($row,$criterion) {
     global $isAdmin;
 
     $characteristic = new stdClass;
-    $characteristic->label = "$row[level]. $row[short_name] [$row[program_specifier]]";
+    $characteristic->label = "$row[level]. $row[short_name]";
+    if (!is_null($row['program_specifier']) && $row['program_specifier'] !== '')
+         $characteristic->label .= "[$row[program_specifier]]";
     $characteristic->children = array();
 
     // add admin tools for characteristics
-    if ($isAdmin) {
-        $editCharacteristic = new stdClass;
-        $editCharacteristic->label = 'Edit Characteristic';
-        $editCharacteristic->type = 'editCharacteristic';
-        $editCharacteristic->id = $row['abet_characteristic.id'];
-        $characteristic->children[] = $editCharacteristic;
-    }
+    // if ($isAdmin) {
+    //     $editCharacteristic = new stdClass;
+    //     $editCharacteristic->label = 'Edit Characteristic';
+    //     $editCharacteristic->type = 'editCharacteristic';
+    //     $editCharacteristic->id = $row['abet_characteristic.id'];
+    //     $characteristic->children[] = $editCharacteristic;
+    // }
 
     $criterion->children[] = $characteristic;
     return $characteristic;
@@ -129,10 +133,10 @@ function make_assessment_node($row,$parent) {
 header('Content-Type: application/json');
 
 if (!abet_is_authenticated())
-    page_fail(401); // Unauthorized
+    page_fail(UNAUTHORIZED);
 
 if ($_SERVER['REQUEST_METHOD'] != 'GET')
-    page_fail(400); // Bad Request
+    page_fail(BAD_REQUEST);
 
 // output is array of navigation trees
 $navTrees = array();
@@ -155,6 +159,7 @@ $qbInfo = array(
         "LEFT OUTER JOIN abet_characteristic ON abet_assessment.fk_characteristic = abet_characteristic.id",
         "LEFT OUTER JOIN assessment_worksheet ON abet_assessment.id = assessment_worksheet.fk_assessment",
         "LEFT OUTER JOIN general_content ON abet_assessment.id = general_content.fk_assessment",
+        "LEFT OUTER JOIN rubric ON assessment_worksheet.fk_rubric = rubric.id"
     ),
     'orderby' => "program.year, program.semester, program.name, abet_criterion.rank, abet_characteristic.level"
 );
@@ -254,20 +259,36 @@ for ($i = 1;$i <= $query->get_number_of_rows();$i++) {
     }
 
     // generate content (if any)
-    if (!is_null($row['general_content.id']) || !is_null($row['assessment_worksheet.id'])) {
+    if (!is_null($row['assessment_worksheet.id'])) {
+        // worksheet content item
         $content = new stdClass;
-        if (is_null($row['general_content.id'])) {
-            // worksheet content item
-            $content->label = 'Worksheet';
-            $content->type = 'getWorksheet';
-            $content->id = $row['assessment_worksheet.id'];
+        $content->label = 'Worksheet';
+        $content->type = 'getWorksheet';
+        $content->id = $row['assessment_worksheet.id'];
+
+        // add content to assessment; there should always be a valid
+        // assessment if there is content
+        $assessment->children[] = $content;
+
+        // (note: there should always be a rubric accompanying a worksheet)
+        if (!is_null($row['rubric.id'])) {
+            // create rubric node: we must use the assessment worksheet id so
+            // that we can refer to the rubric AND its rubric_results counterpart
+            $rubric = new stdClass;
+            $rubric->label = 'Rubric';
+            $rubric->type = 'getRubric';
+            $rubric->id = $row['assessment_worksheet.id'];
+
+            $assessment->children[] = $rubric;
         }
-        else {
-            // general-content item
-            $content->label = 'Content';
-            $content->type = 'getContent';
-            $content->id = $row['general_content.id'];
-        }
+    }
+
+    if (!is_null($row['general_content.id'])) {
+        // general-content item
+        $content = new stdClass;
+        $content->label = 'Content';
+        $content->type = 'getContent';
+        $content->id = $row['general_content.id'];
 
         // add content to assessment; there should always be a valid
         // assessment if there is content
@@ -301,18 +322,23 @@ if ($isAdmin) {
 
     $createUser = new stdClass;
     $createUser->label = "Create New User";
-    $createUser->type = 'createUser';
+    $createUser->type = 'loadUserCreate';
     $createUser->id = null;
 
     $editUser = new stdClass;
-    $editUser->label = "Edit User";
-    $editUser->type = "editUser";
+    $editUser->label = "Remove User";
+    $editUser->type = "removeUser";
     $editUser->id = null;
+
+    $editCharacteristics = new stdClass;
+    $editCharacteristics->label = "Characteristics...";
+    $editCharacteristics->type = "editCharacteristics";
+    $editCharacteristics->id = null;
 
     $adminTools = new stdClass;
     $adminTools->label = "Admin Tools";
     $adminTools->children = array(
-        $createUser, $editUser
+        $createUser, $editUser, $editCharacteristics
     );
 
     $navTrees[] = $adminTools;

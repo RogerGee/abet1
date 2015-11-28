@@ -9,6 +9,7 @@ $paths = array(
 set_include_path(implode(PATH_SEPARATOR,$paths));
 require_once 'abet1-login.php';
 require_once 'abet1-query.php';
+require_once 'abet1-misc.php';
 
 /* usercreate.php - JSON transfer specification
     Supports: POST
@@ -36,14 +37,14 @@ header('Content-Type: application/json');
 // the user must have an admin role in order to create user accounts
 if (!abet_is_admin_authenticated()) {
     echo json_encode(array("error"=>"no admin authentication mode"));
-    http_response_code(401); // Unauthorized
+    http_response_code(UNAUTHORIZED);
     exit;
 }
 
 // only POST requests are handled here
 if ($_SERVER['REQUEST_METHOD'] != 'POST') {
     echo '{"success":false}';
-    http_response_code(400); // Bad Request
+    http_response_code(BAD_REQUEST);
     exit;
 }
 
@@ -52,7 +53,7 @@ if (!array_key_exists('username',$_POST) || !array_key_exists('passwd',$_POST)
     || !array_key_exists('role',$_POST))
 {
     echo '{"success":false}';
-    http_response_code(400); // Bad Request
+    http_response_code(BAD_REQUEST);
     exit;
 }
 
@@ -61,14 +62,14 @@ $un = strtolower($_POST['username']);
 if ($un != $_POST['username']) {
     echo json_encode(array("error"=>"username must be lowercase",
         "errField"=>"username"));
-    http_response_code(400); // Bad Request
+    http_response_code(BAD_REQUEST);
     exit;
 }
 unset($un);
 if (!ctype_alpha($_POST['username'][0])) {
     echo json_encode(array("error"=>"username must begin with alphabetic character",
         "errField"=>"username"));
-    http_response_code(400); // Bad Request
+    http_response_code(BAD_REQUEST);
     exit;
 }
 
@@ -85,7 +86,7 @@ list($code,$json) = Query::perform_transaction(function(&$rollback) {
     // check select result
     if (!$query->is_empty()) {
         $rollback = true;
-        return array(400,json_encode(array(
+        return array(BAD_REQUEST,json_encode(array(
             "error" => "the requested username is unavailable",
             "errField" => "username" )));
     }
@@ -98,7 +99,7 @@ list($code,$json) = Query::perform_transaction(function(&$rollback) {
         'values' => array(array("s:$hash","s:$_POST[role]")))));
     if (!$query->validate_update()) {
         $rollback = true;
-        return array(500,"{\"success\":false}");
+        return array(SERVER_ERROR,"{\"success\":false}");
     }
 
     // insert new 'userprofile' entity with foreign key to the newly created
@@ -113,10 +114,10 @@ list($code,$json) = Query::perform_transaction(function(&$rollback) {
             'where' => "passwd = '$hash'" ))));
     if (!$query->validate_update()) {
         $rollback = true;
-        return array(500,"{\"success\":false}");
+        return array(SERVER_ERROR,"{\"success\":false}");
     }
 
-    return array(200,"{\"success\":true}");
+    return array(OKAY,"{\"success\":true}");
 });
 
 http_response_code($code);

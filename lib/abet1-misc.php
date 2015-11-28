@@ -2,6 +2,11 @@
 
 // misc. library functions goes here
 
+define(OKAY,200);
+define(BAD_REQUEST,400);
+define(UNAUTHORIZED,401);
+define(SERVER_ERROR,500);
+
 function page_fail($code) {
     echo "{\"success\":false}";
     http_response_code($code);

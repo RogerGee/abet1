@@ -205,3 +205,13 @@ INSERT INTO assessment_worksheet (fk_assessment,fk_course,objective,instrument,c
     4,
     4
 );
+
+-- test comments/file uploads by adding general_content entity to assessment #3
+INSERT INTO general_content (fk_assessment) VALUES (3);
+INSERT INTO user_comment (content,fk_author,fk_content_set,created) VALUES
+    ('This is a comment made by Matthew.',2,LAST_INSERT_ID(),NOW()),
+    ('This is a comment made by John.',5,LAST_INSERT_ID(),NOW());
+
+INSERT INTO file_upload (file_name,file_contents,file_comment,file_created,fk_author,fk_content_set) VALUES
+    ('a.txt','Hello, World!','This is exciting.',NOW(),2,1),
+    ('b.txt','Bye-Bye, World!','This is sad.',NOW(),5,1);
