@@ -2,7 +2,6 @@
 function decodeNavInner(data) {
 	var li = {tag:"li", children:[{tag:"div"}]};
 	if (data.children) {
-		console.log("hi");
 		li.children[0].children = [data.label];
 		li.children.push({tag:"ul", children:[]})
 		for (i in data.children)

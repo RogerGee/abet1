@@ -58,7 +58,7 @@ if (!abet_is_authenticated()) {
 				</ul>
 			</div>
 		</div>
-		<div class="left_bar">
+		<div id="left_bar" class="left_bar">
 			Navigation
 			<ul class="tree">
 				<li>
