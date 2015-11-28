@@ -214,8 +214,6 @@ CREATE TABLE rubric (
 CREATE TABLE rubric_results (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     total_students INT,
-    action VARCHAR(4096),
-    acheivement VARCHAR(4096),
     last_touch TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 

@@ -149,11 +149,13 @@ class Query {
             . "non-result queries");
     }
 
-    // call the callback for each row (associative ordering)
+    // call the callback for each row (associative ordering); you can break by returning
+    // false in $func on an arbitrary iteration
     function for_each_assoc(callable $func) {
         if ($this->isResultBased) {
             for ($i = 0;$i < $this->get_number_of_rows();$i++)
-                call_user_func($func,$this->get_rows_assoc($i));
+                if (call_user_func($func,$this->get_rows_assoc($i)) === false)
+                    break;
         }
         else {
             throw new Exception("call to " . __FUNCTION__ . " is illegal for "
@@ -161,11 +163,13 @@ class Query {
         }
     }
 
-    // call the callback for each row (numeric ordering)
+    // call the callback for each row (numeric ordering); you can break by returning
+    // false in $func on an arbitrary iteration
     function for_each_ordered(callable $func) {
         if ($this->isResultBased) {
             for ($i = 0;$i < $this->get_number_of_rows();$i++)
-                call_user_func($func,$this->get_rows_ordered($i));
+                if (call_user_func($func,$this->get_rows_ordered($i)) === false)
+                    break;
         }
         else {
             throw new Exception("call to " . __FUNCTION__ . " is illegal for "
@@ -307,9 +311,10 @@ class QueryBuilder {
                 d (double)
                 s (string)
                 b (blob)
+                l (literal SQL)
 
             [insert]
-                'fields': array of field names for update
+                'fields': array of field names for insert
                 'values': array of arrays of variables
                 'table': the table into which to insert
                 'select': optional replacement for 'values'; will run select
@@ -324,10 +329,13 @@ class QueryBuilder {
                 'where-params': array of variables for where-clause [optional]
                 'limit': limit (sql) [optional: default value is 1]
 
+                Notes: you must specify at least 'where' or 'limit' for safe-mode
+                update operations.
+
             [select]
                 'tables': array of table-name => (array of field-name)
                 'aliases': array of 'table.field' => alias-name [optional]
-                'joins': array of table-name => sql [optional]
+                'joins': array of table-name => sql [optional] (may be single string)
                 'where': where-clause (sql) [optional]
                 'where-params': array of variables for where-clause [optional]
                 'orderby': order by clause (sql) [optional]
@@ -342,10 +350,15 @@ class QueryBuilder {
                 table-qualified field names
 
             [delete]
-                'tables': the tables from which to delete
-                'where': where clause for the delete (sql) using table-qualified
-                         field names
+                'tables': array of tables from which to delete (may be single string)
+                'joins': array of table-name => sql [optional] (may be single string)
+                'where': where clause for the delete (sql)
                 'where-params': array of variables for where-clause [optional]
+                'limit': limit (sql) [optional]
+
+                Notes: you must specify at least one of 'where' or 'limit' due
+                to mySQL safe-mode; 'joins' may reference other tables that
+                are not to be deleted from
     */
 
     public $kind;
@@ -406,10 +419,11 @@ class QueryBuilder {
 
     private function make_prep($var) {
         $a = explode(':',$var,2);
-        if (count($a) < 2 || ($a[0] != 'i' && $a[0] != 'd' && $a[0] != 's' && $a[0] != 'b'))
+        if (count($a) < 2 || ($a[0] != 'i' && $a[0] != 'd' && $a[0] != 's' && $a[0] != 'b' && $a[0] != 'l'))
             throw new Exception("bad variable value in creation of QueryBuilder");
-        if (count($a) > 2)
-            $a[1] .= implode(':',array_splice($a,0,2));
+        if ($a[0] == "l")
+            // return literal SQL code
+            return $a[1];
         $o = new stdClass;
         $o->type = $a[0];
         $o->value = $a[1];
@@ -450,7 +464,8 @@ class QueryBuilder {
     }
 
     private function update_string($info) {
-        if (!array_key_exists('updates',$info) || !array_key_exists('table',$info))
+        if (!array_key_exists('updates',$info) || !array_key_exists('table',$info)
+                || (!array_key_exists('limit',$info) && !array_key_exists('where',$info)))
             throw new Exception("");
 
         $q = "UPDATE " . $info['table'] . " SET ";
@@ -463,6 +478,8 @@ class QueryBuilder {
 
         if (array_key_exists('where',$info)) {
             if (array_key_exists('where-params',$info)) {
+                if (!is_array($info['where-params']))
+                    throw new Exception("");
                 // if the user specified this, then they used unbound variables
                 // in the where-clause; now we must create the bindings
                 array_walk($info['where-params'],array($this,'make_prep'));
@@ -490,6 +507,9 @@ class QueryBuilder {
                 $tables[] = $tbl;
             if (is_array($a)) {
                 foreach ($a as $fld) {
+                    if ($fld === "") {
+                        continue;
+                    }
                     if (!is_string($tbl))
                         // this is a literal value in the select statement; we ignore
                         // the table in this instance because it is just a placeholder
@@ -498,7 +518,7 @@ class QueryBuilder {
                         $fields[] = "$tbl.$fld";
                 }
             }
-            else {
+            else if ($a !== "") {
                 // for convenience we allow the mapped element to be a string in
                 // case the user wants to specify a single field
                 if (!is_string($tbl))
@@ -525,10 +545,12 @@ class QueryBuilder {
 
         // handle joins: they should be specified for all tables except first
         if (array_key_exists('joins',$info)) {
-            if (!is_array($info['joins']))
-                throw new Exception("");
-            foreach ($info['joins'] as $join) {
-                $q .= " $join";
+            if (!is_array($info['joins'])) {
+                $q .= " $info[joins]";
+            }
+            else {
+                foreach ($info['joins'] as $join)
+                    $q .= " $join";
             }
         }
         else if (count($tables) > 1) {
@@ -541,6 +563,8 @@ class QueryBuilder {
         // handle order by, where and limit
         if (array_key_exists('orderby',$info)) {
             if (array_key_exists('orderby-params',$info)) {
+                if (!is_array($info['orderby-params']))
+                    throw new Exception("");
                 // if the user specified this, then they used unbound variables
                 // in the orderby-clause; now we must create the bindings
                 array_walk($info['orderby-params'],array($this,'make_prep'));
@@ -550,6 +574,8 @@ class QueryBuilder {
         }
         if (array_key_exists('where',$info)) {
             if (array_key_exists('where-params',$info)) {
+                if (!is_array($info['where-params']))
+                    throw new Exception("");
                 // if the user specified this, then they used unbound variables
                 // in the where-clause; now we must create the bindings
                 array_walk($info['where-params'],array($this,'make_prep'));
@@ -565,6 +591,45 @@ class QueryBuilder {
     }
 
     private function delete_string($info) {
+        if (!array_key_exists('tables',$info) || !array_key_exists('where',$info)
+                || (!array_key_exists('where',$info) && !array_key_exists('limit',$info)))
+            throw new Exception("");
 
+        // prepare table names
+        $q = "DELETE FROM ";
+        if (is_array($info['tables']))
+            $q .= implode(', ',$info['tables']);
+        else
+            $q .= "$info[tables]";
+
+        // prepare joins
+        if (array_key_exists('joins',$info)) {
+            if (is_array($info['joins'])) {
+                foreach ($info['joins'] as $join)
+                    $q .= " $join";
+            }
+            else
+                $q .= "$info[joins]";
+        }
+
+        // prepare where clause
+        if (array_key_exists('where',$info)) {
+            if (array_key_exists('where-params',$info)) {
+                if (!is_array($info['where-params']))
+                    throw new Exception("");
+                // if the user specified this, then they used unbound variables
+                // in the where-clause; now we must create the bindings
+                array_walk($info['where-params'],array($this,'make_prep'));
+            }
+
+            $q .= " WHERE $info[where]";
+        }
+
+        // prepare limit clause
+        if (array_key_exists('limit',$info)) {
+            $q .= " LIMIT $info[limit]";
+        }
+
+        return $q;
     }
 }

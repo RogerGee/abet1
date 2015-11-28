@@ -149,9 +149,10 @@ $qbInfo = array(
         'program'=>array('id','name','semester','year'),
         'abet_criterion'=>array('id','rank','description'),
         'abet_characteristic'=>array('id','level','program_specifier','short_name'),
-        'assessment_worksheet'=>'id',
+        'assessment_worksheet'=>array('id','activity'),
         'general_content'=>'id',
-        'rubric'=>'id'
+        'rubric'=>'id',
+        'course'=>'course_number',
     ),
     'joins' => array(
         // join on all the content so we can fetch their ids
@@ -160,9 +161,10 @@ $qbInfo = array(
         "LEFT OUTER JOIN abet_characteristic ON abet_assessment.fk_characteristic = abet_characteristic.id",
         "LEFT OUTER JOIN assessment_worksheet ON abet_assessment.id = assessment_worksheet.fk_assessment",
         "LEFT OUTER JOIN general_content ON abet_assessment.id = general_content.fk_assessment",
-        "LEFT OUTER JOIN rubric ON assessment_worksheet.fk_rubric = rubric.id"
+        "LEFT OUTER JOIN rubric ON assessment_worksheet.fk_rubric = rubric.id",
+        "LEFT OUTER JOIN course ON assessment_worksheet.fk_course = course.id"
     ),
-    'orderby' => "program.year, program.semester, program.name, abet_criterion.rank, abet_characteristic.level"
+    'orderby' => "program.year, program.semester, program.name, abet_criterion.rank, abet_characteristic.level, course.course_number"
 );
 
 // is the user is not an admin, restrict their access according to the ACLs
@@ -267,6 +269,17 @@ for ($i = 1;$i <= $query->get_number_of_rows();$i++) {
         $content->type = 'getWorksheet';
         $content->id = $row['assessment_worksheet.id'];
 
+        if (!is_null($row['course_number']) || !is_null($row['activity'])) {
+            // create division for worksheet content; this will include the
+            // worksheet and rubric (and potentially a general_content)
+            $division = new stdClass;
+            $division->label = is_null($row['course_number']) ? $row['activity']
+                : $row['course_number'];
+            $division->children = array();
+            $assessment->children[] = $division;
+            $assessment = $division;
+        }
+
         // add content to assessment; there should always be a valid
         // assessment if there is content
         $assessment->children[] = $content;
@@ -336,10 +349,15 @@ if ($isAdmin) {
     $editCharacteristics->type = "editCharacteristics";
     $editCharacteristics->id = null;
 
+    $editCourse = new stdClass;
+    $editCourse->label = "Courses...";
+    $editCourse->type = "editCourses";
+    $editCourses->id = null;
+
     $adminTools = new stdClass;
     $adminTools->label = "Admin Tools";
     $adminTools->children = array(
-        $createUser, $editUser, $editCharacteristics
+        $createUser, $editUser, $editCharacteristics, $editCourses
     );
 
     $navTrees[] = $adminTools;
