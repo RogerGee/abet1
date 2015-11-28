@@ -25,13 +25,14 @@ function decodeNav(data, id) {
 function loadNavigation() {
 	$.ajax({url:"/nav.php",dataType:"json"}).done(function(data) {
 		$("#left_bar").html("");
-		$("#left_bar").append("Navigation");
-		$("#left_bar").append(gen(decodeNav(data[0], "navtree")));
+		$("#left_bar").append(data[0].label);
+		$("#left_bar").append(gen(decodeNav(data[0].children, "navtree")));
 		if (data.length > 1) {
-			$("#left_bar").append("Admin Tools");
-			$("#left_bar").append(gen(decodeNav(data[1], "admintree")));
+			$("#left_bar").append(data[1].label);
+			$("#left_bar").append(gen(decodeNav(data[1].children, "admintree")));
 		}
 		$("#navtree, #admintree").tree();
+		hijackAnchors();
 	});
 }
 

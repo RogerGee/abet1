@@ -117,15 +117,25 @@ $(document).ready(function() {
 			$("#settings").css("display") != "none")
 			$("#settings").fadeToggle(300);
 	});
-	hijackAnchors();
+	loadNavigation();
 });
+//assign to nested obj
+function assign(o, s, v) {
+	var c = s.split(':');
+	if (c.length == 1) {
+		o[s] = v;
+		return;
+	}
+	var f = c.shift();
+	if (typeof(o[f]) === 'undefined')
+		o[f] = {};
+	assign(o[f], c.join(':'), v);
+}
 //set handlers on properties of the user object
 function initInputs() {
 	$("#content .property").on("change", function() {
-		if (typeof(obj[this.id]) !== "undefined") {
-			obj[this.id] = $(this).val();
-			saveState();
-		}
+		assign(obj, this.id, $(this).val());
+		saveState();
 	});
 	hijackAnchors();
 }
