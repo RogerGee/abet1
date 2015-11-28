@@ -27,8 +27,8 @@
 						$(this).attr("h", parseInt($(this).attr("h")) + h);
 						$(this).css("height", $(this).attr("h"));
 					});
-				} else {
-					var h = parseInt($(ul).css("height"));
+				} else if (parseInt($(ul).css("height")) == $(ul).attr("h")) {
+					var h = $(ul).attr("h");
 					//close this ul
 					$(ul).css("height", 0);
 					//and shrink all parents by appropriate amount
