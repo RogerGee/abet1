@@ -24,17 +24,17 @@
 					$(ul).css("height", h);
 					//and expand all parents by appropriate amount
 					$(ul).parents(".tree ul").each(function() {
-						$(this).css("height", parseInt($(this).css("height")) + h);
+						$(this).attr("h", parseInt($(this).attr("h")) + h);
+						$(this).css("height", $(this).attr("h"));
 					});
 				} else {
 					var h = parseInt($(ul).css("height"));
-					//cache the current height for reopening
-					$(ul).attr("h", h);
 					//close this ul
 					$(ul).css("height", 0);
 					//and shrink all parents by appropriate amount
 					$(ul).parents(".tree ul").each(function() {
-						$(this).css("height", parseInt($(this).css("height")) - h);
+						$(this).attr("h", parseInt($(this).attr("h")) - h);
+						$(this).css("height", $(this).attr("h"));
 					});
 				}
 			});
