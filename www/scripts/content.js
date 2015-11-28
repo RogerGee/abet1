@@ -1,4 +1,4 @@
-/* functions for editing assessments */
+/* functions for editing general_content */
 function getContent(id) {
 	$.ajax({url:"content.php?id="+id,dataType:"json"}).done(function(general_content) {
 		obj = {}
@@ -113,8 +113,7 @@ function submitContent() {
 
 function addComment() {
 	$.ajax({method:"post", url:"content.php", dataType:"json",
-		data:{type:"comment"},
-		statusCode:{
+		data:{type:"comment", id:obj.id}, statusCode:{
 			200: function(data) {
 				obj.content.append(data);
 				loadContent(obj);
@@ -132,6 +131,7 @@ function addFile() {
 	var data = new FormData();
 	data.append("file", $("#file").prop("files")[0]);
 	data.append("type", "file");
+	data.append("id", obj.id)
 	$.ajax({method:"post", url:"content.php", dataType:"json", data:data,
 		processData:false, contentType:false, statusCode:{
 			200: function(data) {
