@@ -3,17 +3,19 @@
 function gen(obj) {
 	var ret = "<" + obj.tag;
 	for (var prop in obj)
-		if (prop != "children" && prop != "tag")
+		if (prop != "children" && prop != "tag" && obj[prop] !== null)
 			ret += " " + prop + "='" + obj[prop] + "'";
 	var html = "";
-	if (obj.children) {
-		if (obj.children instanceof Array || typeof(obj.children) === 'string') {
+	if (obj.children !== null && obj.children !== undefined) {
+		if (obj.children instanceof Array) {
 			for (var child in obj.children) {
-				if (typeof(obj.children[child]) === 'string')
+				if (typeof(obj.children[child]) !== 'object')
 					html += obj.children[child];
 				else if (obj.children[child] !== null)
 					html += gen(obj.children[child]);
 			}
+		} else if (typeof(obj.children) !== 'object') { 
+			html += obj.children;
 		} else {
 			html += gen(obj.children)
 		}
@@ -30,7 +32,7 @@ function navigateInternal(href, id) {
 }
 //functions for cache maintenance
 function hasState() {
-	return typeof(localStorage[user]) !== 'undefined';
+	return localStorage[user] !== undefined;
 }
 function saveState() {
 	localStorage[user] = JSON.stringify(obj);
