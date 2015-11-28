@@ -43,6 +43,7 @@ textarea {
 }
 /* side navigation bar style */
 .left_bar {
+	overflow: auto;
 	width: 20%;
 	height: 90%;
 	padding: 10px;

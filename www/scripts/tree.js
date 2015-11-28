@@ -10,10 +10,8 @@
 				var h = parseInt($(this).css("height"));
 				//set a dummy attribute h to the height of folded content
 				$(this).attr("h", h);
-				//subtract this height from all parent uls
-				$(this).parents(".tree ul").each(function() {
-					$(this).attr("h", $(this).attr("h") - h);
-				});
+				//subtract this height from the parent ul
+				$(this).parent().parent().attr("h",$(this).parent().parent().attr("h")-h);
 			})).done(function() {
 				//init all to closed
 				$(root).find("ul").css("height", 0);
