@@ -6,7 +6,7 @@ function decodeNavInner(data) {
 		li.children.push({tag:"ul", children:[]})
 		for (i in data.children)
 			li.children[1].children.push(decodeNavInner(data.children[i]));
-	} else if (data.type && data.id) {
+	} else if (data.type) {
 		li.children[0].children = [
 			{tag:"a", "class":"internal", href:data.type, id:data.id}];
 		li.children[0].children[0].children = [data.label];
