@@ -59,42 +59,7 @@ if (!abet_is_authenticated()) {
 				</ul>
 			</div>
 		</div>
-		<div id="left_bar" class="left_bar">
-			Navigation
-			<ul class="tree">
-				<li>
-					<div>content</div>
-					<ul>
-						<li>
-							<div><a href="#">inner content</a></div>
-						</li>
-						<li>
-							<div><a href="#">inner content</a></div>
-						</li>
-						<li>
-							<div>inner folder</div>
-							<ul>
-								<li><div><a href="#">inner content again</a></div></li>
-							</ul>
-						</li>
-					</ul>
-				</li>
-				<li>
-					<div>hi</div>
-					<ul>
-						<li>
-							<div><a href="#">hi inner content</a></div>
-						</li>
-						<li>
-							<div><a href="#">whooo inner content</a></div>
-						</li>
-					</ul>
-				</li>
-				<li>
-					<div><a href="#">hello</a></div>
-				</li>
-			</ul>
-		</div>
+		<div id="left_bar" class="left_bar"></div>
 		<div id="content" class="content">
 			this is content
 			<br/><br/><br/><br/><br/><br/><br/><br/><br/>
