@@ -1,6 +1,7 @@
 (function($) {
 	$.extend({
 		confirm: function(title, message, accept, decline) {
+			if ($(".confirm_wrapper").length) return;
 			if (typeof(message) === 'undefined') {
 				message = typeof(title) !== 'undefined' ? title : "Are you sure?";
 				title = "Confirm";
