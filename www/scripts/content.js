@@ -95,7 +95,7 @@ function loadContent(general_content) {
 		}
 	});
 	$("input[type=button][value=delete]").on("click", function() {
-		deleteItem(this.id, $(this).prop("id"));
+		deleteItem($(this).attr("id"), $(this).attr("tp"));
 	});
 	$("#submit").on("click", submitContent);
 	initInputs();
