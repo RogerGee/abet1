@@ -16,10 +16,10 @@ function processContent(content, num) {
 				{tag:"td", children:"Comment"},
 				{tag:"td", children:[
 					{tag:"input", id:num, style:"float:right;", 
-						tp:"file", type:"button", value:"delete"
+						tp:"comment", type:"button", value:"delete"
 					},
 					{tag:"input", id:num, style:"float:right;",
-						type:"button", value:"save"
+						tp:"comment", type:"button", value:"save"
 					}
 				]}
 			]},
@@ -48,7 +48,7 @@ function processContent(content, num) {
 						tp:"file", type:"button", value:"delete"
 					},
 					{tag:"input", id:num, style:"float:right;",
-						type:"button", value:"save"
+						tp:"file", type:"button", value:"save"
 					}
 				]}
 			]},
@@ -105,7 +105,7 @@ function loadContent(general_content) {
 		deleteItem($(this).attr("id"), $(this).attr("tp"));
 	});
 	$("input[type=button][value=save]").on("click", function() {
-		submitItem($(this).attr("id"));
+		submitItem($(this).attr("id"), $(this).attr("tp"));
 	});
 	initInputs();
 }
@@ -116,8 +116,11 @@ function submitItem(id) {
 			200: function() {
 				//verify it worked to user
 				
-				//scrub cache
-				clearState();
+				//cut the modification
+				var last = ":content";
+				if (type == "file")
+					last = ":file_comment";
+				cutModif("content:"+id+last);
 			},
 			400: function() {
 				

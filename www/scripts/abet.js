@@ -40,6 +40,11 @@ function saveState() {
 function loadState() {
 	return JSON.parse(localStorage[user]);
 }
+function cutModif(id) {
+	delete (obj._modifs[id])
+	if (Object.keys(obj._modifs).length == 0)
+		clearState();
+}
 function clearState() {
 	delete localStorage[user];
 }
@@ -144,7 +149,9 @@ function assign(o, s, v) {
 //set handlers on properties of the user object
 function initInputs() {
 	$("#content .property").on("change", function() {
-		assign(obj, this.id, $(this).val());
+		assign(obj, $(this).attr("id"), $(this).val());
+		if (!obj._modifs) obj._modifs = {};
+		obj._modifs[$(this).attr("id")] = '';
 		saveState();
 	});
 }
