@@ -229,7 +229,11 @@ function create_file($gcId) {
             ),
             'joins' => 'INNER JOIN userprofile ON userprofile.id = file_upload.fk_author',
             'where' => 'file_upload.id = LAST_INSERT_ID()'
-        ))));
+        ))))->get_row_assoc();
+        if (is_null($row)) {
+            $rollback = true;
+            return array(SERVER_ERROR,"could not retrieve inserted row");
+        }
 
         // format the data for the client
         //   id, file_name, file_comment (empty), file_created, author (string)

@@ -355,12 +355,12 @@ if ($isAdmin) {
     $editCourse = new stdClass;
     $editCourse->label = "Courses...";
     $editCourse->type = "editCourses";
-    $editCourses->id = null;
+    $editCourse->id = null;
 
     $adminTools = new stdClass;
     $adminTools->label = "Admin Tools";
     $adminTools->children = array(
-        $createUser, $editUser, $editCharacteristics, $editCourses
+        $createUser, $editUser, $editCharacteristics, $editCourse
     );
 
     $navTrees[] = $adminTools;
