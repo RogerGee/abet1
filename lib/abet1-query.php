@@ -153,8 +153,8 @@ class Query {
     // false in $func on an arbitrary iteration
     function for_each_assoc(callable $func) {
         if ($this->isResultBased) {
-            for ($i = 0;$i < $this->get_number_of_rows();$i++)
-                if (call_user_func($func,$this->get_rows_assoc($i)) === false)
+            for ($i = 1;$i <= $this->get_number_of_rows();$i++)
+                if (call_user_func($func,$this->get_row_assoc($i)) === false)
                     break;
         }
         else {
@@ -167,8 +167,8 @@ class Query {
     // false in $func on an arbitrary iteration
     function for_each_ordered(callable $func) {
         if ($this->isResultBased) {
-            for ($i = 0;$i < $this->get_number_of_rows();$i++)
-                if (call_user_func($func,$this->get_rows_ordered($i)) === false)
+            for ($i = 1;$i <= $this->get_number_of_rows();$i++)
+                if (call_user_func($func,$this->get_row_ordered($i)) === false)
                     break;
         }
         else {

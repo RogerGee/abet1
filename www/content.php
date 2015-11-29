@@ -84,6 +84,7 @@ $DATETIME_FORMAT = "%M %D, %Y - %l:%i %p";
 
 // get content set given general_content entity id
 function get_content($gcId) {
+    global $DATETIME_FORMAT;
     $content = array();
 
     // select comments and file uploads separately
@@ -111,10 +112,10 @@ function get_content($gcId) {
     )));
 
     // grab content items and sort them by create time
-    $comments->for_each_assoc(function($row) use($content) {
+    $comments->for_each_assoc(function($row) use(&$content) {
         $content[] = $row;
     });
-    $uploads->for_each_assoc(function($row) use($content) {
+    $uploads->for_each_assoc(function($row) use(&$content) {
         $content[] = $row;
     });
     usort($content,function($a,$b){return $a['unix_time'] - $b['unix_time'];});
@@ -126,6 +127,7 @@ function get_content($gcId) {
 function create_comment($gcId) {
     // perform the update/select operations within a transaction
     list($code,$message) = Query::perform_transaction(function(&$rollback) use($gcId){
+        global $DATETIME_FORMAT;
         // insert new row into user_comment table
         $insert = new Query(new QueryBuilder(INSERT_QUERY,array(
             'table' => 'user_comment',
@@ -181,6 +183,7 @@ function create_comment($gcId) {
 function create_file($gcId) {
     // perform update/select operations within a transaction
     list($code,$message) = Query::perform_transaction(function(&$rollback) use($gcId){
+        global $DATETIME_FORMAT;
         // create new file_upload entity
         $insert = new Query(new QueryBuilder(INSERT_QUERY,array(
             'table' => 'file_upload',
@@ -259,10 +262,6 @@ function update_content($entityKind,$updates) {
         'where' => "$entityKind.id = ?",
         'where-params' => array("i:$entityId")
     )));
-
-    if (!$query->validate_update()) {
-        page_fail_with_reason(SERVER_ERROR,"update operation failed on content item");
-    }
 }
 
 // verify that the entity is accessible within its general content entity
@@ -307,7 +306,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 else if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (array_key_exists('id',$_POST) && array_key_exists('type',$_POST)) {
         // make sure user can access general_content entity
-        if (!check_assessment_access($_SESSION['id'],$_POST['id'],'general_content'))
+        if (!abet_is_admin_authenticated() && !check_assessment_access($_SESSION['id'],$_POST['id'],'general_content'))
             page_fail(UNAUTHORIZED);
 
         // create new content (single entity)
@@ -355,7 +354,7 @@ else if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             // for security's sake I create these manually
             $updates = array();
-            $updates['id'] = "i:$content[id]";
+            $updates['id'] = $content['id'];
             if (array_key_exists('file_comment',$content))
                 $updates['file_comment'] = "s:$content[file_comment]";
             else
