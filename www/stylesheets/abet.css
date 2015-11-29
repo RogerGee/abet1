@@ -101,4 +101,13 @@ textarea {
 .submit_success {
 	color: green;
 }
+/* rubric table*/
+.rubric {
+	border: 1px solid black;
+	border-collapse: collapse;
+}
+.rubric td, .rubric th {
+	border: 1px solid black;
+}
+
 

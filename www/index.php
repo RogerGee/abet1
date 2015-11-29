@@ -26,6 +26,8 @@ if (!abet_is_authenticated()) {
 		<script src="scripts/profile.js" type="text/javascript"></script>
 		<script src="scripts/navigation.js" type="text/javascript"></script>
 		<script src="scripts/content.js" type="text/javascript"></script>
+		<script src="scripts/rubric.js" type="text/javascript"></script>
+		<script src="scripts/worksheet.js" type="text/javascript"></script>
 		<script src="scripts/tree.js" type="text/javascript"></script>
 		<script src="scripts/confirm.js" type="text/javascript"></script>
 		<?php if(abet_is_admin_authenticated()) { ?>
