@@ -58,6 +58,9 @@ function submitWorksheet() {
 		statusCode:{
 			200: function() {
 				//verify it worked to user
+				
+				//scrub cache
+				clearState();
 			},
 			400: function() {
 				
