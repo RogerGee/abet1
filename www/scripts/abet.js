@@ -81,6 +81,9 @@ function initPhone() {
 }
 //hijack internal hrefs
 function hijackAnchors() {
+	if ($(".internal").attr("hijacked"))
+		return;
+	$(".internal").attr("hijacked", true);
 	$(".internal").click(function(event) {
 		event.preventDefault();
 		var href = $(this).attr("href");
