@@ -1,7 +1,7 @@
 /* functions for editing general_content */
 function getContent(id) {
 	$.ajax({url:"content.php?id="+id,dataType:"json"}).done(function(general_content) {
-		obj = {}
+		obj = {};
 		obj.id = id;
 		obj.content = general_content;
 		obj.load_func = "loadContent";
@@ -46,7 +46,9 @@ function processContent(content, num) {
 			]},
 			{tag:"tr", children:[
 				{tag:"td", children:"File Name:"},
-				{tag:"td", children:content.file_name}
+				{tag:"td", children:{tag:"a", href:"file-download.php?id="+content.id,
+					children:content.file_name
+				}}
 			]},
 			{tag:"tr", children:[
 				{tag:"td", children:"File Author:"},
