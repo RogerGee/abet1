@@ -329,13 +329,13 @@ else if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // verify that the user can access the entity
         $kind = $_POST['type'] == 'file' ? 'file_upload' : 'user_comment';
         if (!abet_is_admin_authenticated()
-            && !check_general_content_item_access($_SESSION['id'],$_POST['id'],$kind))
+            && !check_general_content_item_access($_SESSION['id'],$_POST['delete'],$kind))
         {
             page_fail(UNAUTHORIZED);
         }
 
         // delete the specified entity
-        echo delete_content($_POST['id'],$kind);
+        echo delete_content($_POST['delete'],$kind);
     }
     else if (array_key_exists('content',$_POST)) {
         // update content (array of entities)

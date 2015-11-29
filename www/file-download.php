@@ -35,7 +35,9 @@ if (!array_key_exists('id',$_GET)) {
 }
 
 // check access to specific file resource
-if (!check_general_content_item_access($_SESSION['id'],$_GET['id'],'file_upload')) {
+if (!abet_is_admin_authenticated()
+    && !check_general_content_item_access($_SESSION['id'],$_GET['id'],'file_upload'))
+{
     http_response_code(UNAUTHORIZED);
     header('Content-Type: text/html');
     echo "<h1>Access to the specified object is unauthorized.</h1>";
