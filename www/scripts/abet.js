@@ -90,7 +90,11 @@ function hijackAnchors() {
 		} else {
 			$.confirm("Unsubmited Work", "You have unsubmited data on this page.\n" +
 				"Are you sure you wish to leave? All changes will be lost",
-				"Leave", "Stay").accept(function() {navigateInternal(href);});
+				"Leave", "Stay").accept(function() {
+				navigateInternal(href);
+				//scrub cache
+				clearState();
+			});
 		}
 	});
 }
