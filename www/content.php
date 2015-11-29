@@ -81,6 +81,7 @@ require_once 'abet1-misc.php';
 */
 
 $DATETIME_FORMAT = "%M %D, %Y - %l:%i %p";
+header('Content-Type: application/json');
 
 // get content set given general_content entity id
 function get_content($gcId) {
@@ -92,9 +93,13 @@ function get_content($gcId) {
         'tables' => array(
             'user_comment' => array('id','content'),
             1 => array(
-                "DATE_FORMAT(created,'$DATETIME_FORMAT') created",
-                "UNIX_TIMESTAMP(created) unix_time"
-            )
+                "DATE_FORMAT(user_comment.created,'$DATETIME_FORMAT') created",
+                "UNIX_TIMESTAMP(user_comment.created) unix_time"
+            ),
+            'userprofile' => array('first_name','last_name')
+        ),
+        'joins' => array(
+            'INNER JOIN userprofile ON userprofile.id = user_comment.fk_author'
         ),
         'where' => "fk_content_set = ?",
         'where-params' => array("i:$gcId")
@@ -105,19 +110,27 @@ function get_content($gcId) {
             1 => array(
                 "DATE_FORMAT(file_created,'$DATETIME_FORMAT') file_created",
                 "UNIX_TIMESTAMP(file_created) unix_time"
-            )
+            ),
+            'userprofile' => array('first_name','last_name')
+        ),
+        'joins' => array(
+            'INNER JOIN userprofile ON userprofile.id = file_upload.fk_author'
         ),
         'where' => "fk_content_set = ?",
         'where-params' => array("i:$gcId")
     )));
 
+    // create closure for adding row to content set
+    $addRow = function($row) use(&$content) {
+        $row['author'] = "$row[first_name] $row[last_name]";
+        unset($row['first_name']);
+        unset($row['last_name']);
+        $content[] = $row;
+    };
+
     // grab content items and sort them by create time
-    $comments->for_each_assoc(function($row) use(&$content) {
-        $content[] = $row;
-    });
-    $uploads->for_each_assoc(function($row) use(&$content) {
-        $content[] = $row;
-    });
+    $comments->for_each_assoc($addRow);
+    $uploads->for_each_assoc($addRow);
     usort($content,function($a,$b){return $a['unix_time'] - $b['unix_time'];});
 
     return json_encode($content);
@@ -314,6 +327,11 @@ else if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             // make sure file data was uploaded correctly
             if (!is_uploaded_file($_FILES['file']['tmp_name']))
                 page_fail_with_reason(SERVER_ERROR,"file upload was unsuccessful");
+
+            // limit file size to 250mb (there probably is a better way of doing
+            // this that doesn't require the file to actually finish uploading)
+            if ($_FILES['file']['size'] > 262100000)
+                page_fail_with_reason(SERVER_ERROR,"uploaded file is too large");
 
             echo create_file($_POST['id']);
         }
