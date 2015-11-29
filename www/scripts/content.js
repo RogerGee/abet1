@@ -5,7 +5,7 @@ function getContent(id) {
 		obj.id = id;
 		obj.content = general_content;
 		obj.load_func = "loadContent";
-		loadAssessment(obj);
+		loadContent(obj);
 	});
 }
 
@@ -95,6 +95,7 @@ function loadContent(general_content) {
 	$("input[type=button][value=delete]").on("click", function() {
 		deleteItem(this.id, $(this).prop("id"));
 	});
+	$("#submit").on("click", submitContent);
 	initInputs();
 }
 
@@ -115,7 +116,7 @@ function addComment() {
 	$.ajax({method:"post", url:"content.php", dataType:"json",
 		data:{type:"comment", id:obj.id}, statusCode:{
 			200: function(data) {
-				obj.content.append(data);
+				obj.content.push(data);
 				loadContent(obj);
 				if (hasState())
 					saveState();
@@ -135,7 +136,7 @@ function addFile() {
 	$.ajax({method:"post", url:"content.php", dataType:"json", data:data,
 		processData:false, contentType:false, statusCode:{
 			200: function(data) {
-				obj.content.append(data);
+				obj.content.push(data);
 				loadContent(obj);
 				if (hasState())
 					saveState();
