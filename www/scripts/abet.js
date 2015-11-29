@@ -94,9 +94,10 @@ function hijackAnchors() {
 			$.confirm("Unsubmited Work", "You have unsubmited data on this page.\n" +
 				"Are you sure you wish to leave? All changes will be lost",
 				"Leave", "Stay").accept(function() {
-				navigateInternal(href, id);
 				//scrub cache
 				clearState();
+				//"navigate"
+				navigateInternal(href, id);
 			});
 		}
 	});
@@ -146,7 +147,6 @@ function initInputs() {
 		assign(obj, this.id, $(this).val());
 		saveState();
 	});
-	hijackAnchors();
 }
 //handle 401 (user not authenticated/logged in) globally, redirect to login
 $(document).ajaxError(function(event, jqxhr) {
