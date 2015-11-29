@@ -29,9 +29,9 @@ require_once 'abet1-misc.php';
      | delete type |
      *-------------*
      - if update content:
-     *---------*           *-----------------*      *------------*
-     | content |  array of | id file_comment |  OR  | id content |
-     *---------*           *-----------------*      *------------*
+     *-----------------*      *------------*
+     | id file_comment |  OR  | id content |
+     *-----------------*      *------------*
 
     This script creates, edits and retrieves general content objects. The GET
     request is used to retrieve an initial set of general content items (file upload
@@ -64,19 +64,21 @@ require_once 'abet1-misc.php';
                 id, author, content (empty), created
 
         C) update content
-            - client sends array of objects with the following fields:
+            - client sends a single object with the following fields:
                 - if file upload:
                     id, file_comment
                 - if user comment:
                     id, content
             - server just updates comments for file_upload/user_comment
             - server returns {"success":true} if action
+                - if the object was deleted then {"success":false} with 404
                 - {"success":false} otherwise with status code 500
 
         D) delete content
             - client sends a single id/type pair
             - server deletes single entity
             - server returns {"success":true} if action
+                - if the object was deleted previously then {"success":false} with 404
                 - {"success":false} otherwise with status code 500
 */
 
@@ -194,6 +196,10 @@ function create_comment($gcId) {
 // creates a new file upload for the given general_content given file upload
 // info in $_FILES
 function create_file($gcId) {
+    // we must change the file permissions to rw-r--r-- so that mySQL can
+    // read the uploaded file; this allows 'others' to read the file (beware!)
+    chmod($_FILES['file']['tmp_name'],0644);
+
     // perform update/select operations within a transaction
     list($code,$message) = Query::perform_transaction(function(&$rollback) use($gcId){
         global $DATETIME_FORMAT;
@@ -262,9 +268,9 @@ function delete_content($entityId,$entityKind) {
         'where-params' => array("i:$entityId")
     )));
 
-    if (!$query->validate_update()) {
-        page_fail_with_reason(SERVER_ERROR,"content item deletion failed");
-    }
+    // if (!$query->validate_update()) {
+    //     page_fail_with_reason(SERVER_ERROR,"content item deletion failed");
+    // }
 
     return "{\"success\":true}";
 }
@@ -329,42 +335,41 @@ else if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // verify that the user can access the entity
         $kind = $_POST['type'] == 'file' ? 'file_upload' : 'user_comment';
         if (!abet_is_admin_authenticated()
-            && !check_general_content_item_access($_SESSION['id'],$_POST['delete'],$kind))
+            && !check_general_content_item_access($_SESSION['id'],$_POST['delete'],$kind,$found))
         {
-            page_fail(UNAUTHORIZED);
+            page_fail($found ? UNAUTHORIZED : NOT_FOUND);
         }
 
         // delete the specified entity
         echo delete_content($_POST['delete'],$kind);
     }
     else if (array_key_exists('content',$_POST)) {
-        // update content (array of entities)
-        foreach ($_POST['content'] as $content) {
-            if (!array_key_exists('id',$content))
-                page_fail(BAD_REQUEST);
-            if (array_key_exists('file_comment',$content))
-                $kind = 'file_upload';
-            else if (array_key_exists('content',$content))
-                $kind = 'user_comment';
-            else
-                page_fail(BAD_REQUEST);
+        // update content (single entity)
+        if (!array_key_exists('id',$_POST))
+            page_fail(BAD_REQUEST);
+        if (array_key_exists('file_comment',$_POST))
+            $kind = 'file_upload';
+        else if (array_key_exists('content',$_POST))
+            $kind = 'user_comment';
+        else
+            page_fail(BAD_REQUEST);
 
-            // verify that the user can access the entity
-            if (!abet_is_admin_authenticated()
-                && !check_general_content_item_access($_SESSION['id'],$content['id'],$kind))
-            {
-                page_fail(UNAUTHORIZED);
-            }
-
-            // for security's sake I create these manually
-            $updates = array();
-            $updates['id'] = $content['id'];
-            if (array_key_exists('file_comment',$content))
-                $updates['file_comment'] = "s:$content[file_comment]";
-            else
-                $updates['content'] = "s:$content[content]";
-            update_content($kind,$updates);
+        // verify that the user can access the entity
+        if (!abet_is_admin_authenticated()
+            && !check_general_content_item_access($_SESSION['id'],$_POST['id'],$kind,$found))
+        {
+            page_fail($found ? UNAUTHORIZED : NOT_FOUND);
         }
+
+        // for security's sake I create these manually
+        $updates = array();
+        $updates['id'] = $_POST['id'];
+        if (array_key_exists('file_comment',$_POST))
+            $updates['file_comment'] = "s:$_POST[file_comment]";
+        else
+            $updates['content'] = "s:$_POST[content]";
+        update_content($kind,$updates);
+
         echo "{\"success\":true}";
     }
     else

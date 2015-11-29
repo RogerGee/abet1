@@ -36,11 +36,17 @@ if (!array_key_exists('id',$_GET)) {
 
 // check access to specific file resource
 if (!abet_is_admin_authenticated()
-    && !check_general_content_item_access($_SESSION['id'],$_GET['id'],'file_upload'))
+    && !check_general_content_item_access($_SESSION['id'],$_GET['id'],'file_upload',$found))
 {
-    http_response_code(UNAUTHORIZED);
     header('Content-Type: text/html');
-    echo "<h1>Access to the specified object is unauthorized.</h1>";
+    if ($found) {
+        http_response_code(UNAUTHORIZED);
+        echo "<h1>Access to the specified object is unauthorized or it has been removed.</h1>";
+    }
+    else {
+        http_response_code(NOT_FOUND);
+        echo "<h1>The specified object was not found. It's possible it was removed.</h1>";
+    }
     exit;
 }
 

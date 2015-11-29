@@ -5,6 +5,7 @@
 define('OKAY',200);
 define('BAD_REQUEST',400);
 define('UNAUTHORIZED',401);
+define('NOT_FOUND',404);
 define('SERVER_ERROR',500);
 define('DEFAULT_CONTENT_TYPE','application/octet-stream');
 
@@ -53,7 +54,7 @@ function check_assessment_access($userId,$entityId,$entityKind) {
     return $found;
 }
 
-function check_general_content_item_access($userId,$entityId,$entityKind) {
+function check_general_content_item_access($userId,$entityId,$entityKind,&$found) {
     // select the general_content entity id given either a file_upload or user_comment
     $query = new Query(new QueryBuilder(SELECT_QUERY,array(
         'tables' => array(
@@ -64,8 +65,11 @@ function check_general_content_item_access($userId,$entityId,$entityKind) {
         'where' => "$entityKind.id = ?",
         'where-params' => array("i:$entityId")
     )));
-    if ($query->is_empty())
+    if ($query->is_empty()) {
+        $found = false;
         return false;
+    }
+    $found = true;
 
     // then verify that we have access to the general content element for some assessment
     $gcId = $query->get_row_ordered()[0];
