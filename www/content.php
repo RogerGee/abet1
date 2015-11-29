@@ -269,6 +269,9 @@ function update_content($entityKind,$updates) {
 // (e.g. that a comment exists within a general_content entity which the user can
 // modify)
 function verify_general_content_item($entityId,$entityKind) {
+    if (abet_is_admin_authenticated())
+        return true;
+
     // select the general_content entity id given either a file_upload or user_comment
     $query = new Query(new QueryBuilder(SELECT_QUERY,array(
         'tables' => array(
@@ -296,7 +299,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         page_fail(BAD_REQUEST);
 
     // double check access to content
-    if (!check_assessment_access($_SESSION['id'],$_GET['id'],'general_content'))
+    if (!abet_is_admin_authenticated() && !check_assessment_access($_SESSION['id'],$_GET['id'],'general_content'))
         page_fail(UNAUTHORIZED);
 
     echo get_content($_GET['id']);
@@ -352,11 +355,11 @@ else if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             // for security's sake I create these manually
             $updates = array();
-            $updates['id'] = "i:$content['id']";
+            $updates['id'] = "i:$content[id]";
             if (array_key_exists('file_comment',$content))
-                $updates['file_comment'] = "s:$content['file_comment']";
+                $updates['file_comment'] = "s:$content[file_comment]";
             else
-                $updates['content'] = "s:$content['content']";
+                $updates['content'] = "s:$content[content]";
             update_content($kind,$updates);
         }
         echo "{\"success\":true}";

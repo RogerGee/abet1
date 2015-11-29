@@ -271,18 +271,21 @@ for ($i = 1;$i <= $query->get_number_of_rows();$i++) {
 
         if (!is_null($row['course_number']) || !is_null($row['activity'])) {
             // create division for worksheet content; this will include the
-            // worksheet and rubric (and potentially a general_content)
+            // worksheet and rubric
             $division = new stdClass;
             $division->label = is_null($row['course_number']) ? $row['activity']
                 : $row['course_number'];
             $division->children = array();
             $assessment->children[] = $division;
-            $assessment = $division;
         }
+        else
+            // this shouldn't happen, but in case it does just add the worksheet/rubric
+            // pair to the assessment division
+            $division = $assessment;
 
         // add content to assessment; there should always be a valid
         // assessment if there is content
-        $assessment->children[] = $content;
+        $division->children[] = $content;
 
         // (note: there should always be a rubric accompanying a worksheet)
         if (!is_null($row['rubric.id'])) {
@@ -293,7 +296,7 @@ for ($i = 1;$i <= $query->get_number_of_rows();$i++) {
             $rubric->type = 'getRubric';
             $rubric->id = $row['assessment_worksheet.id'];
 
-            $assessment->children[] = $rubric;
+            $division->children[] = $rubric;
         }
     }
 
