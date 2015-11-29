@@ -110,7 +110,7 @@ function loadContent(general_content) {
 	initInputs();
 }
 
-function submitItem(id) {
+function submitItem(id, type) {
 	$.ajax({method:"post", url:"content.php", dataType:"json", data:obj.content[id],
 		statusCode:{
 			200: function() {
