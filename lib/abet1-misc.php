@@ -27,7 +27,8 @@ function page_fail_on_field($code,$field,$error) {
 }
 
 // this function checks the ACLs for assessments to verify that the specified
-// user has access to the assessment that contains the specified entity
+// user has access to the assessment that contains the specified entity; the
+// entity must be one of 'general_content' OR 'assessment_worksheet'
 function check_assessment_access($userId,$entityId,$entityKind) {
     $query = new Query(new QueryBuilder(SELECT_QUERY,array(
         'tables' => array(
@@ -42,7 +43,7 @@ function check_assessment_access($userId,$entityId,$entityKind) {
     )));
 
     $found = false;
-    $query->for_each_ordered(function($row) use(&$found) {
+    $query->for_each_ordered(function($row) use(&$found,$entityId) {
         if ($row[0] == $entityId) {
             $found = true;
             return false;
@@ -50,6 +51,25 @@ function check_assessment_access($userId,$entityId,$entityKind) {
     });
 
     return $found;
+}
+
+function check_general_content_item_access($userId,$entityId,$entityKind) {
+    // select the general_content entity id given either a file_upload or user_comment
+    $query = new Query(new QueryBuilder(SELECT_QUERY,array(
+        'tables' => array(
+            $entityKind => '',
+            'general_content' => 'id'
+        ),
+        'joins' => "INNER JOIN general_content ON general_content.id = $entityKind.fk_content_set",
+        'where' => "$entityKind.id = ?",
+        'where-params' => array("i:$entityId")
+    )));
+    if ($query->is_empty())
+        return false;
+
+    // then verify that we have access to the general content element for some assessment
+    $gcId = $query->get_row_ordered()[0];
+    return check_assessment_access($userId,$gcId,'general_content');
 }
 
 function file_download($fileId) {

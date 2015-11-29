@@ -277,30 +277,6 @@ function update_content($entityKind,$updates) {
     )));
 }
 
-// verify that the entity is accessible within its general content entity
-// (e.g. that a comment exists within a general_content entity which the user can
-// modify)
-function verify_general_content_item($entityId,$entityKind) {
-    if (abet_is_admin_authenticated())
-        return true;
-
-    // select the general_content entity id given either a file_upload or user_comment
-    $query = new Query(new QueryBuilder(SELECT_QUERY,array(
-        'tables' => array(
-            $entityKind => '',
-            'general_content' => 'id'
-        ),
-        'joins' => "INNER JOIN general_content ON general_content.id = $entityKind.fk_content_set",
-        'where' => "entityKind.id = ?",
-        'where-params' => array("i:$entityId")
-    )));
-    if ($query->is_empty())
-        return false;
-
-    $gcId = $query->get_rows_ordered()[0];
-    return check_assessment_access($_SESSION['id'],$gcId,'general_content');
-}
-
 // check initial user authentication
 if (!abet_is_authenticated()) {
     page_fail(UNAUTHORIZED);
@@ -348,8 +324,11 @@ else if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         // verify that the user can access the entity
         $kind = $_POST['type'] == 'file' ? 'file_upload' : 'user_comment';
-        if (!verify_general_content_item($_POST['id'],$kind))
+        if (!abet_is_admin_authenticated()
+            && !check_general_content_item_access($_SESSION['id'],$_POST['id'],$kind))
+        {
             page_fail(UNAUTHORIZED);
+        }
 
         // delete the specified entity
         echo delete_content($_POST['id'],$kind);
@@ -367,8 +346,11 @@ else if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 page_fail(BAD_REQUEST);
 
             // verify that the user can access the entity
-            if (!verify_general_content_item($content['id'],$kind))
+            if (!abet_is_admin_authenticated()
+                && !check_general_content_item_access($_SESSION['id'],$content['id'],$kind))
+            {
                 page_fail(UNAUTHORIZED);
+            }
 
             // for security's sake I create these manually
             $updates = array();
