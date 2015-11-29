@@ -14,10 +14,14 @@ function processContent(content, num) {
 		return {tag:"table", style:"border: 1px solid black;", children:[
 			{tag:"tr", children:[
 				{tag:"td", children:"Comment"},
-				{tag:"td", children:
+				{tag:"td", children:[
 					{tag:"input", id:num, style:"float:right;", 
-						tp:"comment", type:"button", value:"delete"}
-				}
+						tp:"file", type:"button", value:"delete"
+					},
+					{tag:"input", id:num, style:"float:right;",
+						type:"button", value:"save"
+					}
+				]}
 			]},
 			{tag:"tr", children:[
 				{tag:"td", children:"Author:"},
@@ -39,10 +43,14 @@ function processContent(content, num) {
 		return {tag:"table", style:"border: 1px solid black;", children:[
 			{tag:"tr", children:[
 				{tag:"td", children:"File Upload"},
-				{tag:"td", children:
+				{tag:"td", children:[
 					{tag:"input", id:num, style:"float:right;", 
-						tp:"file", type:"button", value:"delete"}
-				}
+						tp:"file", type:"button", value:"delete"
+					},
+					{tag:"input", id:num, style:"float:right;",
+						type:"button", value:"save"
+					}
+				]}
 			]},
 			{tag:"tr", children:[
 				{tag:"td", children:"File Name:"},
@@ -83,7 +91,6 @@ function loadContent(general_content) {
 			{tag:"option", value:"file", children:"New File"},
 			{tag:"option", value:"comment", children:"New Comment"},
 	]}));
-	content.append("<br /><input type='button' id='submit' value='Submit'>");
 	$("#add").on("click", function() {
 		if ($("#type").val() == 'comment') {
 			addComment();
@@ -97,12 +104,14 @@ function loadContent(general_content) {
 	$("input[type=button][value=delete]").on("click", function() {
 		deleteItem($(this).attr("id"), $(this).attr("tp"));
 	});
-	$("#submit").on("click", submitContent);
+	$("input[type=button][value=save]").on("click", function() {
+		submitItem($(this).attr("id"));
+	});
 	initInputs();
 }
 
-function submitContent() {
-	$.ajax({method:"post", url:"content.php", dataType:"json", data:obj,
+function submitItem(id) {
+	$.ajax({method:"post", url:"content.php", dataType:"json", data:obj.content[id],
 		statusCode:{
 			200: function() {
 				//verify it worked to user
