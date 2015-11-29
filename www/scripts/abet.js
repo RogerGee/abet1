@@ -91,7 +91,7 @@ function hijackAnchors() {
 			$.confirm("Unsubmited Work", "You have unsubmited data on this page.\n" +
 				"Are you sure you wish to leave? All changes will be lost",
 				"Leave", "Stay").accept(function() {
-				navigateInternal(href);
+				navigateInternal(href, id);
 				//scrub cache
 				clearState();
 			});
