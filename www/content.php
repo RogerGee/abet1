@@ -343,10 +343,8 @@ else if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // delete the specified entity
         echo delete_content($_POST['delete'],$kind);
     }
-    else if (array_key_exists('content',$_POST)) {
+    else if (array_key_exists('id',$_POST)) {
         // update content (single entity)
-        if (!array_key_exists('id',$_POST))
-            page_fail(BAD_REQUEST);
         if (array_key_exists('file_comment',$_POST))
             $kind = 'file_upload';
         else if (array_key_exists('content',$_POST))
