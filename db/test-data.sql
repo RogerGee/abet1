@@ -116,26 +116,18 @@ INSERT INTO rubric (name,fk_description,threshold,threshold_desc) VALUES
 
 );
 -- create rubric results for assessment worksheets and competency results
-INSERT INTO rubric_results (total_students,action,acheivement) VALUES
+INSERT INTO rubric_results (total_students) VALUES
 (
-    23,
-    'Test students in CS 115',
-    'Most students were above Marginal'
+    23
 ),
 (
-    20,
-    'Test students in CS 120',
-    'Most students were above Marginal'
+    20
 ),
 (
-    10,
-    'Test students in CS 567',
-    'All students must be outstanding or die'
+    10
 ),
 (
-    5,
-    'Test students in CS 318',
-    'Most students can fail'
+    5
 );
 
 -- create competencies for competency results

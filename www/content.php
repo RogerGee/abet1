@@ -265,7 +265,8 @@ function delete_content($entityId,$entityKind) {
     $query = new Query(new QueryBuilder(DELETE_QUERY,array(
         'tables' => $entityKind,
         'where' => "$entityKind.id = ?",
-        'where-params' => array("i:$entityId")
+        'where-params' => array("i:$entityId"),
+        'limit' => 1
     )));
 
     // if (!$query->validate_update()) {
@@ -283,7 +284,8 @@ function update_content($entityKind,$updates) {
         'table' => $entityKind,
         'updates' => $updates,
         'where' => "$entityKind.id = ?",
-        'where-params' => array("i:$entityId")
+        'where-params' => array("i:$entityId"),
+        'limit' => 1
     )));
 }
 

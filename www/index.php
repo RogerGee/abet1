@@ -33,6 +33,7 @@ if (!abet_is_authenticated()) {
 		<?php if(abet_is_admin_authenticated()) { ?>
 		<!-- Admin only scripts go here -->
 		<script src="scripts/usercreate.js" type="text/javascript"></script>
+		<script src="scripts/program.js" type="text/javascript"></script>
 		<?php } ?>
 		<link rel="stylesheet" href="stylesheets/abet.css" />
 		<link rel="stylesheet" href="stylesheets/tree.css" />
