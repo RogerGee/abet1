@@ -117,4 +117,7 @@ function loadProgram(program) {
     // add and setup submit button
     content.append(gen({tag:"input", id:"submit", type:"button", value:"Submit"}));
     $("#submit").on("click", submitProgram);
+
+    // setup automated update for global object
+    initInputs();
 }

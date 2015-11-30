@@ -56,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         if (is_null($row))
             page_fail(NOT_FOUND);
 
-        return json_encode($row);
+        echo json_encode($row);
     }
     else {
         // create new program
@@ -65,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
             $insert = new Query(new QueryBuilder(INSERT_QUERY,array(
                 'table' => 'program',
                 'fields' => array('name'),
-                'values' => array(array("l:New Program"))
+                'values' => array(array("l:'New Program'"))
             )));
             if (!$insert->validate_update()) {
                 $rollback = true;
@@ -101,7 +101,7 @@ else if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 return array_key_exists($x,$_POST) && !is_null($_POST[$x])
                         && $_POST[$x] !== '';
             },
-            array('id', 'name', 'semester', 'year', 'description')
+            array('id', 'name', 'abbrv', 'semester', 'year', 'description')
     );
     if (in_array(false,$a))
         page_fail_with_reason(BAD_REQUEST,"missing or empty field name");
@@ -120,8 +120,6 @@ else if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         'where-params' => array("i:$_POST[id]"),
         'limit' => 1
     )));
-    if (!$query->validate_update())
-        page_fail(NOT_FOUND); // assume not found if failed update
 
     echo "{\"success\":true}";
 }
