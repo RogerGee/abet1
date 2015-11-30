@@ -26,8 +26,8 @@ require_once 'abet1-misc.php';
 
     This script creates/edits programs. The user must be an admin to do this. If
     the GET method is invoked the script either
-        1) gets a specified course object given an 'id'
-        2) creates a new course object and returns it (when no parameters are specified)
+        1) gets a specified program object given an 'id'
+        2) creates a new program object and returns it (when no parameters are specified)
 
     If the method is POST, the script expects an object just like the one it returns
     on GET. It will make the necessary updates to the database. The only field validation
@@ -42,10 +42,10 @@ if (!abet_is_admin_authenticated())
 
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     if (array_key_exists('id',$_GET)) {
-        // get existing course
+        // get existing program
         $query = new Query(new QueryBuilder(SELECT_QUERY,array(
             'tables' => array(
-                'course' => array(
+                'program' => array(
                     'id', 'name', 'abbrv', 'semester', 'year', 'description'
                 )
             ),
@@ -59,11 +59,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         return json_encode($row);
     }
     else {
-        // create new course
+        // create new program
         list($code,$json) = Query::perform_transaction(function(&$rollback){
-            // insert new row for new course
+            // insert new row for new program
             $insert = new Query(new QueryBuilder(INSERT_QUERY,array(
-                'table' => 'course',
+                'table' => 'program',
                 'fields' => array('name'),
                 'values' => array(array("l:New Program"))
             )));
@@ -72,10 +72,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
                 return array(SERVER_ERROR,"an insertion operation failed");
             }
 
-            // grab the new course object
+            // grab the new program object
             $query = new Query(new QueryBuilder(SELECT_QUERY,array(
                 'tables' => array(
-                    'course' => array(
+                    'program' => array(
                         'id', 'name', 'abbrv', 'semester', 'year', 'description'
                     )
                 ),
@@ -108,7 +108,7 @@ else if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     // update the specified element
     $query = new Query(new QueryBuilder(UPDATE_QUERY,array(
-        'table' => 'course',
+        'table' => 'program',
         'updates' => array(
             'name' => "s:$_POST[name]",
             'abbrv' => "s:$_POST[abbrv]",
