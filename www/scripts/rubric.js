@@ -160,9 +160,10 @@ function loadRubric(rubric) {
 		$(this).parent().children().html(getPrettyPercent($(this).val()));
 	});
 	$("input[type=button][value=delete]").on("click", function() {
+		var id = this.id;
 		$.confirm("Are you sure?", "The following item will be deleted forever!",
 			"Delete", "Cancel").accept(function() {
-			deleteRow(this.id);
+			deleteRow(id);
 		});
 	});
 	$("input[type=button][value='Add Row']").on("click", addRow)
