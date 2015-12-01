@@ -88,25 +88,26 @@ function initPhone() {
 }
 //hijack internal hrefs
 function hijackAnchors() {
-	if ($(".internal").attr("hijacked"))
-		return;
-	$(".internal").attr("hijacked", true);
-	$(".internal").click(function(event) {
-		event.preventDefault();
-		var href = $(this).attr("href");
-		var id = this.id;
-		if (!hasState()) {
-			navigateInternal(href, id);
-		} else {
-			$.confirm("Unsubmited Work", "You have unsubmited data on this page.\n" +
-				"Are you sure you wish to leave? All changes will be lost",
-				"Leave", "Stay").accept(function() {
-				//scrub cache
-				clearState();
-				//"navigate"
+	$(".internal").each(function() {
+		if ($._data(this, "events") && $._data(this, "events").click)
+			return;
+		$(this).click(function(event) {
+			event.preventDefault();
+			var href = $(this).attr("href");
+			var id = this.id;
+			if (!hasState()) {
 				navigateInternal(href, id);
-			});
-		}
+			} else {
+				$.confirm("Unsubmited Work", "You have unsubmited data on this page.\n"+
+					"Are you sure you wish to leave? All changes will be lost.",
+					"Leave", "Stay").accept(function() {
+					//scrub cache
+					clearState();
+					//"navigate"
+					navigateInternal(href, id);
+				});
+			}
+		});
 	});
 }
 //check on document ready for any previous unsaved work
@@ -135,6 +136,7 @@ $(document).ready(function() {
 			$("#settings").fadeToggle(300);
 	});
 	loadNavigation();
+	setInterval(loadNavigation, 60000);
 });
 //assign to nested obj
 function assign(o, s, v) {

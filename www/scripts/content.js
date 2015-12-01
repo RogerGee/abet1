@@ -83,7 +83,7 @@ function loadContent(general_content) {
 	var content = $("#content");
 	content.html("");
 	content.append("<h2>Content</h2>");
-	for (i = 0; i < object.length; i++) {
+	for (var i = 0; i < object.length; i++) {
 		content.append(gen(processContent(object[i], i)));
 	}
 	content.append(gen({tag:"input", type:"button", id:"add", value:"Add"}));
@@ -114,11 +114,14 @@ function loadContent(general_content) {
 }
 
 function submitItem(id, type) {
+	$(".submit_success").remove();
 	$.ajax({method:"post", url:"content.php", dataType:"json", data:obj.content[id],
 		statusCode:{
 			200: function() {
 				//verify it worked to user
-				
+				$("input[value=save][id="+id+"]").after(gen(
+					{tag:"div","class":"submit_success",children:"Changes Submitted"}
+				));
 				//cut the modification
 				var last = ":content";
 				if (type == "file")

@@ -51,11 +51,14 @@ function loadWorksheet(worksheet) {
 }
 
 function submitWorksheet() {
+	$(".submit_success").remove();
 	$.ajax({method:"post", url:"worksheet.php", dataType:"json", data:obj,
 		statusCode:{
 			200: function() {
 				//verify it worked to user
-				
+				$("#submit").after(gen(
+					{tag:"p","class":"submit_success",children:"Changes Submitted"}
+				));
 				//scrub cache
 				clearState();
 			},

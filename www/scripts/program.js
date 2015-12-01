@@ -9,6 +9,7 @@ function programIncoming(program) {
     obj = program;
     obj.load_func = "loadProgram";
     loadProgram(obj);
+	loadNavigation();
 }
 
 // retrieve a single program for edit specified by id (user clicked

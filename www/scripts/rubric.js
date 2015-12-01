@@ -94,7 +94,7 @@ function loadRubric(rubric) {
 			{tag:"th", children:"Delete"}
 		]}
 	]};
-	for (i = 0; i < rubric.competency.length; i++) {
+	for (var i = 0; i < rubric.competency.length; i++) {
 		var a = rubric.competency[i].unacceptable_tally / rubric.total_students;
 		var b = rubric.competency[i].marginal_tally / rubric.total_students;
 		var c = rubric.competency[i].expected_tally / rubric.total_students;
@@ -137,11 +137,10 @@ function loadRubric(rubric) {
 	content.append(gen(table));
 	content.append("<input type='button' id='submit' value='Submit'/>");
 	$("#total_students").on("keyup mouseup", function() {
+		$("#total_students").trigger("change");
 		$(".rubric input[type=number]").trigger("input");
 	});
 	$(".rubric input[type=number]").on("input", function() {
-		if ($(this).val() < 0)
-			$(this).val(0);
 		var total = 0;
 		$("input[row="+$(this).attr("row")+"]").each(function() {
 			total += parseInt($(this).val());
@@ -150,8 +149,10 @@ function loadRubric(rubric) {
 			total -= $(this).val();
 			$(this).val(obj.total_students - total);
 		}
-		var x = $(this).val() / obj.total_students * 100;
-		x = +x.toFixed(2);
+		if ($(this).val() < 0)
+			$(this).val(0);
+		var x = $(this).val() * 100;
+		x = +(obj.total_students != 0 ? x / obj.total_students : 0).toFixed(2);
 		$(this).parent().children().html(x + "%");
 	});
 	$("input[type=button][value=delete]").on("click", function() {
@@ -166,11 +167,14 @@ function loadRubric(rubric) {
 }
 
 function submitRubric() {
+	$(".submit_success").remove();
 	$.ajax({method:"post", url:"rubric.php", dataType:"json", data:obj,
 		statusCode:{
 			200: function() {
 				//verify it worked to user
-				
+				$("#submit").after(gen(
+					{tag:"p","class":"submit_success",children:"Changes Submitted"}
+				));
 				//scrub cache
 				clearState();
 			},
