@@ -105,15 +105,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 }
 else if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // verify fields
+    static $fields = array('id', 'name', 'abbrv', 'semester', 'year', 'description');
     $a = array_map(
             function($x) {
-                return array_key_exists($x,$_POST) && !is_null($_POST[$x])
-                        && $_POST[$x] !== '';
+                if (!array_key_exists($x,$_POST))
+                    return null;
+                return !is_null($_POST[$x]) && $_POST[$x] !== '';
             },
-            array('id', 'name', 'abbrv', 'semester', 'year', 'description')
+            $fields
     );
-    if (in_array(false,$a))
-        page_fail_with_reason(BAD_REQUEST,"missing or empty field name");
+    if (($key = array_search(false,$a,false)) !== false) {
+        if (is_null($a[$key]))
+            page_fail_with_reason(BAD_REQUEST,"missing field name");
+        page_fail_on_field(BAD_REQUEST,$fields[$key],'value must have non-zero length');
+    }
 
     // update the specified element
     $query = new Query(new QueryBuilder(UPDATE_QUERY,array(

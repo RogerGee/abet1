@@ -104,3 +104,16 @@ function file_download($fileId) {
     echo $result['file_contents'];
     return true;
 }
+
+function generic_update($table,$id,array $updates) {
+    if (count($updates) <= 0)
+        return;
+
+    $query = new Query(new QueryBuilder(UPDATE_QUERY,array(
+        'table' => $table,
+        'updates' => $updates,
+        'where' => "$table.id = ?",
+        'where-params' => array("i:$id"),
+        'limit' => 1
+    )));
+}

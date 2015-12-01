@@ -316,11 +316,6 @@ else if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if (!is_uploaded_file($_FILES['file']['tmp_name']))
                 page_fail_with_reason(SERVER_ERROR,"file upload was unsuccessful");
 
-            // limit file size to 250mb (there probably is a better way of doing
-            // this that doesn't require the file to actually finish uploading)
-            if ($_FILES['file']['size'] > 262100000)
-                page_fail_with_reason(SERVER_ERROR,"uploaded file is too large");
-
             echo create_file($_POST['id']);
         }
         else if ($_POST['type'] == 'comment') {
