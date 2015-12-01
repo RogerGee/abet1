@@ -135,6 +135,9 @@ $(document).ready(function() {
 			$("#settings").css("display") != "none")
 			$("#settings").fadeToggle(300);
 	});
+	$(window).resize(function() {
+		$(".tree").tree();
+	}
 	loadNavigation();
 	setInterval(loadNavigation, 60000);
 });
