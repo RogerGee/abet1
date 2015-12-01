@@ -211,7 +211,7 @@ function deleteRow(id) {
 		data:{"delete":obj.competency[id].id},
 		statusCode:{
 			200: function() {
-				obj.content.splice(id, 1);
+				obj.competency.splice(id, 1);
 				loadRubric(obj);
 				if (hasState())
 					saveState();
