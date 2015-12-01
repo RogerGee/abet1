@@ -19,7 +19,7 @@ require_once 'abet1-misc.php';
     | id |  // id is of assessment_worksheet that references rubric
     *----*
 
-    Fields: POST
+    Fields: POST (update)
     *--------------------------------------------------------------------------------------*
     | id // assessment_worksheet                                                           |
     | name threshold threshold_desc // rubric                                              |
@@ -29,7 +29,12 @@ require_once 'abet1-misc.php';
     |               unacceptable_tally,pass_fail_type,comment]                             |
     *--------------------------------------------------------------------------------------*
 
-    This script handles getting and updating rubric user objects.
+    Fields: POST (create competency result row)
+    *--------------*
+    | add:"row" id |
+    *--------------*
+
+    This script handles getting, updating and expanding rubric user objects.
 */
 
 function get_rubric($id) {
@@ -192,7 +197,7 @@ function update_rubric($obj) {
     return "{\"success\":true}";
 }
 
-function delete_competency($id) {
+function delete_competency($id) { // 'id' is competency id
     // check access to entity
     if (!abet_is_admin_authenticated() && !check_competency_result_access($_SESSION['id'],$id,$found)) {
         if (!$found)
@@ -211,6 +216,52 @@ function delete_competency($id) {
     return "{\"success\":true}";
 }
 
+function add_comp_row($id) { // 'id' is worksheet id
+    return Query::perform_transaction(function(&$rollback) use($id){
+        // select id of rubric_results entity
+        $query = new Query(new QueryBuilder(SELECT_QUERY,array(
+            'tables' => array('rubric_results' => 'id'),
+            'joins' => array(
+                'INNER JOIN assessment_worksheet ON assessment_worksheet.fk_rubric_results = rubric_results.id'
+            ),
+            'where' => 'assessment_worksheet.id = ?',
+            'where-params' => array("i:$id")
+        )));
+        if ($query->is_empty())
+            page_fail(NOT_FOUND);
+        $rrId = $query->get_row_ordered()[0];
+
+        // insert new competency_results entity
+        $insert = new Query(new QueryBuilder(INSERT_QUERY,array(
+            'table' => 'competency_results',
+            'fields' => array(
+                'outstanding_tally', 'expected_tally', 'marginal_tally',
+                'unacceptable_tally', 'fk_rubric_results'
+            ),
+            'values' => array(array("l:0","l:0","l:0","l:0","l:$rrId")),
+        )));
+
+        // select the inserted row and return it
+        $comp = new Query(new QueryBuilder(SELECT_QUERY,array(
+            'tables' => array(
+                'competency_results' => array(
+                    'id', 'competency_desc', 'outstanding_tally', 'expected_tally',
+                    'marginal_tally', 'unacceptable_tally', 'pass_fail_type',
+                    'comment'
+                )
+            ),
+            'aliases' => array(
+                'competency_results.competency_desc' => 'description'
+            ),
+            'where' => 'id = LAST_INSERT_ID()',
+        )));
+        if ($comp->is_empty())
+            page_fail(SERVER_ERROR); // shouldn't happen
+
+        return json_encode($comp->get_row_assoc());
+    });
+}
+
 header('Content-Type: application/json');
 
 // verify logged in user
@@ -218,7 +269,12 @@ if (!abet_is_authenticated())
     page_fail(UNAUTHORIZED);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    if (array_key_exists('delete',$_POST)) // delete case
+    if (array_key_exists('add',$_POST) && $_POST['add'] == 'row'
+            && array_key_exists('id',$_POST))
+    {
+        echo add_comp_row($_POST['id']);
+    }
+    else if (array_key_exists('delete',$_POST)) // delete case
         echo delete_competency($_POST['delete']);
     else // update case
         echo update_rubric($_POST);
