@@ -102,9 +102,11 @@ function loadContent(general_content) {
 		}
 	});
 	$("input[type=button][value=delete]").on("click", function() {
+		var id = $(this).attr("id");
+		var type = $(this).attr("tp");
 		$.confirm("Are you sure?", "The following item will be deleted forever!",
 			"Delete", "Cancel").accept(function() {
-			deleteItem($(this).attr("id"), $(this).attr("tp"));
+			deleteItem(id, type);
 		});
 	});
 	$("input[type=button][value=save]").on("click", function() {
@@ -153,6 +155,7 @@ function addComment() {
 
 function addFile() {
 	var data = new FormData();
+	$("#file").attr("disabled", true);
 	data.append("file", $("#file").prop("files")[0]);
 	data.append("type", "file");
 	data.append("id", obj.id)
@@ -165,7 +168,8 @@ function addFile() {
 					saveState();
 			},
 			400: function() {
-				//this shouldn't happen
+				//this shouldn't happen (but it does)
+				$("#file").attr("disabled", false);
 			}
 		}
 	});
