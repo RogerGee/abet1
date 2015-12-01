@@ -59,7 +59,13 @@ function compNav(data) {
 	hijackAnchors();
 }
 
+//global flag to prevent calling loadNavigation twice simultaneously
+var __loading__ = false;
+
 function loadNavigation() {
+	if (__loading__)
+		return;
+	__loading__ = true;
 	$.ajax({url:"/nav.php",dataType:"json"}).done(function(data) {
 		if ($("#left_bar").html())
 			return compNav(data[0]);
@@ -71,6 +77,6 @@ function loadNavigation() {
 		}
 		$("#navtree, #admintree").tree();
 		hijackAnchors();
-	});
+	}).done(function() {__loading__ = false;});
 }
 

@@ -37,6 +37,8 @@ function submitProgram() {
                 $("#submit").after(gen(
                     {tag:"p","class":"submit_success",children:"Changes Submitted"}
                 ));
+				//reload the nav, since we just changed it
+				loadNavigation();
                 //scrub the cache, but only on successful submit
                 clearState();
             },
