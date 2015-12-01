@@ -19,14 +19,18 @@
 				//set a dummy attribute h to the height of folded content
 				$(this).attr("h", h);
 				//subtract this height from the parent ul
-				if (!$(this).is("[open]"))
-					$(this).parent().parent().attr("h",$(this).parent().parent().attr("h")-h);
+				$(this).parent().parent().attr("h",$(this).parent().parent().attr("h")-h);
 			});
-			//close those that weren't already open
+			//close those that weren't already open, and open those that were
 			$(root).find("ul").each(function() {
 				if ($(this).is("[open]")) {
-					$(this).css("height", $(this).attr("h"));
 					$(this).attr("open", false);
+					var h = parseInt($(this).attr("h"));
+					$(this).css("height", h);
+					$(this).parents(".tree ul").each(function() {
+						$(this).attr("h", parseInt($(this).attr("h")) + h);
+						$(this).css("height", $(this).attr("h"));
+					});
 				} else {
 					$(this).css("height", 0);
 				}
