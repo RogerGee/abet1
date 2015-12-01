@@ -43,8 +43,8 @@ function submitProgram() {
             400: function(data) {
                 // these shouldn't happen because of the drop downs (will just
                 // happen if fields were left empty)
-                if (typeof data.errField !== "undefined") {
-                    data = data.responseJSON;
+                data = data.responseJSON;
+				if (typeof data.errField !== "undefined") {
                     $("#"+data.errField).parent().after(gen(
                         {tag:"td","class":"submit_error",children:data.error}
                     ));
@@ -118,7 +118,10 @@ function loadProgram(program) {
     // add and setup submit button
     content.append(gen({tag:"input", id:"submit", type:"button", value:"Submit"}));
     $("#submit").on("click", submitProgram);
-
+	
     // setup automated update for global object
     initInputs();
+	
+	//set some defaults
+	$("select").trigger("change");
 }

@@ -8,6 +8,11 @@ function getRubric(id) {
 	});
 }
 
+function getPrettyPercent(number) {
+	var x = number * 100;
+	return +(obj.total_students != 0 ? x / obj.total_students : 0).toFixed(2) + "%";
+}
+
 function loadRubric(rubric) {
 	/*	draft of rubric JSON
 		{
@@ -95,34 +100,35 @@ function loadRubric(rubric) {
 		]}
 	]};
 	for (var i = 0; i < rubric.competency.length; i++) {
-		var a = rubric.competency[i].unacceptable_tally / rubric.total_students;
-		var b = rubric.competency[i].marginal_tally / rubric.total_students;
-		var c = rubric.competency[i].expected_tally / rubric.total_students;
-		var d = rubric.competency[i].outstanding_tally / rubric.total_students;
+		var a = getPrettyPercent(rubric.competency[i].unacceptable_tally);
+		var b = getPrettyPercent(rubric.competency[i].marginal_tally);
+		var c = getPrettyPercent(rubric.competency[i].expected_tally);
+		var d = getPrettyPercent(rubric.competency[i].outstanding_tally);
+		console.log(d);
 		table.children.push({tag:"tr", children:[
 			{tag:"td", children:{tag:"textarea", "class":"property", rows:4, cols:30,
 				id:"competency:"+i+":description",
 				children:rubric.competency[i].description
 			}},
-			{tag:"td", style:"width:6em;", children:[{tag:"h2", children:a+"%"},
+			{tag:"td", style:"width:6em;", children:[{tag:"h2", children:a},
 				{tag:"input", type:"number", "class":"property", style:"width:4em;",
 					id:"competency:"+i+":unacceptable_tally", row:i,
 					value:rubric.competency[i].unacceptable_tally
 				}
 			]},
-			{tag:"td", style:"width:6em;", children:[{tag:"h2", children:b+"%"},
+			{tag:"td", style:"width:6em;", children:[{tag:"h2", children:b},
 				{tag:"input", type:"number", "class":"property", style:"width:4em;",
 					id:"competency:"+i+":marginal_tally", row:i,
 					value:rubric.competency[i].marginal_tally
 				}
 			]},
-			{tag:"td", style:"width:6em;", children:[{tag:"h2", children:c+"%"},
+			{tag:"td", style:"width:6em;", children:[{tag:"h2", children:c},
 				{tag:"input", type:"number", "class":"property", style:"width:4em;",
 					id:"competency:"+i+":expected_tally", row:i,
 					value:rubric.competency[i].expected_tally
 				}
 			]},
-			{tag:"td", style:"width:6em;", children:[{tag:"h2", children:a+"%"},
+			{tag:"td", style:"width:6em;", children:[{tag:"h2", children:d},
 				{tag:"input", type:"number", "class":"property", style:"width:4em;",
 					id:"competency:"+i+":outstanding_tally", row:i,
 					value:rubric.competency[i].outstanding_tally
@@ -151,9 +157,7 @@ function loadRubric(rubric) {
 		}
 		if ($(this).val() < 0)
 			$(this).val(0);
-		var x = $(this).val() * 100;
-		x = +(obj.total_students != 0 ? x / obj.total_students : 0).toFixed(2);
-		$(this).parent().children().html(x + "%");
+		$(this).parent().children().html(getPrettyPercent($(this).val()));
 	});
 	$("input[type=button][value=delete]").on("click", function() {
 		$.confirm("Are you sure?", "The following item will be deleted forever!",
