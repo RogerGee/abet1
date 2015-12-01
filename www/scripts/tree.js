@@ -19,7 +19,8 @@
 				//set a dummy attribute h to the height of folded content
 				$(this).attr("h", h);
 				//subtract this height from the parent ul
-				$(this).parent().parent().attr("h",$(this).parent().parent().attr("h")-h);
+				if (!$(this).is("[open]"))
+					$(this).parent().parent().attr("h",$(this).parent().parent().attr("h")-h);
 			});
 			//close those that weren't already open
 			$(root).find("ul").each(function() {
