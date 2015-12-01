@@ -48,7 +48,7 @@ function loadRubric(rubric) {
 	content.append(gen({tag:"table", children:[
 		{tag:"tr", children:[
 			{tag:"td", children:"Unacceptable Description:"},
-			{tag:"td", children:{tag:"textarea", "class":"property", rows:2, cols:68,
+			{tag:"td", children:{tag:"textarea", "class":"property", rows:3, cols:68,
 				id:"unacceptable_desc", children:rubric.unacceptable_desc
 			}}
 		]},
