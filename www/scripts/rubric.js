@@ -40,11 +40,50 @@ function loadRubric(rubric) {
 	var content = $("#content");
 	content.html("");
 	content.append("<h2>" + rubric.name + "</h2>");
-	content.append("<p>Unacceptable: " + rubric.unacceptable_desc + "</p>");
-	content.append("<p>Marginal: " + rubric.marginal_desc + "</p>");
-	content.append("<p>Expected: " + rubric.expected_desc + "</p>");
-	content.append("<p>Outstanding: " + rubric.outstanding_desc + "</p>");
-	content.append("<p><u>" + rubric.threshold_desc + "</u></p>");
+	content.append(gen({tag:"table", children:[
+		{tag:"tr", children:[
+			{tag:"td", children:"Unacceptable Description:"},
+			{tag:"td", children:{tag:"input", "class":"property", type:"input", 
+				id:"unacceptable_desc", value:rubric.unacceptable_desc
+			}}
+		]},
+		{tag:"tr", children:[
+			{tag:"td", children:"Marginal Description:"},
+			{tag:"td", children:{tag:"input", "class":"property", type:"input", 
+				id:"marginal_desc", value:rubric.marginal_desc
+			}}
+		]},
+		{tag:"tr", children:[
+			{tag:"td", children:"Expected Description:"},
+			{tag:"td", children:{tag:"input", "class":"property", type:"input", 
+				id:"expected_desc", value:rubric.expected_desc
+			}}
+		]},
+		{tag:"tr", children:[
+			{tag:"td", children:"Outstanding Description:"},
+			{tag:"td", children:{tag:"input", "class":"property", type:"input", 
+				id:"outstanding_desc", value:rubric.outstanding_desc
+			}}
+		]},
+		{tag:"tr", children:[
+			{tag:"td", children:"Threshold:"},
+			{tag:"td", children:{tag:"input", "class":"property", type:"number", 
+				min:0, max:1, step:.01, id:"threshold", value:rubric.threshold
+			}}
+		]},
+		{tag:"tr", children:[
+			{tag:"td", children:"Threshold Description:"},
+			{tag:"td", children:{tag:"input", "class":"property", type:"input", 
+				id:"threshold_desc", value:rubric.threshold_desc
+			}}
+		]},
+		{tag:"tr", children:[
+			{tag:"td", children:"Students:"},
+			{tag:"td", children:{tag:"input", "class":"property", type:"number", 
+				min:0, max:999, step:1, id:"total_students", value:rubric.total_students
+			}}
+		]}
+	]}));
 	var table = {tag:"table", "class":"rubric", children:[
 		{tag:"tr", children:[
 			{tag:"th", children:"Component"},
@@ -56,27 +95,39 @@ function loadRubric(rubric) {
 		]}
 	]};
 	for (i = 0; i < rubric.competency.length; i++) {
+		var a = rubric.competency[i].unacceptable_tally / rubric.total_students;
+		var b = rubric.competency[i].marginal_tally / rubric.total_students;
+		var c = rubric.competency[i].expected_tally / rubric.total_students;
+		var d = rubric.competency[i].outstanding_tally / rubric.total_students;
 		table.children.push({tag:"tr", children:[
 			{tag:"td", children:{tag:"textarea", "class":"property", rows:4, cols:30,
 				id:"competency:"+i+":description",
 				children:rubric.competency[i].description
 			}},
-			{tag:"td", children:{tag:"input", type:"number", "class":"property",
-				id:"competency:"+i+":unacceptable_tally", row:i,
-				value:rubric.competency[i].unacceptable_tally
-			}},
-			{tag:"td", children:{tag:"input", type:"number", "class":"property",
-				id:"competency:"+i+":marginal_tally", row:i,
-				value:rubric.competency[i].marginal_tally
-			}},
-			{tag:"td", children:{tag:"input", type:"number", "class":"property",
-				id:"competency:"+i+":expected_tally", row:i,
-				value:rubric.competency[i].expected_tally
-			}},
-			{tag:"td", children:{tag:"input", type:"number", "class":"property",
-				id:"competency:"+i+":outstanding_tally", row:i,
-				value:rubric.competency[i].outstanding_tally
-			}},
+			{tag:"td", style:"width:6em;", children:[{tag:"h2", children:a+"%"},
+				{tag:"input", type:"number", "class":"property", style:"width:4em;",
+					id:"competency:"+i+":unacceptable_tally", row:i,
+					value:rubric.competency[i].unacceptable_tally
+				}
+			]},
+			{tag:"td", style:"width:6em;", children:[{tag:"h2", children:b+"%"},
+				{tag:"input", type:"number", "class":"property", style:"width:4em;",
+					id:"competency:"+i+":marginal_tally", row:i,
+					value:rubric.competency[i].marginal_tally
+				}
+			]},
+			{tag:"td", style:"width:6em;", children:[{tag:"h2", children:c+"%"},
+				{tag:"input", type:"number", "class":"property", style:"width:4em;",
+					id:"competency:"+i+":expected_tally", row:i,
+					value:rubric.competency[i].expected_tally
+				}
+			]},
+			{tag:"td", style:"width:6em;", children:[{tag:"h2", children:a+"%"},
+				{tag:"input", type:"number", "class":"property", style:"width:4em;",
+					id:"competency:"+i+":outstanding_tally", row:i,
+					value:rubric.competency[i].outstanding_tally
+				}
+			]},
 			{tag:"td", children:{tag:"input", id:i, type:"button", value:"delete"}}
 		]});
 	}
@@ -85,7 +136,10 @@ function loadRubric(rubric) {
 	});
 	content.append(gen(table));
 	content.append("<input type='button' id='submit' value='Submit'/>");
-	$("input[type=number]").on("input", function() {
+	$("#total_students").on("keyup mouseup", function() {
+		$(".rubric input[type=number]").trigger("input");
+	});
+	$(".rubric input[type=number]").on("input", function() {
 		if ($(this).val() < 0)
 			$(this).val(0);
 		var total = 0;
@@ -96,12 +150,18 @@ function loadRubric(rubric) {
 			total -= $(this).val();
 			$(this).val(obj.total_students - total);
 		}
+		var x = $(this).val() / obj.total_students * 100;
+		x = +x.toFixed(2);
+		$(this).parent().children().html(x + "%");
 	});
 	$("input[type=button][value=delete]").on("click", function() {
-		deleteRow(this.id);
+		$.confirm("Are you sure?", "The following item will be deleted forever!",
+			"Delete", "Cancel").accept(function() {
+			deleteRow(this.id);
+		});
 	});
 	$("input[type=button][value='Add Row']").on("click", addRow)
-	$("#submit").on("click", submitContent);
+	$("#submit").on("click", submitRubric);
 	initInputs();
 }
 

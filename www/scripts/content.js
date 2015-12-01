@@ -102,7 +102,10 @@ function loadContent(general_content) {
 		}
 	});
 	$("input[type=button][value=delete]").on("click", function() {
-		deleteItem($(this).attr("id"), $(this).attr("tp"));
+		$.confirm("Are you sure?", "The following item will be deleted forever!",
+			"Delete", "Cancel").accept(function() {
+			deleteItem($(this).attr("id"), $(this).attr("tp"));
+		});
 	});
 	$("input[type=button][value=save]").on("click", function() {
 		submitItem($(this).attr("id"), $(this).attr("tp"));

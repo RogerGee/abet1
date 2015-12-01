@@ -13,6 +13,7 @@ function loadWorksheet(worksheet) {
 		{
 			faculty:"",
 			criterion:"",
+			characteristic:"",
 			activity:"", || course:"",
 			objective:"",
 			instrument:"",
