@@ -137,7 +137,7 @@ $(document).ready(function() {
 	});
 	$(window).resize(function() {
 		$(".tree").tree();
-	}
+	});
 	loadNavigation();
 	setInterval(loadNavigation, 60000);
 });
