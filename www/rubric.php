@@ -164,9 +164,15 @@ function update_rubric($obj) {
         foreach ($obj['competency'] as $comp) {
             if (!array_key_exists('id',$comp))
                 continue;
+            $id = $comp['id'];
+
+            // check access to competency result entity (silently fail if denied)
+            if (!abet_is_admin_authenticated() && !check_competency_result_access($_SESSION['id'],$id,$found))
+                continue;
+
             $updates = array();
             if (array_key_exists('description',$comp))
-                $updates['description'] = "s:$comp[description]";
+                $updates['competency_desc'] = "s:$comp[description]";
             if (array_key_exists('outstanding_tally',$comp))
                 $updates['outstanding_tally'] = "s:$comp[outstanding_tally]";
             if (array_key_exists('expected_tally',$comp))
@@ -186,6 +192,25 @@ function update_rubric($obj) {
     return "{\"success\":true}";
 }
 
+function delete_competency($id) {
+    // check access to entity
+    if (!abet_is_admin_authenticated() && !check_competency_result_access($_SESSION['id'],$id,$found)) {
+        if (!$found)
+            page_fail(NOT_FOUND);
+        page_fail(UNAUTHORIZED);
+    }
+
+    // delete element
+    $query = new Query(new QueryBuilder(DELETE_QUERY,array(
+        'tables' => 'competency_results',
+        'where' => "competency_results.id = ?",
+        'where-params' => array("i:$id"),
+        'limit' => 1
+    )));
+
+    return "{\"success\":true}";
+}
+
 header('Content-Type: application/json');
 
 // verify logged in user
@@ -193,7 +218,10 @@ if (!abet_is_authenticated())
     page_fail(UNAUTHORIZED);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    echo update_rubric($_POST);
+    if (array_key_exists('delete',$_POST)) // delete case
+        echo delete_competency($_POST['delete']);
+    else // update case
+        echo update_rubric($_POST);
 }
 else if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     if (!array_key_exists('id',$_GET))

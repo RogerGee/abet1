@@ -76,6 +76,31 @@ function check_general_content_item_access($userId,$entityId,$entityKind,&$found
     return check_assessment_access($userId,$gcId,'general_content');
 }
 
+function check_competency_result_access($userId,$crId,&$found) {
+    // select the first assessment_worksheet which (through several layers of
+    // indirection) is referenced by the competency item
+    $query = new Query(new QueryBuilder(SELECT_QUERY,array(
+        'tables' => array(
+            'assessment_worksheet' => 'id'
+        ),
+        'joins' => array(
+            "INNER JOIN rubric_results ON rubric_results.id = assessment_worksheet.fk_rubric_results",
+            "INNER JOIN competency_results ON competency_results.fk_rubric_results = rubric_results.id"
+        ),
+        'where' => "competency_results.id = ?",
+        'where-params' => array("i:$crId")
+    )));
+    if ($query->is_empty()) {
+        $found = false;
+        return false;
+    }
+    $found = true;
+
+    // then verify that we have access to the worksheet for some assessment
+    $wkstId = $query->get_row_ordered()[0];
+    return check_assessment_access($userId,$wkstId,'assessment_worksheet');
+}
+
 function file_download($fileId) {
     // get file info and contents: the file should be big enough to hold in
     // memory until we can send it
