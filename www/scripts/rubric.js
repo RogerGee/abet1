@@ -49,25 +49,25 @@ function loadRubric(rubric) {
 		{tag:"tr", children:[
 			{tag:"td", children:"Unacceptable Description:"},
 			{tag:"td", children:{tag:"textarea", "class":"property", rows:2, cols:66,
-				id:"unacceptable_desc", html:rubric.unacceptable_desc
+				id:"unacceptable_desc", children:rubric.unacceptable_desc
 			}}
 		]},
 		{tag:"tr", children:[
 			{tag:"td", children:"Marginal Description:"},
 			{tag:"td", children:{tag:"textarea", "class":"property", rows:2, cols:66,
-				id:"marginal_desc", html:rubric.marginal_desc
+				id:"marginal_desc", children:rubric.marginal_desc
 			}}
 		]},
 		{tag:"tr", children:[
 			{tag:"td", children:"Expected Description:"},
 			{tag:"td", children:{tag:"textarea", "class":"property", rows:2, cols:66,
-				id:"expected_desc", html:rubric.expected_desc
+				id:"expected_desc", children:rubric.expected_desc
 			}}
 		]},
 		{tag:"tr", children:[
 			{tag:"td", children:"Outstanding Description:"},
 			{tag:"td", children:{tag:"textarea", "class":"property", rows:2, cols:66,
-				id:"outstanding_desc", html:rubric.outstanding_desc
+				id:"outstanding_desc", children:rubric.outstanding_desc
 			}}
 		]},
 		{tag:"tr", children:[
@@ -79,7 +79,7 @@ function loadRubric(rubric) {
 		{tag:"tr", children:[
 			{tag:"td", children:"Threshold Description:"},
 			{tag:"td", children:{tag:"textarea", "class":"property", rows:2, cols:66,
-				id:"threshold_desc", html:rubric.threshold_desc
+				id:"threshold_desc", children:rubric.threshold_desc
 			}}
 		]},
 		{tag:"tr", children:[
