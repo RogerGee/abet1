@@ -115,7 +115,7 @@ function update_wkst($id,$objec,$instr,$coa) {
     if (!is_null($instr))
         $us['instrument'] = "s:$instr";
     if (!is_null($coa))
-        $fs['course_of_action'] = "s:$coa";
+        $us['course_of_action'] = "s:$coa";
 
     if (count($us) > 0) {
         // update the three fields of importance
