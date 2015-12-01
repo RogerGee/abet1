@@ -9,7 +9,6 @@ function programIncoming(program) {
     obj = program;
     obj.load_func = "loadProgram";
     loadProgram(obj);
-	loadNavigation();
 }
 
 // retrieve a single program for edit specified by id (user clicked
@@ -24,7 +23,11 @@ function editProgram(id) {
 function createProgram(id) {
     // use AJAX to call GET on program.php with no parameters; this will cause
     // the server to get us a new program object
-    $.ajax({method:"GET",url:"program.php"}).done(programIncoming);
+    $.ajax({method:"GET",url:"program.php"}).done(function(data) {
+		programIncoming(data);
+		//reload the nav, since we just changed it
+		loadNavigation();
+	});
 }
 
 // submits changes to create new program
