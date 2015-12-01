@@ -120,8 +120,8 @@ function make_assessment_node($row,$parent) {
     global $isAdmin;
 
     $assessment = new stdClass;
-    if (!is_null($row['assessment.name']) && $row['assessment.name'] != '')
-        $assessment->label = "Assessment ({$row['assessment.name']})";
+    if (!is_null($row['abet_assessment.name']) && $row['abet_assessment.name'] != '')
+        $assessment->label = "Assessment ({$row['abet_assessment.name']})";
     else
         $assessment->label = 'Assessment (unsorted)';
     $assessment->children = array();
@@ -320,6 +320,12 @@ for ($i = 1;$i <= $query->get_number_of_rows();$i++) {
         // assessment if there is content
         $assessment->children[] = $content;
     }
+
+    // unset variables for next iteration
+    unset($program);
+    unset($criterion);
+    unset($characteristic);
+    unset($assessment);
 }
 
 $navTrees[] = $userTools;
