@@ -195,4 +195,34 @@ class ABETAssessment {
             }
         });
     }
+
+    // return list of users who can edit assessment; elements contain
+    // a tuple of (id,username,full_name); full_name is "$first $last"
+    function get_acl() {
+        $query = new Query(new QueryBuilder(SELECT_QUERY,array(
+            'tables' => array(
+                'userprofile' => array(
+                    'id', 'username', 'first_name', 'last_name'
+                )
+            ),
+            'joins' => array(
+                'INNER JOIN userauth ON userprofile.fk_userauth = userauth.id',
+                'INNER JOIN acl_entry ON acl_entry.fk_profile = userprofile.id',
+                'INNER JOIN acl ON acl.id = acl_entry.fk_acl',
+                'INNER JOIN abet_assessment ON abet_assessment.fk_acl = acl.id'
+            ),
+            'where' => "abet_assessment.id = $this->id AND userauth.role = 'Faculty'"
+        )));
+
+        $results = array();
+        $query->for_each_assoc(function($row) use(&$results){
+            $entry = new stdClass;
+            $entry->id = $row['id'];
+            $entry->username = $row['username'];
+            $entry->full_name = "$row[first_name] $row[last_name]";
+            $results[] = $entry;
+        });
+
+        return $results;
+    }
 }

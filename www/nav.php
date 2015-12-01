@@ -86,7 +86,7 @@ function make_criterion_node($row,$program,$programId) {
         $createAssessment = new stdClass;
         $createAssessment->label = "Create Assessment";
         $createAssessment->type = 'createAssessment';
-        $createAssessment->id = $programId;
+        $createAssessment->id = "$programId:{$row['abet_criterion.id']}";
         $criterion->children[] = $createAssessment;
     }
 
