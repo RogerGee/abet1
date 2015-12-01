@@ -22,7 +22,7 @@ function loadWorksheet(worksheet) {
 	var content = $("#content");
 	content.html("");
 	content.append("<h2>Assessment Worksheet</h2>");
-	content.append(gen({tag:"ol", children:[
+	content.append(gen({tag:"ul", children:[
 		{tag:"li", children:["Faculty Member(s) responsible<br/>", worksheet.faculty]},
 		{tag:"li", children:["ABET Criterion to be assessing<br/>", worksheet.criterion]},
 		{tag:"li", children:["Course or activity where measure is used<br/>",
@@ -38,10 +38,6 @@ function loadWorksheet(worksheet) {
 				children:worksheet.instrument
 			}
 		]},
-		{tag:"li", children:["Name of rubric used to evaluate performance",
-			"<br/>Rubric exists in sidebar"
-		]},
-		{tag:"li", children:"The results<br/>On Rubric"},
 		{tag:"li", children:["Course of Action<br/>",
 			{tag:"textarea", "class":"property", cols:80, rows:4,
 				children:worksheet.course_of_action
