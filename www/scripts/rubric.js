@@ -48,26 +48,26 @@ function loadRubric(rubric) {
 	content.append(gen({tag:"table", children:[
 		{tag:"tr", children:[
 			{tag:"td", children:"Unacceptable Description:"},
-			{tag:"td", children:{tag:"input", "class":"property", type:"input", 
-				id:"unacceptable_desc", value:rubric.unacceptable_desc
+			{tag:"td", children:{tag:"textarea", "class":"property", rows:2, cols:66,
+				id:"unacceptable_desc", html:rubric.unacceptable_desc
 			}}
 		]},
 		{tag:"tr", children:[
 			{tag:"td", children:"Marginal Description:"},
-			{tag:"td", children:{tag:"input", "class":"property", type:"input", 
-				id:"marginal_desc", value:rubric.marginal_desc
+			{tag:"td", children:{tag:"textarea", "class":"property", rows:2, cols:66,
+				id:"marginal_desc", html:rubric.marginal_desc
 			}}
 		]},
 		{tag:"tr", children:[
 			{tag:"td", children:"Expected Description:"},
-			{tag:"td", children:{tag:"input", "class":"property", type:"input", 
-				id:"expected_desc", value:rubric.expected_desc
+			{tag:"td", children:{tag:"textarea", "class":"property", rows:2, cols:66,
+				id:"expected_desc", html:rubric.expected_desc
 			}}
 		]},
 		{tag:"tr", children:[
 			{tag:"td", children:"Outstanding Description:"},
-			{tag:"td", children:{tag:"input", "class":"property", type:"input", 
-				id:"outstanding_desc", value:rubric.outstanding_desc
+			{tag:"td", children:{tag:"textarea", "class":"property", rows:2, cols:66,
+				id:"outstanding_desc", html:rubric.outstanding_desc
 			}}
 		]},
 		{tag:"tr", children:[
@@ -78,8 +78,8 @@ function loadRubric(rubric) {
 		]},
 		{tag:"tr", children:[
 			{tag:"td", children:"Threshold Description:"},
-			{tag:"td", children:{tag:"input", "class":"property", type:"input", 
-				id:"threshold_desc", value:rubric.threshold_desc
+			{tag:"td", children:{tag:"textarea", "class":"property", rows:2, cols:66,
+				id:"threshold_desc", html:rubric.threshold_desc
 			}}
 		]},
 		{tag:"tr", children:[
