@@ -10,6 +10,7 @@ set_include_path(implode(PATH_SEPARATOR,$paths));
 require_once 'abet1-login.php';
 require_once 'abet1-query.php';
 require_once 'abet1-misc.php';
+require_once 'abet1-object.php';
 
 /* program.php - JSON transfer specification
 
@@ -28,6 +29,7 @@ require_once 'abet1-misc.php';
     the GET method is invoked the script either
         1) gets a specified program object given an 'id'
         2) creates a new program object and returns it (when no parameters are specified)
+            - new programs have default assessments for each criterion
 
     If the method is POST, the script expects an object just like the one it returns
     on GET. It will make the necessary updates to the database. The only field validation
@@ -85,6 +87,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
             if (is_null($row)) {
                 $rollback = true;
                 return array(SERVER_ERROR,"could not retrieve inserted row");
+            }
+
+            // create a default assessment for each criterion that has a general
+            // content item
+            foreach (range(1,8) as $critId) {
+                $assess = ABETAssessment::create('',$row['id'],null,$critId);
+                $assess->add_general_content();
             }
 
             return array(OKAY,json_encode($row));

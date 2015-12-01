@@ -39,13 +39,19 @@ require_once 'abet1-misc.php';
 
     The JSON object will be an array. Each element corresponds to a navigation
     tree we want the user to have access to.
+
+    The nav tree built by assessment: if a program has no assessments then no
+    output will be generated. This is why it is important to define at least
+    one assessment per program. The root user will see criteria that do not
+    necessarily have assessments yet - they have the command tool to create assessments
+    under those criteria.
 */
 
 function make_program_node($row,$parent) {
     global $isAdmin;
 
     $program = new stdClass;
-    $program->label = "$row[name] - $row[semester] $row[year]";
+    $program->label = "{$row['program.name']} - $row[semester] $row[year]";
     $program->children = array();
 
     // add admin tools for programs
@@ -114,7 +120,10 @@ function make_assessment_node($row,$parent) {
     global $isAdmin;
 
     $assessment = new stdClass;
-    $assessment->label = 'Assessment';
+    if (!is_null($row['assessment.name']) && $row['assessment.name'] != '')
+        $assessment->label = "Assessment ({$row['assessment.name']})";
+    else
+        $assessment->label = 'Assessment (unsorted)';
     $assessment->children = array();
 
     // add admin tools for assessments
@@ -145,7 +154,7 @@ $isAdmin = abet_is_admin_authenticated();
 // design query to select all navigation for current user
 $qbInfo = array(
     'tables' => array(
-        'abet_assessment'=>'id',
+        'abet_assessment'=>array('id','name'),
         'program'=>array('id','name','semester','year'),
         'abet_criterion'=>array('id','rank','description'),
         'abet_characteristic'=>array('id','level','program_specifier','short_name'),
@@ -303,7 +312,7 @@ for ($i = 1;$i <= $query->get_number_of_rows();$i++) {
     if (!is_null($row['general_content.id'])) {
         // general-content item
         $content = new stdClass;
-        $content->label = 'Content';
+        $content->label = 'General Content';
         $content->type = 'getContent';
         $content->id = $row['general_content.id'];
 

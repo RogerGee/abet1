@@ -73,11 +73,11 @@ FROM userprofile
 WHERE username = 'john';
 
 -- create assessments
-INSERT INTO abet_assessment (fk_program,fk_characteristic,fk_criterion,fk_acl) VALUES
-    (1,10,3,1),
-    (1,11,3,2),
-    (1,4,3,3),
-    (2,2,3,4);
+INSERT INTO abet_assessment (fk_program,fk_characteristic,fk_criterion,fk_acl,name) VALUES
+    (1,10,3,1,'Intro Scripting'),
+    (1,11,3,2,'Intro Programming'),
+    (1,4,3,3,'Team Programming'),
+    (2,2,3,4,'Random');
 
 -- create rubric descriptions for rubrics
 INSERT INTO rubric_description (outstanding_desc,expected_desc,marginal_desc,unacceptable_desc) VALUES
@@ -130,34 +130,27 @@ INSERT INTO rubric_results (total_students) VALUES
     5
 );
 
--- create competencies for competency results
-INSERT INTO competency (description) VALUES
-('Demonstrate knowledge of fundamental terms and concepts associated with introductory level computer programming.'),
-('Given a simple problem statement, develop a program to solve the problem.'),
-('In a structured problem setting, trace the code and correctly identify the basic programming constructs, such as data types, assignment statements, arithmetic operators, relational and logical operators, decision processing steps, repetition, and mathematical functions.'),
-('When tracing the steps of ill-posed source code, identify the sections or steps that process or function incorrectly and/or produce errors (such as syntax errors) and specify solutions.');
-
 -- create competency results
-INSERT INTO competency_results (pass_fail_type,outstanding_tally,expected_tally,marginal_tally,unacceptable_tally,fk_rubric_results,fk_competency) VALUES
-    (FALSE,15,8,0,0,1,1), /* CS 115 Assessment Rubric */
-    (FALSE,8,8,2,5,1,2),
-    (FALSE,13,6,0,4,1,3),
-    (FALSE,7,0,7,9,1,4),
+INSERT INTO competency_results (pass_fail_type,outstanding_tally,expected_tally,marginal_tally,unacceptable_tally,fk_rubric_results,competency_desc) VALUES
+    (FALSE,15,8,0,0,1,'Demonstrate knowledge of fundamental terms and concepts associated with introductory level computer programming.'), /* CS 115 Assessment Rubric */
+    (FALSE,8,8,2,5,1,'Given a simple problem statement, develop a program to solve the problem.'),
+    (FALSE,13,6,0,4,1,'In a structured problem setting, trace the code and correctly identify the basic programming constructs, such as data types, assignment statements, arithmetic operators, relational and logical operators, decision processing steps, repetition, and mathematical functions.'),
+    (FALSE,7,0,7,9,1,'When tracing the steps of ill-posed source code, identify the sections or steps that process or function incorrectly and/or produce errors (such as syntax errors) and specify solutions.'),
 
-    (FALSE,10,5,3,2,2,1), /* CS 120 Assessment Rubric */
-    (FALSE,10,5,3,2,2,2),
-    (FALSE,10,5,3,2,2,3),
-    (FALSE,10,5,3,2,2,4),
+    (FALSE,10,5,3,2,2,'Demonstrate knowledge of fundamental terms and concepts associated with introductory level computer programming.'), /* CS 120 Assessment Rubric */
+    (FALSE,10,5,3,2,2,'Given a simple problem statement, develop a program to solve the problem.'),
+    (FALSE,10,5,3,2,2,'In a structured problem setting, trace the code and correctly identify the basic programming constructs, such as data types, assignment statements, arithmetic operators, relational and logical operators, decision processing steps, repetition, and mathematical functions.'),
+    (FALSE,10,5,3,2,2,'When tracing the steps of ill-posed source code, identify the sections or steps that process or function incorrectly and/or produce errors (such as syntax errors) and specify solutions.'),
 
-    (TRUE,10,0,0,0,3,1), /* CS 567 Assessment Rubric */
-    (TRUE,10,0,0,0,3,2),
-    (TRUE,10,0,0,0,3,3),
-    (TRUE,9,0,0,0,3,4),
+    (TRUE,10,0,0,0,3,'Demonstrate knowledge of fundamental terms and concepts associated with introductory level computer programming.'), /* CS 567 Assessment Rubric */
+    (TRUE,10,0,0,0,3,'Given a simple problem statement, develop a program to solve the problem.'),
+    (TRUE,10,0,0,0,3,'In a structured problem setting, trace the code and correctly identify the basic programming constructs, such as data types, assignment statements, arithmetic operators, relational and logical operators, decision processing steps, repetition, and mathematical functions.'),
+    (TRUE,9,0,0,0,3,'When tracing the steps of ill-posed source code, identify the sections or steps that process or function incorrectly and/or produce errors (such as syntax errors) and specify solutions.'),
 
-    (FALSE,4,1,0,0,4,1), /* CS 318 Assessment Rubric */
-    (FALSE,3,2,0,0,4,2),
-    (FALSE,2,1,1,1,4,3),
-    (FALSE,1,1,1,2,4,4);
+    (FALSE,4,1,0,0,4,'Demonstrate knowledge of fundamental terms and concepts associated with introductory level computer programming.'), /* CS 318 Assessment Rubric */
+    (FALSE,3,2,0,0,4,'Given a simple problem statement, develop a program to solve the problem.'),
+    (FALSE,2,1,1,1,4,'In a structured problem setting, trace the code and correctly identify the basic programming constructs, such as data types, assignment statements, arithmetic operators, relational and logical operators, decision processing steps, repetition, and mathematical functions.'),
+    (FALSE,1,1,1,2,4,'When tracing the steps of ill-posed source code, identify the sections or steps that process or function incorrectly and/or produce errors (such as syntax errors) and specify solutions.');
 
 -- create assessment worksheets
 INSERT INTO assessment_worksheet (fk_assessment,fk_course,objective,instrument,course_of_action,fk_rubric,fk_rubric_results) VALUES

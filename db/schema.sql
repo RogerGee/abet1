@@ -137,7 +137,7 @@ CREATE TABLE abet_assessment (
     fk_characteristic INT, /* may be null if no characteristic */
     fk_criterion INT NOT NULL, /* must refer to a criterion */
     fk_acl INT NOT NULL, /* who can write to the assessment and its children */
-    currency DATE,
+    name VARCHAR(512), /* user-defined name for assessment */
     last_touch TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
     FOREIGN KEY (fk_program) REFERENCES program (id),
@@ -242,14 +242,14 @@ CREATE TABLE assessment_worksheet (
     FOREIGN KEY (fk_last_edit) REFERENCES userprofile (id)
 ) ENGINE=InnoDB;
 
--- create table competency; a competency is also called a 'component' of the
--- assessment rubric
-CREATE TABLE competency (
-    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    description VARCHAR(1024),
-    created TIMESTAMP DEFAULT 0,
-    last_touch TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-) ENGINE=InnoDB;
+-- -- create table competency; a competency is also called a 'component' of the
+-- -- assessment rubric
+-- CREATE TABLE competency (
+--     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+--     description VARCHAR(1024),
+--     created TIMESTAMP DEFAULT 0,
+--     last_touch TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+-- ) ENGINE=InnoDB;
 
 -- -- create intersection table rubric_competency; creates a many-to-many
 -- -- relationship between rubrics and competencies
@@ -274,12 +274,11 @@ CREATE TABLE competency_results (
     pass_fail_type BOOLEAN, /* if TRUE then only use outstanding and rubric_results.total_students */
     comment VARCHAR(4096),
     fk_rubric_results INT NOT NULL,
-    fk_competency INT NOT NULL,
+    competency_desc VARCHAR(1024),
     created TIMESTAMP DEFAULT 0,
     last_touch TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
-    FOREIGN KEY (fk_rubric_results) REFERENCES rubric_results (id),
-    FOREIGN KEY (fk_competency) REFERENCES competency (id)
+    FOREIGN KEY (fk_rubric_results) REFERENCES rubric_results (id)
 ) ENGINE=InnoDB;
 
 -- -----------------------------------------------------------------------------

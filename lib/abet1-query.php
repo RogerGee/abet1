@@ -73,7 +73,8 @@ class Query {
 
         // cache results
         $this->stmt->store_result();
-        $this->isResultBased = $builder->kind == SELECT_QUERY;
+        $this->isResultBased = $builder->kind == SELECT_QUERY
+            || strpos(strtolower("$builder"),'select') === 0;
 
         // get field names into array
         $metadata = $this->stmt->result_metadata();
@@ -300,6 +301,7 @@ define('INSERT_QUERY','insert');
 define('UPDATE_QUERY','update');
 define('SELECT_QUERY','select');
 define('DELETE_QUERY','delete');
+define('RAW_QUERY','raw');
 
 class QueryBuilder {
     /*
@@ -359,6 +361,10 @@ class QueryBuilder {
                 Notes: you must specify at least one of 'where' or 'limit' due
                 to mySQL safe-mode; 'joins' may reference other tables that
                 are not to be deleted from
+
+            [raw]
+                'query': raw query string
+                'variables': preparations for query string
     */
 
     public $kind;
@@ -380,6 +386,9 @@ class QueryBuilder {
                 break;
             case 'delete':
                 $this->qstring = $this->delete_string($info);
+                break;
+            case 'raw':
+                $this->qstring = $this->raw_string($info);
                 break;
             default:
                 throw new Exception("parameter 'kind' was incorrect in call "
@@ -442,14 +451,18 @@ class QueryBuilder {
         // if 'values' was specified, then use a VALUES clause to insert values
         // directly
         if (array_key_exists('values',$info)) {
-            $s = 'VALUES ';
-            foreach ($info['values'] as $a) {
-                if (!is_array($a)) throw new Exception("");
+            if (is_null($info['values']) || count($info['values']) == 0)
+                $q .= "VALUES()"; // inserting empty row
+            else {
+                $s = 'VALUES ';
+                foreach ($info['values'] as $a) {
+                    if (!is_array($a)) throw new Exception("");
 
-                // turn each value into a prepared parameter before adding
-                // to the query; this replaces each value with '?'
-                $q .= "$s(" . implode(',',array_map(array($this,'make_prep'),$a)) . ")";
-                $s = ", ";
+                    // turn each value into a prepared parameter before adding
+                    // to the query; this replaces each value with '?'
+                    $q .= "$s(" . implode(',',array_map(array($this,'make_prep'),$a)) . ")";
+                    $s = ", ";
+                }
             }
         }
 
@@ -629,6 +642,18 @@ class QueryBuilder {
         if (array_key_exists('limit',$info)) {
             $q .= " LIMIT $info[limit]";
         }
+
+        return $q;
+    }
+
+    private function raw_string($info) {
+        if (!array_key_exists('query',$info)) {
+            throw new Exception("");
+        }
+
+        $q = "$info[query]";
+        if (array_key_exists('variables',$info))
+            array_wak($info['variables'],array($this,'make_prep'));
 
         return $q;
     }
