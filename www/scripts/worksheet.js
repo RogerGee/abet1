@@ -30,17 +30,17 @@ function loadWorksheet(worksheet) {
 			(worksheet.activity ? worksheet.activity : worksheet.course)
 		]},
 		{tag:"li", children:["Objective or standard that interprets the Criterion<br/>",
-			{tag:"textarea", "class":"property", cols:80, rows:4,
+			{tag:"textarea", id:"objective", "class":"property", cols:80, rows:4,
 				children:worksheet.objective
 			}
 		]},
 		{tag:"li", children:["The test of the instrument used to make the evaluation<br/>",
-			{tag:"textarea", "class":"property", cols:80, rows:4,
+			{tag:"textarea", id:"instrument", "class":"property", cols:80, rows:4,
 				children:worksheet.instrument
 			}
 		]},
 		{tag:"li", children:["Course of Action<br/>",
-			{tag:"textarea", "class":"property", cols:80, rows:4,
+			{tag:"textarea", id:"course_of_action", "class":"property", cols:80, rows:4,
 				children:worksheet.course_of_action
 			}
 		]}
