@@ -1,7 +1,7 @@
 (function($) {
 	$.fn.extend({
 		/* set up tree */
-		tree: function() {
+		tree_old: function() {
 			if ($(this).prop("tagName") != "UL")
 				return;
 			var root = this;
@@ -62,6 +62,52 @@
 						$(this).css("height", $(this).attr("h"));
 						$(this).css("transition-duration", (h/200)+"s");
 					});
+				}
+			});
+		},
+		tree: function() {
+			//make sure this is a ul, nothing else can be a tree
+			if (!$(this).is("ul"))
+				return;
+			var root = this;
+			$(root).addClass("tree");
+			//make sure tree is fully expanded
+			$(root).find("ul").css("height", "auto");
+			//close those that weren't already open
+			$(root).find("ul").each(function() {
+				if (!$(this).is("[open]")) {
+					$(this).css("height", 0);
+				}
+			});
+			//remove any previously set click listeners
+			$(root).find("div").off("click");
+			//add the click listener
+			$(root).find("div").on("click", function() {
+				var ul = $($(this).parent()).children("ul");
+				//set all parent uls to auto
+				$(ul).parents(".tree ul").css("height", "auto");
+				if (!$(ul).is("[open]")) {
+					//set open attribute
+					$(ul).attr("open", true);
+					//hack to silently expand, grab height, and return to previous size
+					var h1 = parseInt($(ul).css("height"));
+					$(ul).css("height", "auto");
+					var h2 = parseInt($(ul).css("height"));
+					$(ul).css("height", h1);
+					//set duration based on the change in height
+					$(ul).css("transition-duration", ((h2-h1)/200)+"s");
+					//set the new height after a millisecond
+					setTimeout(function() {$(ul).css("height", h2);}, 1);
+				} else {
+					//set open attribute
+					$(ul).attr("open", false);
+					//change the height from auto to specific height
+					var h = parseInt($(ul).css("height"));
+					$(ul).css("height", h);
+					//set duration based on the change in height
+					$(ul).css("transition-duration", (h/200)+"s");
+					//set the new height after a millisecond
+					setTimeout(function() {$(ul).css("height", 0);}, 1);
 				}
 			});
 		}
