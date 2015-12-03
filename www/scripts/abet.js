@@ -116,10 +116,11 @@ $(document).ready(function() {
 	loadHome();
 	//check on document ready for any previous unsaved work, or a refresh
 	if (sessionStorage[user]) {
-		if (hasState())
+		if (hasState()) {
 			reloadPage();
-		if (!obj._modifs)
-			clearState();
+			if (obj._modifs)
+				clearState();
+		}
 		$("#left_bar").html(sessionStorage[user]);
 	} else if (hasState()) {
 		$.confirm("Unsaved Data", "It seems you left before submitting data.\n" +
