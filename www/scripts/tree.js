@@ -84,6 +84,11 @@
 			//add the click listener
 			$(root).find("div").on("click", function() {
 				var ul = $($(this).parent()).children("ul");
+				//make sure all parents are open
+				var open = true;
+				$(ul).parents(".tree ul").each(function() {
+					open &= $(this).is("[open]");
+				}); if (!open) return;
 				//set all parent uls to auto
 				$(ul).parents(".tree ul").css("height", "auto");
 				if (!$(ul).is("[open]")) {
