@@ -110,8 +110,10 @@ function hijackAnchors() {
 		});
 	});
 }
-//check on document ready for any previous unsaved work
 $(document).ready(function() {
+	//load the home page
+	loadHome();
+	//check on document ready for any previous unsaved work
 	if (hasState()) {
 		$.confirm("Unsaved Data", "It seems you left before submitting data.\n" +
 			"Would you like to reload your progress?", "Yes", "No")

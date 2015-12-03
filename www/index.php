@@ -23,6 +23,7 @@ if (!abet_is_authenticated()) {
 		<script src="scripts/jquery.min.js" type="text/javascript"></script>
 		<script src="scripts/jquery-ui.min.js" type="text/javascript"></script>
 		<script src="scripts/abet.js" type="text/javascript"></script>
+		<script src="scripts/home.js" type="text/javascript"></script>
 		<script src="scripts/profile.js" type="text/javascript"></script>
 		<script src="scripts/navigation.js" type="text/javascript"></script>
 		<script src="scripts/content.js" type="text/javascript"></script>
@@ -34,6 +35,7 @@ if (!abet_is_authenticated()) {
 		<!-- Admin only scripts go here -->
 		<script src="scripts/usercreate.js" type="text/javascript"></script>
 		<script src="scripts/program.js" type="text/javascript"></script>
+		<script src="scripts/assessment.js" type="text/javascript"></script>
 		<?php } ?>
 		<link rel="stylesheet" href="stylesheets/abet.css" />
 		<link rel="stylesheet" href="stylesheets/tree.css" />
@@ -44,7 +46,7 @@ if (!abet_is_authenticated()) {
 	</head>
 	<body>
 		<div class="top_bar">
-			<a href="/" class="nav_button"><h1>ABET</h1></a>
+			<a href="loadHome" class="nav_button internal"><h1>ABET</h1></a>
 			<input type="text" placeholder="search" class="search"></input>
 			<div class="top_icons">
 				<img id="notif" src="resources/notif.png" class="icon"></img>
@@ -63,15 +65,6 @@ if (!abet_is_authenticated()) {
 			</div>
 		</div>
 		<div id="left_bar" class="left_bar"></div>
-		<div id="content" class="content">
-			this is content
-			<br/><br/><br/><br/><br/><br/><br/><br/><br/>
-			<br/><br/><br/><br/><br/><br/><br/><br/><br/>
-			<br/><br/><br/><br/><br/><br/><br/><br/><br/>
-			<br/><br/><br/><br/><br/><br/><br/><br/><br/>
-			<br/><br/><br/><br/><br/><br/><br/><br/><br/>
-			<br/><br/><br/><br/><br/><br/><br/><br/><br/>
-			look scrollbars
-		</div>
+		<div id="content" class="content"></div>
 	</body>
 </html>

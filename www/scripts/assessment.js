@@ -37,17 +37,14 @@ function loadAssessment(assessment) {
 			characteristics:[
 				{
 					id:"",
-					level:"",
-					program_specifier:"",
-					short_name:""
+					name:""
 				} //, ...
 			],
 			characteristic:4,
 			profiles:[
 				{
 					id:12,
-					first_name:"",
-					last_name:""
+					name:""
 				} //, ...
 			],
 			acl:[5, 6, 7],
@@ -55,7 +52,7 @@ function loadAssessment(assessment) {
 			worksheets:[
 				{
 					id:3,
-					course_or_activity:""
+					name:""
 				} //, ...
 			]
 		}
@@ -87,14 +84,14 @@ function loadAssessment(assessment) {
 	]};
 	for (var i = 0; i < assessment.characteristics.length; i++) {
 		var c = assessment.characteristics[i];
-		var opt = {tag:"option", value:c.id, children:c.short_name};
+		var opt = {tag:"option", value:c.id, children:c.name};
 		if (c.id == assessment.characteristic)
 			opt.selected = true;
 		table.children[1].children[1].children.children.push(opt);
 	}
 	for (var i = 0; i < assessment.profiles.length; i++) {
 		var p = assessment.profiles[i];
-		var opt = {tag:"option", value:p.id, children:p.first_name + " " + p.last_name};
+		var opt = {tag:"option", value:p.id, children:p.name};
 		table.children[3].children[0].children.children.push(opt);
 	}
 	content.append(gen(table));
