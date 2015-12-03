@@ -118,6 +118,8 @@ $(document).ready(function() {
 	if (sessionStorage[user]) {
 		if (hasState())
 			reloadPage();
+		if (!obj._modifs)
+			clearState();
 		$("#left_bar").html(sessionStorage[user]);
 	} else if (hasState()) {
 		$.confirm("Unsaved Data", "It seems you left before submitting data.\n" +
