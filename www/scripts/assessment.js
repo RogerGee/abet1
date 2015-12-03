@@ -100,13 +100,11 @@ function loadAssessment(assessment) {
 		if (i == 0)
 			content.append("<h2>Worksheets</h2>");
 		var w = assessment.worksheets[i];
-		content.append(gen({tag:"a", href:"getWorksheet", 
-			id:w.id, children:w.course_or_activity
-		}));
+		content.append(gen({tag:"a", href:"getWorksheet", id:w.id, children:w.name}));
 		content.append("<br/>")
 		if (i == assessment.worksheets.length - 1) {
 			content.append(gen({tag:"input", type:"text", id:"activity"}));
-			content.append(gen({tag:"input", type:"button", id:"create"}));
+			content.append(gen({tag:"input", type:"button", id:"create", value:"Create"}));
 		}
 	}
 	$("#acl_add").on("click", function() {

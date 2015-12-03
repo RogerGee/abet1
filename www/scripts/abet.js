@@ -35,7 +35,8 @@ function hasState() {
 	return localStorage[user] !== undefined;
 }
 function saveState() {
-	localStorage[user] = JSON.stringify(obj);
+	if (obj)
+		localStorage[user] = JSON.stringify(obj);
 }
 function loadState() {
 	return JSON.parse(localStorage[user]);
@@ -113,8 +114,12 @@ function hijackAnchors() {
 $(document).ready(function() {
 	//load the home page
 	loadHome();
-	//check on document ready for any previous unsaved work
-	if (hasState()) {
+	//check on document ready for any previous unsaved work, or a refresh
+	if (sessionStorage[user]) {
+		if (hasState())
+			reloadPage();
+		$("#left_bar").html(sessionStorage[user]);
+	} else if (hasState()) {
 		$.confirm("Unsaved Data", "It seems you left before submitting data.\n" +
 			"Would you like to reload your progress?", "Yes", "No")
 			.accept(reloadPage).decline(clearState);
@@ -168,5 +173,9 @@ function initInputs() {
 $(document).ajaxError(function(event, jqxhr) {
 	if (jqxhr.status == 401)
 		window.location.href = "/login.php";
+});
+$(window).bind("beforeunload", function(event) {
+	sessionStorage[user] = $("#left_bar").html();
+	saveState();
 });
 
