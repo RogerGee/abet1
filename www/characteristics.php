@@ -154,7 +154,7 @@ else if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
     else {
         // edit existing characteristic
-        echo create_characteristic(
+        echo update_characteristic(
             $_POST['id'],
             isset($_POST['level']) ? $_POST['level'] : null,
             isset($_POST['short_name']) ? $_POST['short_name'] : null,
