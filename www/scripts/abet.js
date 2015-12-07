@@ -35,8 +35,7 @@ function hasState() {
 	return localStorage[user] !== undefined;
 }
 function saveState() {
-	if (obj)
-		localStorage[user] = JSON.stringify(obj);
+	localStorage[user] = JSON.stringify(obj);
 }
 function loadState() {
 	return JSON.parse(localStorage[user]);
@@ -118,7 +117,7 @@ $(document).ready(function() {
 	if (sessionStorage[user]) {
 		if (hasState()) {
 			reloadPage();
-			if (obj._modifs)
+			if (!obj._modifs)
 				clearState();
 		}
 		$("#left_bar").html(sessionStorage[user]);

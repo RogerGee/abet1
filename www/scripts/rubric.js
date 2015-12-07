@@ -10,7 +10,7 @@ function getRubric(id) {
 
 function getPrettyPercent(number) {
 	var x = number * 100;
-	return +(obj.total_students != 0 ? x / obj.total_students : 0).toFixed(2) + "%";
+	return +(x / obj.total_students || 0).toFixed(2) + "%";
 }
 
 function loadRubric(rubric) {
@@ -141,14 +141,14 @@ function loadRubric(rubric) {
 	});
 	content.append(gen(table));
 	content.append("<input type='button' id='submit' value='Submit'/>");
-	$("#total_students").on("keyup mouseup", function() {
+	$("#total_students").on("input", function() {
 		$("#total_students").trigger("change");
 		$(".rubric input[type=number]").trigger("input");
 	});
 	$(".rubric input[type=number]").on("input", function() {
 		var total = 0;
 		$("input[row="+$(this).attr("row")+"]").each(function() {
-			total += parseInt($(this).val());
+			total += parseInt($(this).val()) || 0;
 		});
 		if (total > obj.total_students) {
 			total -= $(this).val();
@@ -156,7 +156,7 @@ function loadRubric(rubric) {
 		}
 		if ($(this).val() < 0)
 			$(this).val(0);
-		$(this).parent().children().html(getPrettyPercent($(this).val()));
+		$(this).parent().children("h2").html(getPrettyPercent($(this).val()));
 	});
 	$("input[type=button][value=delete]").on("click", function() {
 		var id = this.id;

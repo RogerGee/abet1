@@ -11,7 +11,7 @@ function getContent(id) {
 
 function processContent(content, num) {
 	if (typeof(content.content) !== 'undefined') {	//comment
-		return {tag:"table", style:"border: 1px solid black;", children:[
+		return {tag:"table", "class":"box", children:[
 			{tag:"tr", children:[
 				{tag:"td", children:"Comment"},
 				{tag:"td", children:[
@@ -40,7 +40,7 @@ function processContent(content, num) {
 			]}
 		]};
 	} else {										//file_upload
-		return {tag:"table", style:"border: 1px solid black;", children:[
+		return {tag:"table", "class":"box", children:[
 			{tag:"tr", children:[
 				{tag:"td", children:"File Upload"},
 				{tag:"td", children:[

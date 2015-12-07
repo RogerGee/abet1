@@ -2,13 +2,13 @@
 	$.extend({
 		confirm: function(title, message, accept, decline) {
 			if ($(".confirm_wrapper").length) return;
-			if (typeof(message) === 'undefined') {
-				message = typeof(title) !== 'undefined' ? title : "Are you sure?";
+			if (message === undefined) {
+				message = title || "Are you sure?";
 				title = "Confirm";
 			}
-			title = typeof(title) !== 'undefined' ? title : "Confirm";
-			accept = typeof(accept) !== 'undefined' ? accept : "yes";
-			decline = typeof(decline) !== 'undefined' ? decline : "no";
+			title = title || "Confirm";
+			accept = accept || "yes";
+			decline = decline || "no";
 			$("body").append(gen({tag:"div", "class":"confirm_wrapper", children:[
 				{tag:"div", "class":"overlay"},
 				{tag:"div", "class":"box", children:[

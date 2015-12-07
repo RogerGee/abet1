@@ -27,7 +27,7 @@ function loadWorksheet(worksheet) {
 		{tag:"li", children:["Faculty Member(s) responsible<br/>", worksheet.faculty]},
 		{tag:"li", children:["ABET Criterion to be assessing<br/>", worksheet.criterion]},
 		{tag:"li", children:["Course or activity where measure is used<br/>",
-			(worksheet.activity ? worksheet.activity : worksheet.course)
+			(worksheet.activity || worksheet.course)
 		]},
 		{tag:"li", children:["Objective or standard that interprets the Criterion<br/>",
 			{tag:"textarea", id:"objective", "class":"property", cols:80, rows:4,

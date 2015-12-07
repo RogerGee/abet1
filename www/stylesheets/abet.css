@@ -109,9 +109,18 @@ textarea {
 .rubric td, .rubric th {
 	border: 1px solid black;
 }
-
+.rubric td {
+	background-color: #F5F5F5;
+}
+.rubric th {
+	background-color: #FAFAFA;
+}
 /* characteristics */
-
 .ch_entry_description {
 	text-decoration: underline;
+}
+/* content boxes */
+.box {
+	background-color: #F5F5F5;
+	border: 1px solid black;
 }
