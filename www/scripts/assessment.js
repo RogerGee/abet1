@@ -100,7 +100,7 @@ function loadAssessment(assessment) {
 		if (i == 0)
 			content.append("<h2>Worksheets</h2>");
 		var w = assessment.worksheets[i];
-		content.append(gen({tag:"a", href:"getWorksheet", id:w.id, children:w.name}));
+		content.append(gen({tag:"a", href:"getWorksheet", "class":"internal", id:w.id, children:w.name}));
 		content.append("<br/>")
 		if (i == assessment.worksheets.length - 1) {
 			content.append(gen({tag:"input", type:"text", id:"activity"}));
