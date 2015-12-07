@@ -47,6 +47,11 @@ function nextLevel(level) {
     return nextLevel(s) + 'a';
 }
 
+// determine if a is less than or equal to b with shortlex ordering (by cardinality first)
+function shortlex(a,b) {
+    return (a.length < b.length || (a.length == b.length && a <= b));
+}
+
 function characteristicsRadioClick() {
     // TODO: detect when object is not saved and prevent user from switching
     var cobj = obj.chars[$(this).parents('tr').attr('cobjid')];
@@ -147,7 +152,7 @@ function loadCharacteristics(chars) {
                         // insert the new characteristic into the array of characteristics
                         // and into the control interface at sorted position
                         var index = 0, newcobjid;
-                        while (index < obj.chars.length && obj.chars[index].level <= data.level)
+                        while (index < obj.chars.length && shortlex(obj.chars[index].level,data.level))
                             ++index;
                         newcobjid = obj.chars.length;
                         obj.chars.push(cobj); // (we don't change the order of this array)
@@ -231,7 +236,7 @@ function loadCharacteristics(chars) {
                             // its (possibly) new level
                             var index = 0;
                             var rows = $('tr[cobjid]');
-                            while (index < rows.length && $(rows[index]).attr('key') <= cobj.level)
+                            while (index < rows.length && shortlex($(rows[index]).attr('key'),cobj.level))
                                 ++index;
                             if (index >= obj.chars.length)
                                 $(rows[index-1]).after($('tr[cobjid='+cobjid+']'));
