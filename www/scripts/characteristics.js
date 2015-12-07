@@ -43,7 +43,7 @@ function nextLevel(level) {
     var i = level.length - 1;
     var s = level.substr(0,i);
     if (level[i] < 'z')
-        return s + String.fromCharCode(String.charCodeAt(level[i]) + 1);
+        return s + String.fromCharCode(level.charCodeAt(i) + 1);
     return nextLevel(s) + 'a';
 }
 
