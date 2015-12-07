@@ -94,7 +94,6 @@ function loadCharacteristics(chars) {
     }
 
     // create drop down content for program specifiers
-    var progSpec = [{tag:"option", value:null, children:"&lt;empty&gt;"}];
     for (var s of chars.prog_spec) {
         var item = {tag:"option", value:s, children:s};
         progSpec.push(item);
@@ -175,10 +174,10 @@ function loadCharacteristics(chars) {
                         }
                         else
                             newRow.children.push({tag:"td","class":"ch_entry_program_specifier"});
-                        if (index < obj.chars.length)
+                        if (index < obj.chars.length-1)
                             $('#options_table tr:nth-child(' + (index+1) + ')').before(gen(newRow));
                         else
-                            $('#options_table tr:nth-child(' + obj.chars.length + ')').after(gen(newRow));
+                            $('#options_table tr:nth-child(' + (obj.chars.length-1) + ')').after(gen(newRow));
 
                         // select the new radio button entry and set its click handler
                         var radbut = $('tr[cobjid='+newcobjid+'] input[type=radio]');
