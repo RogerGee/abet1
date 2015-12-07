@@ -30,7 +30,7 @@ function editCharacteristics() {
         obj.short_name = null;
         obj.description = null;
         obj.program_specifier = null;
-        obj.load_func = loadCharacteristics;
+        obj.load_func = "loadCharacteristics";
         loadCharacteristics(obj);
     });
 }
