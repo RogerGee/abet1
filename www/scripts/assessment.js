@@ -26,7 +26,7 @@ function setAssigned() {
 		lookup[obj.profiles[i].id] = i;
 	for (var i = 0; i < obj.acl.length; i++) {
 		var p = obj.profiles[lookup[obj.acl[i]]];
-		$("#acl").append(p.first_name + " " + p.last_name + "<br/>");
+		$("#acl").append(p.name + "<br/>");
 	}
 }
 
@@ -110,7 +110,7 @@ function loadAssessment(assessment) {
 	$("#acl_add").on("click", function() {
 		if (obj.acl.indexOf($("#profiles").val()) == -1)
 			obj.acl.push($("#profiles").val());
-		setAssigned()
+		setAssigned();
 	});
 	$("#acl_remove").on("click", function() {
 		var lookup = {};
@@ -118,7 +118,7 @@ function loadAssessment(assessment) {
 			lookup[obj.acl[i]] = i;
 		if (lookup[$("#profiles").val()] != null)
 			obj.acl.splice(lookup[$("#profiles").val()], 1);
-		setAssigned()
+		setAssigned();
 	});
 	$("#submit").on("click", submitAssessment);
 	$("#create").on("click", createWorksheet);
