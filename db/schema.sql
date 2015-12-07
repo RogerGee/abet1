@@ -122,7 +122,7 @@ CREATE TABLE program (
 -- create table `abet_characteristic`
 CREATE TABLE abet_characteristic (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    level CHAR, /* the organizational level ordered by (e.g. a) */
+    level VARCHAR(5), /* the organizational level ordered by (e.g. a) */
     program_specifier VARCHAR(8), /* e.g. CS, IT, ETC. */
     short_name VARCHAR(128), /* display name */
     description VARCHAR(4096),
@@ -279,6 +279,17 @@ CREATE TABLE competency_results (
     last_touch TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
     FOREIGN KEY (fk_rubric_results) REFERENCES rubric_results (id)
+) ENGINE=InnoDB;
+
+-- create table `rev`
+--  we use this table to store revisions of user objects as compressed JSON strings;
+--  each entity saves a snapshot of the database state at a given time so that we
+--  could potentially recreate it at a later time; this is based on the assumption
+--  that primary keys are never recycled
+CREATE TABLE rev (
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    type ENUM('worksheet','rubric','general_content'),
+    data BLOB
 ) ENGINE=InnoDB;
 
 -- -----------------------------------------------------------------------------

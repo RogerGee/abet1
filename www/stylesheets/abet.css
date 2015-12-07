@@ -110,4 +110,8 @@ textarea {
 	border: 1px solid black;
 }
 
+/* characteristics */
 
+.ch_entry_description {
+	text-decoration: underline;
+}

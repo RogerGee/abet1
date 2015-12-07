@@ -73,6 +73,15 @@ if (!ctype_alpha($_POST['username'][0])) {
     exit;
 }
 
+// validate user role; must be one of 'admin', 'faculty', 'observer'
+if ($_POST['role'] != 'faculty' && $_POST['role'] != 'admin' && $_POST['role'] != 'observer') {
+    page_fail_on_field(
+        BAD_REQUEST,
+        'role',
+        'role must be one of \'faculty\', \'admin\' or \'observer\''
+    );
+}
+
 // perform a transaction that will atomically check the database and do an
 // insert
 list($code,$json) = Query::perform_transaction(function(&$rollback) {
@@ -106,11 +115,15 @@ list($code,$json) = Query::perform_transaction(function(&$rollback) {
     // 'userauth' entity; we use the password hash to identify the userauth instance
     $query = new Query(new QueryBuilder(INSERT_QUERY,array(
         'table' => 'userprofile',
-        'fields' => array('fk_userauth','username'),
+        'fields' => array('fk_userauth','username','created'),
         'select' => array(
             'tables' => array(
                 'userauth'=>'id',
-                1 => "'$_POST[username]'"), // literal username value
+                1 => array(
+                    "'$_POST[username]'", // literal username value
+                    "NOW()" // value for 'created' field
+                )
+            ),
             'where' => "passwd = '$hash'" ))));
     if (!$query->validate_update()) {
         $rollback = true;

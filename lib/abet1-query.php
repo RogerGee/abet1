@@ -573,18 +573,7 @@ class QueryBuilder {
         }
         // else only one table
 
-        // handle order by, where and limit
-        if (array_key_exists('orderby',$info)) {
-            if (array_key_exists('orderby-params',$info)) {
-                if (!is_array($info['orderby-params']))
-                    throw new Exception("");
-                // if the user specified this, then they used unbound variables
-                // in the orderby-clause; now we must create the bindings
-                array_walk($info['orderby-params'],array($this,'make_prep'));
-            }
-
-            $q .= " ORDER BY $info[orderby]";
-        }
+        // handle where, order by, and limit
         if (array_key_exists('where',$info)) {
             if (array_key_exists('where-params',$info)) {
                 if (!is_array($info['where-params']))
@@ -595,6 +584,17 @@ class QueryBuilder {
             }
 
             $q .= " WHERE $info[where]";
+        }
+        if (array_key_exists('orderby',$info)) {
+            if (array_key_exists('orderby-params',$info)) {
+                if (!is_array($info['orderby-params']))
+                    throw new Exception("");
+                // if the user specified this, then they used unbound variables
+                // in the orderby-clause; now we must create the bindings
+                array_walk($info['orderby-params'],array($this,'make_prep'));
+            }
+
+            $q .= " ORDER BY $info[orderby]";
         }
         if (array_key_exists('limit',$info)) {
             $q .= " LIMIT $info[limit]";
