@@ -4,7 +4,7 @@ function editAssessment(id) {
 		obj = assessment;
 		obj.id = id;
 		obj.load_func = "loadAssessment";
-		loadAssssment(assessment);
+		loadAssessment(assessment);
 	});
 }
 
@@ -15,7 +15,7 @@ function createAssessment(id) {
 		function(assessment) {
 		obj = assessment;
 		obj.load_func = "loadAssessment";
-		loadAssssment(assessment);
+		loadAssessment(assessment);
 	});
 }
 
