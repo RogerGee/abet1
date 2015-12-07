@@ -175,7 +175,10 @@ function loadCharacteristics(chars) {
                         }
                         else
                             newRow.children.push({tag:"td","class":"ch_entry_program_specifier"});
-                        $('#options_table tr:nth-child(' + (index+1) + ')').before(gen(newRow));
+                        if (index < obj.chars.length)
+                            $('#options_table tr:nth-child(' + (index+1) + ')').before(gen(newRow));
+                        else
+                            $('#options_table tr:nth-child(' + obj.chars.length + ')').after(gen(newRow));
 
                         // select the new radio button entry and set its click handler
                         var radbut = $('tr[cobjid='+newcobjid+'] input[type=radio]');

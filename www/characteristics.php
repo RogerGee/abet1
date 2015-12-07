@@ -54,7 +54,7 @@ function get_characteristics() {
                 'id', 'level', 'short_name', 'description', 'program_specifier'
             )
         ),
-        'orderby' => 'abet_characteristic.level'
+        'orderby' => 'CHAR_LENGTH(level), level',
     )));
 
     return $query->get_rows_assoc();
