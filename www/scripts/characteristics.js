@@ -94,6 +94,7 @@ function loadCharacteristics(chars) {
     }
 
     // create drop down content for program specifiers
+    var progSpec = [];
     for (var s of chars.prog_spec) {
         var item = {tag:"option", value:s, children:s};
         progSpec.push(item);
