@@ -1,5 +1,5 @@
 /* functions for editing assessments */
-function getAssessment(id) {
+function editAssessment(id) {
 	$.ajax({url:"assessment.php?id="+id, dataType:"json"}).done(function(assessment) {
 		obj = assessment;
 		obj.id = id;
@@ -8,7 +8,7 @@ function getAssessment(id) {
 	});
 }
 
-function newAssessment(id) {
+function createAssessment(id) {
 	//id in this case is a fusion of program and criterion ids
 	var ids = id.split(":");
 	$.ajax({url:"assessment.php?pid="+ids[0]+"&cid="+ids[1], dataType:"json"}).done(

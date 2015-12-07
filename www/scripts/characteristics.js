@@ -189,6 +189,8 @@ function loadCharacteristics(chars) {
                         $("#response_message_insert").after(gen(
                             {tag:"p","class":"submit_success",children:"Characteristic Created"}
                         ));
+						//scrub cache
+						clearState();
                     },
                     400:function(data) {
                         data = data.responseJSON;
@@ -245,6 +247,8 @@ function loadCharacteristics(chars) {
                                 $(rows[index-1]).after($('tr[cobjid='+cobjid+']'));
                             else
                                 $(rows[index]).before($('tr[cobjid='+cobjid+']'));
+							//scrub cache
+							clearState();
                         },
                         400:function(data) {
                             data = data.responseJSON;
