@@ -47,12 +47,24 @@ require_once 'abet1-misc.php';
     under those criteria.
 */
 
+function create_unique_id($obj,$id = null) {
+    if (!isset($obj->label))
+        throw new Exception("create_unique_id() expects 'label' on object");
+    if (is_null($id)) {
+        if (!isset($obj->id))
+            throw new Exception("create_unique_id() expects 'id' on object");
+        $id = $obj->id;
+    }
+    $obj->identity = hash('md5',"$obj->label$id",false);
+}
+
 function make_program_node($row,$parent) {
     global $isAdmin;
 
     $program = new stdClass;
     $program->label = "{$row['program.name']} - $row[semester] $row[year]";
     $program->children = array();
+    create_unique_id($program,$row['program.id']);
 
     // add admin tools for programs
     if ($isAdmin) {
@@ -60,6 +72,7 @@ function make_program_node($row,$parent) {
         $editProgram->label = 'Edit Program';
         $editProgram->type = 'editProgram';
         $editProgram->id = $row['program.id'];
+        create_unique_id($editProgram);
         $program->children[] = $editProgram;
     }
 
@@ -80,13 +93,15 @@ function make_criterion_node($row,$program,$programId) {
     $criterion = new stdClass;
     $criterion->label = $label;
     $criterion->children = array();
+    create_unique_id($criterion,$row['abet_criterion.id']);
 
     // add admin tools for criteria
     if ($isAdmin) {
         $createAssessment = new stdClass;
         $createAssessment->label = "Create Assessment";
         $createAssessment->type = 'createAssessment';
-        $createAssessment->id = "$programId:{$row['abet_criterion.id']}";
+        $createAssessment->id = "$programId:{$row['abet_assessment.id']}";
+        create_unique_id($createAssessment);
         $criterion->children[] = $createAssessment;
     }
 
@@ -102,6 +117,7 @@ function make_characteristic_node($row,$criterion) {
     if (!is_null($row['program_specifier']) && $row['program_specifier'] !== '')
          $characteristic->label .= "[$row[program_specifier]]";
     $characteristic->children = array();
+    create_unique_id($characteristic,$row['abet_characteristic.id']);
 
     // add admin tools for characteristics
     // if ($isAdmin) {
@@ -125,6 +141,7 @@ function make_assessment_node($row,$parent) {
     else
         $assessment->label = 'Assessment (unsorted)';
     $assessment->children = array();
+    create_unique_id($assessment,$row['abet_assessment.id']);
 
     // add admin tools for assessments
     if ($isAdmin) {
@@ -132,6 +149,7 @@ function make_assessment_node($row,$parent) {
         $editAssessment->label = 'Edit Assessment';
         $editAssessment->type = 'editAssessment';
         $editAssessment->id = $row['abet_assessment.id'];
+        create_unique_id($editAssessment);
         $assessment->children[] = $editAssessment;
     }
 
@@ -191,6 +209,7 @@ $query = new Query(new QueryBuilder(SELECT_QUERY,$qbInfo));
 $userTools = new stdClass;
 $userTools->label = 'Content';
 $userTools->children = array();
+create_unique_id($userTools,1); // singularly unique
 
 // mappings to remember content organizers as we go through results
 $mappings = array();
@@ -277,6 +296,7 @@ for ($i = 1;$i <= $query->get_number_of_rows();$i++) {
         $content->label = 'Worksheet';
         $content->type = 'getWorksheet';
         $content->id = $row['assessment_worksheet.id'];
+        create_unique_id($content);
 
         if (!is_null($row['course_number']) || !is_null($row['activity'])) {
             // create division for worksheet content; this will include the
@@ -286,6 +306,7 @@ for ($i = 1;$i <= $query->get_number_of_rows();$i++) {
                 : $row['course_number'];
             $division->children = array();
             $assessment->children[] = $division;
+            create_unique_id($division,$row['assessment_worksheet.id']);
         }
         else
             // this shouldn't happen, but in case it does just add the worksheet/rubric
@@ -304,6 +325,7 @@ for ($i = 1;$i <= $query->get_number_of_rows();$i++) {
             $rubric->label = 'Rubric';
             $rubric->type = 'getRubric';
             $rubric->id = $row['assessment_worksheet.id'];
+            create_unique_id($rubric,$row['rubric.id']);
 
             $division->children[] = $rubric;
         }
@@ -315,6 +337,7 @@ for ($i = 1;$i <= $query->get_number_of_rows();$i++) {
         $content->label = 'General Content';
         $content->type = 'getContent';
         $content->id = $row['general_content.id'];
+        create_unique_id($content);
 
         // add content to assessment; there should always be a valid
         // assessment if there is content
@@ -351,32 +374,38 @@ if ($isAdmin) {
     $createProgram->type = 'createProgram';
     $createProgram->id = null;
     $userTools->children[] = $createProgram;
+    create_unique_id($createProgram,1);
 
     $createUser = new stdClass;
     $createUser->label = "Create New User";
     $createUser->type = 'loadUserCreate';
     $createUser->id = null;
+    create_unique_id($createUser,1);
 
     $editUser = new stdClass;
     $editUser->label = "Remove User";
     $editUser->type = "removeUser";
     $editUser->id = null;
+    create_unique_id($editUser,1);
 
     $editCharacteristics = new stdClass;
     $editCharacteristics->label = "Characteristics...";
     $editCharacteristics->type = "editCharacteristics";
     $editCharacteristics->id = null;
+    create_unique_id($editCharacteristics,1);
 
     $editCourse = new stdClass;
     $editCourse->label = "Courses...";
     $editCourse->type = "editCourses";
     $editCourse->id = null;
+    create_unique_id($editCourse,1);
 
     $adminTools = new stdClass;
     $adminTools->label = "Admin Tools";
     $adminTools->children = array(
         $createUser, $editUser, $editCharacteristics, $editCourse
     );
+    create_unique_id($adminTools,1);
 
     $navTrees[] = $adminTools;
 }

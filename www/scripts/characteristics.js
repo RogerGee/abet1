@@ -88,7 +88,7 @@ function loadCharacteristics(chars) {
 
     // create drop down content for characteristic level selection
     var levelSelect = [];
-    for (var s = "a";s != "zz";s = nextLevel(s)) {
+    for (var s = "a";s.length < 3;s = nextLevel(s)) {
         var item = {tag:"option", value:s, children:s};
         levelSelect.push(item);
     }
