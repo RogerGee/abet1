@@ -88,7 +88,10 @@ function submitProfile() {
 		statusCode:{
 			200: function() {
 				$("#submit").after(gen(
-					{tag:"p","class":"submit_success",children:"Changes Submitted"}
+					{tag:"p","class":"submit_success",children:[
+						{tag:"img", src:"resources/check.png"},
+						"Changes Submitted"
+					]}
 				));
 				//in case user changed their username
 				var usernew = obj.username;
@@ -99,7 +102,10 @@ function submitProfile() {
 			400: function(data) {
 				data = data.responseJSON;
 				$("#"+data.errField).parent().after(gen(
-					{tag:"td","class":"submit_error",children:data.error}
+					{tag:"td","class":"submit_error",children:[
+						{tag:"img", src:"resources/fail.png"},
+						data.error
+					]}
 				));
 			}
 		}
@@ -120,7 +126,10 @@ function checkPass() {
 				//password doesn't match, disable fields and add message
 				$("#new_pass1, #new_pass2").prop("disabled", true);
 				$("#old_pass").parent().after(gen(
-					{tag:"td","class":"submit_error",children:"incorrect password!"}
+					{tag:"td","class":"submit_error",children:[
+						{tag:"img", src:"resources/fail.png"},
+						"incorrect password!"
+					]}
 				));
 			}
 		}
@@ -132,7 +141,10 @@ function changePass() {
 	$(".submit_error").remove();
 	if ($("#new_pass1").val() != $("#new_pass2").val()) {
 		$("#new_pass2").parent().after(gen(
-			{tag:"td","class":"submit_error",children:"passwords don't match!"}
+			{tag:"td","class":"submit_error",children:[
+				{tag:"img", src:"resources/fail.png"},
+				"passwords don't match!"
+			]}
 		));
 	} else {
 		$.ajax({method:"post", url:"change-passwd.php", dataType:"json",
@@ -140,13 +152,19 @@ function changePass() {
 			statusCode:{
 				200: function() {
 					$("#changepass").after(gen(
-						{tag:"p","class":"submit_success",children:"Password Changed"}
+						{tag:"p","class":"submit_success",children:[
+							{tag:"img", src:"resources/check.png"},
+							"Password Changed"
+						]}
 					));
 				},
 				400: function(data) {
 					data = data.responseJSON;
 					$("#"+data.errField).parent().after(gen(
-						{tag:"td","class":"submit_error",children:data.error}
+						{tag:"td","class":"submit_error",children:[
+							{tag:"img", src:"resources/fail.png"},
+							data.error
+						]}
 					));
 				}
 			}

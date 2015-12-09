@@ -57,7 +57,10 @@ function submitWorksheet() {
 			200: function() {
 				//verify it worked to user
 				$("#submit").after(gen(
-					{tag:"p","class":"submit_success",children:"Changes Submitted"}
+					{tag:"p","class":"submit_success",children:[
+						{tag:"img", src:"resources/check.png"},
+						"Changes Submitted"
+					]}
 				));
 				//scrub cache
 				clearState();

@@ -37,13 +37,19 @@ function createUser() {
 				//reset page to empty and add success message
 				loadUserCreate();
 				$("#submit").after(gen(
-					{tag:"p","class":"submit_success",children:"User Created"}
+					{tag:"p","class":"submit_success",children:[
+						{tag:"img", src:"resources/check.png"},
+						"User Created"
+					]}
 				));
 			},
 			400: function(data) {
 				data = data.responseJSON;
 				$("#"+data.errField).parent().after(gen(
-					{tag:"td","class":"submit_error",children:data.error}
+					{tag:"td","class":"submit_error",children:[
+						{tag:"img", src:"resources/fail.png"},
+						data.error
+					]}
 				));
 			}
 		}

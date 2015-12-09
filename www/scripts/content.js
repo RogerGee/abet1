@@ -122,7 +122,10 @@ function submitItem(id, type) {
 			200: function() {
 				//verify it worked to user
 				$("input[value=save][id="+id+"]").after(gen(
-					{tag:"div","class":"submit_success",children:"Changes Submitted"}
+					{tag:"p","class":"submit_success",children:[
+						{tag:"img", src:"resources/check.png"},
+						"Changes Submitted"
+					]}
 				));
 				//cut the modification
 				var last = ":content";
@@ -155,6 +158,7 @@ function addComment() {
 
 function addFile() {
 	var data = new FormData();
+	$("#file").before(gen({tag:"img", id:"spin", src:"resources/spin-wait.gif"}));
 	$("#file").attr("disabled", true);
 	data.append("file", $("#file").prop("files")[0]);
 	data.append("type", "file");
@@ -172,7 +176,7 @@ function addFile() {
 				$("#file").attr("disabled", false);
 			}
 		}
-	});
+	}).done(function() {$("#spin").remove();});
 }
 
 function deleteItem(id, type) {

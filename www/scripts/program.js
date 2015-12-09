@@ -38,7 +38,10 @@ function submitProgram() {
         statusCode:{
             200: function() {
                 $("#submit").after(gen(
-                    {tag:"p","class":"submit_success",children:"Changes Submitted"}
+                    {tag:"p","class":"submit_success",children:[
+						{tag:"img", src:"resources/check.png"},
+						"Changes Submitted"
+					]}
                 ));
 				//reload the nav, since we just changed it
 				loadNavigation();
@@ -51,7 +54,10 @@ function submitProgram() {
                 data = data.responseJSON;
 				if (typeof data.errField !== "undefined") {
                     $("#"+data.errField).parent().after(gen(
-                        {tag:"td","class":"submit_error",children:data.error}
+                        {tag:"td","class":"submit_error",children:[
+							{tag:"img", src:"resources/fail.png"},
+							data.error
+						]}
                     ));
                 }
             }

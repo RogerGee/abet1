@@ -187,8 +187,11 @@ function loadCharacteristics(chars) {
 
                         $("#submit").val('Edit');
                         $("#response_message_insert").after(gen(
-                            {tag:"p","class":"submit_success",children:"Characteristic Created"}
-                        ));
+                            {tag:"p","class":"submit_success",children:[
+								{tag:"img", src:"resources/check.png"},
+								"Characteristic Created"
+							]}
+						));
 						//scrub cache
 						clearState();
                     },
@@ -196,12 +199,18 @@ function loadCharacteristics(chars) {
                         data = data.responseJSON;
                         if (typeof data.errField !== "undefined") {
                             $("#"+data.errField).parents('tr').after(gen(
-                                {tag:"td","class":"submit_error",children:data.error}
+                                {tag:"td","class":"submit_error",children:[
+									{tag:"img", src:"resources/fail.png"},
+									data.error
+								]}
                             ));
                         }
                         else {
                             $("#response_message_insert").after(gen(
-                                {tag:"p","class":"submit_error",children:"Operation Failed"}
+                                {tag:"td","class":"submit_error",children:[
+									{tag:"img", src:"resources/fail.png"},
+									"Operation Failed"
+								]}
                             ));
                         }
                     }
@@ -223,7 +232,10 @@ function loadCharacteristics(chars) {
                     statusCode:{
                         200:function() {
                             $("#response_message_insert").after(gen(
-                                {tag:"p","class":"submit_success",children:"Changes Submitted"}
+                                {tag:"p","class":"submit_success",children:[
+									{tag:"img", src:"resources/check.png"},
+									"Changes Submitted"
+								]}
                             ));
 
                             // update entry in DOM
@@ -254,12 +266,18 @@ function loadCharacteristics(chars) {
                             data = data.responseJSON;
                             if (typeof data.errField !== "undefined") {
                                 $("#"+data.errField).parents('tr').after(gen(
-                                    {tag:"td","class":"submit_error",children:data.error}
+                                    {tag:"td","class":"submit_error",children:[
+										{tag:"img", src:"resources/fail.png"},
+										data.error
+									]}
                                 ));
                             }
                             else {
                                 $("#response_message_insert").after(gen(
-                                    {tag:"p","class":"submit_error",children:"Operation Failed"}
+                                    {tag:"td","class":"submit_error",children:[
+										{tag:"img", src:"resources/fail.png"},
+										"Operation Failed"
+									]}
                                 ));
                             }
                         }

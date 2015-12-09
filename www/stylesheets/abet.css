@@ -101,6 +101,11 @@ textarea {
 .submit_success {
 	color: green;
 }
+/* status images */
+.submit_success img, .submit_error img, #spin {
+	width: 15px;
+    height: 15px;
+}
 /* rubric table*/
 .rubric {
 	border: 1px solid black;
@@ -124,3 +129,4 @@ textarea {
 	background-color: #F5F5F5;
 	border: 1px solid black;
 }
+
