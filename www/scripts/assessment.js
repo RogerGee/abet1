@@ -122,6 +122,7 @@ function loadAssessment(assessment) {
 	});
 	$("#submit").on("click", submitAssessment);
 	$("#create").on("click", createWorksheet);
+	setAssigned();
 	initInputs();
 	hijackAnchors();
 }

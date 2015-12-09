@@ -28,7 +28,7 @@ var obj;
 var user;
 //handle internal "navigation"
 function navigateInternal(href, id) {
-	obj = window[href](id);
+	window[href](id);
 }
 //functions for cache maintenance
 function hasState() {
@@ -41,7 +41,8 @@ function loadState() {
 	return JSON.parse(localStorage[user]);
 }
 function cutModif(id) {
-	delete obj._modifs[id];
+	if (obj._modifs && obj._modifs[id])
+		delete obj._modifs[id];
 	if (Object.keys(obj._modifs).length == 0) {
 		delete obj._modifs;
 		clearState();
