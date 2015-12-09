@@ -207,7 +207,7 @@ function loadCharacteristics(chars) {
                         }
                         else {
                             $("#response_message_insert").after(gen(
-                                {tag:"td","class":"submit_error",children:[
+                                {tag:"p","class":"submit_error",children:[
 									{tag:"img", src:"resources/fail.png"},
 									"Operation Failed"
 								]}
@@ -274,7 +274,7 @@ function loadCharacteristics(chars) {
                             }
                             else {
                                 $("#response_message_insert").after(gen(
-                                    {tag:"td","class":"submit_error",children:[
+                                    {tag:"p","class":"submit_error",children:[
 										{tag:"img", src:"resources/fail.png"},
 										"Operation Failed"
 									]}

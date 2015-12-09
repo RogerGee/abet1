@@ -97,11 +97,9 @@ textarea {
 /* feedback */
 .submit_error {
 	color: red;
-	margin: 0 0 0 0;
 }
 .submit_success {
 	color: green;
-	margin: 0 0 0 0;
 }
 /* status images */
 .submit_success img, .submit_error img, #spin {

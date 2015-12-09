@@ -122,7 +122,7 @@ function submitItem(id, type) {
 			200: function() {
 				//verify it worked to user
 				$("input[value=save][id="+id+"]").after(gen(
-					{tag:"p","class":"submit_success",children:[
+					{tag:"div","class":"submit_success",children:[
 						{tag:"img", src:"resources/check.png"},
 						"Changes Submitted"
 					]}
