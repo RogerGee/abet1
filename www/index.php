@@ -37,6 +37,7 @@ if (!abet_is_authenticated()) {
 		<script src="scripts/program.js" type="text/javascript"></script>
 		<script src="scripts/assessment.js" type="text/javascript"></script>
 		<script src="scripts/characteristics.js" type="text/javascript"></script>
+		<script src="scripts/course.js" type="text/javascript"></script>
 		<?php } ?>
 		<link rel="stylesheet" href="stylesheets/abet.css" />
 		<link rel="stylesheet" href="stylesheets/tree.css" />

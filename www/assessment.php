@@ -79,10 +79,9 @@ function get_assessment($id) {
         'joins' => array(
             'LEFT OUTER JOIN acl_entry ON acl_entry.fk_profile = userprofile.id',
             'LEFT OUTER JOIN acl ON acl.id = acl_entry.fk_acl',
-            'LEFT OUTER JOIN abet_assessment ON abet_assessment.fk_acl = acl.id'
+            'LEFT OUTER JOIN abet_assessment ON abet_assessment.fk_acl = acl.id '
+                . 'AND abet_assessment.id = ' . intval($id)
         ),
-        'where' => 'abet_assessment.id = ?',
-        'where-params' => array("i:$id"),
         'orderby' => 'userprofile.last_name'
     )));
     if ($aclQuery->is_empty()) // this shouldn't happen
@@ -106,7 +105,8 @@ function get_assessment($id) {
     $charsQuery = new Query(new QueryBuilder(SELECT_QUERY,array(
         'tables' => array(
             'abet_characteristic' => array('id','level','program_specifier','short_name')
-        )
+        ),
+        'orderby' => 'CHAR_LENGTH(level), level'
     )));
 
     // get single entity rows

@@ -155,7 +155,7 @@ function loadCharacteristics(chars) {
                         while (index < obj.chars.length && shortlex(obj.chars[index].level,data.level))
                             ++index;
                         newcobjid = obj.chars.length;
-                        obj.chars.push(cobj); // (we don't change the order of this array)
+                        obj.chars.push(data); // (we don't change the order of this array)
                         var newRow = {
                             tag:"tr",
                             key:data.level,

@@ -86,11 +86,11 @@ function update_characteristic($id,$level,$shortName,$description,$programSpecif
 }
 
 function create_characteristic($level,$shortName,$description,$programSpecifier) {
-    if (is_null($level))
+    if (is_null($level) || $level == "")
         page_fail_on_field(BAD_REQUEST,'level','must be non-empty');
-    if (is_null($shortName))
+    if (is_null($shortName) || $shortName == "")
         page_fail_on_field(BAD_REQUEST,'short_name','must be non-empty');
-    if (is_null($description))
+    if (is_null($description) || $description == "")
         page_fail_on_field(BAD_REQUEST,'description','must be non-empty');
 
     $info = array(
