@@ -1,14 +1,13 @@
 /* functions for the navbar */
 function decodeNavInner(data) {
-	var li = {tag:"li", children:[{tag:"div", label:data.label}]};
+	var li = {tag:"li", label:data.label, identity:data.identity, children:[{tag:"div"}]};
 	if (data.children) {
 		li.children[0].children = [data.label];
 		li.children.push({tag:"ul", children:[]})
 		for (var i in data.children)
 			li.children[1].children.push(decodeNavInner(data.children[i]));
 	} else if (data.type) {
-		li.children[0].children = [
-			{tag:"a", "class":"internal", href:data.type, id:data.id}];
+		li.children[0].children = [{tag:"a", "class":"internal", href:data.type, id:data.id}];
 		li.children[0].children[0].children = [data.label];
 	}
 	return li;
@@ -28,7 +27,7 @@ function compNavInner(tree, data) {
 		for (i = 0; i < data.children.length; i++) {
 			if (data.children[i].found)
 				continue;
-			if (data.children[i].label == $(this).children("div").attr("label")) {
+			if (data.children[i].identity == $(this).attr("identity")) {
 				found = true;
 				break;
 			}
@@ -37,18 +36,33 @@ function compNavInner(tree, data) {
 			$(this).remove();
 			return;
 		}
+		if (data.children[i].label != $(this).attr("label")) {
+			data.children[i].move = true;
+			$(this).attr("label", data.children[i].label);
+			if (data.children[i].children) {
+				$(this).children("div").html(data.children[i].label);
+			} else {
+				$(this).children("div").children("a").html(data.children[i].label);
+			}
+		}
 		data.children[i].found = true;
 		$(this).children("ul").each(function() {
 			compNavInner(this, data.children[i]);
 		});
 	});
 	for (var i = 0; i < data.children.length; i++) {
-		if (data.children[i].found)
-			continue;
-		if (i == 0) {
-			$($(tree).children()[0]).before(gen(decodeNavInner(data.children[i])));
+		var content;
+		if (data.children[i].found) {
+			if (!data.children[i].move)
+				continue;
+			content = $(tree).children("[identity="+data.children[i].identity+"]").detach();
 		} else {
-			$($(tree).children()[i-1]).after(gen(decodeNavInner(data.children[i])));
+			content = gen(decodeNavInner(data.children[i]));
+		}
+		if (i == 0) {
+			$($(tree).children()[0]).before(content);
+		} else {
+			$($(tree).children()[i-1]).after(content);
 		}
 	}
 }
