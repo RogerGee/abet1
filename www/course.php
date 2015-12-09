@@ -67,6 +67,9 @@ function get_courses() {
                 'description', 'textbook', 'credit_hours'
             )
         ),
+        'aliases' => array(
+            'course.fk_coordinator' => 'coordinator'
+        ),
         'orderby' => 'title',
     )));
 
@@ -156,6 +159,9 @@ function create_course($title,$courseNumber,$coordinator,$instructor,
                     'id', 'title', 'fk_coordinator', 'instructor', 'description',
                     'textbook', 'credit_hours'
                 )
+            ),
+            'aliases' => array(
+                'course.fk_coordinator' => 'coordinator'
             ),
             'where' => 'course.id = LAST_INSERT_ID()'
         )));
