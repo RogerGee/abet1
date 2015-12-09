@@ -108,16 +108,16 @@ function loadAssessment(assessment) {
 		}
 	}
 	$("#acl_add").on("click", function() {
-		if (obj.acl.indexOf($("#profiles").val()) == -1)
-			obj.acl.push($("#profiles").val());
+		if (obj.acl.indexOf(parseInt($("#profiles").val())) == -1)
+			obj.acl.push(parseInt($("#profiles").val()));
 		setAssigned();
 	});
 	$("#acl_remove").on("click", function() {
 		var lookup = {};
 		for (var i = 0; i < obj.acl.length; i++)
 			lookup[obj.acl[i]] = i;
-		if (lookup[$("#profiles").val()] != null)
-			obj.acl.splice(lookup[$("#profiles").val()], 1);
+		if (lookup[parseInt($("#profiles").val())] != null)
+			obj.acl.splice(lookup[parseInt($("#profiles").val())], 1);
 		setAssigned();
 	});
 	$("#submit").on("click", submitAssessment);
