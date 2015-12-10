@@ -87,12 +87,16 @@ function loadContent(general_content) {
 		content.append(gen(processContent(object[i], i)));
 	}
 	if (!read_only) {
-		content.append(gen({tag:"div", "class":"box", style:"padding:3px;", children:[
-			{tag:"input", type:"button", id:"add", value:"Add"},
-			{tag:"select", id:"type", children:[
-				{tag:"option", value:"file", children:"New File"},
-				{tag:"option", value:"comment", children:"New Comment"},
-			]}
+		content.append(gen({tag:"table", "class":"box", children:[
+			{tag:"tr", children:{tag:"td", children:"Add Item"}},
+			{tag:"tr", children:{tag:"td", children:[
+				{tag:"input", type:"button", id:"add", value:"Add"},
+				{tag:"select", id:"type", children:[
+					{tag:"option", value:"file", children:"New File"},
+					{tag:"option", value:"comment", children:"New Comment"},
+				]}, {tag:"tr"}, {tag:"tr"}, {tag:"tr"}, {tag:"tr"}, {tag:"tr"},
+					{tag:"tr"}, {tag:"tr"}, {tag:"tr"}, {tag:"tr"}, {tag:"tr"}
+			]}}
 		]}));
 	}
 	$("#add").on("click", function() {

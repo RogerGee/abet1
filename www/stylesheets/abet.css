@@ -129,8 +129,8 @@ textarea {
 	background-color: #F5F5F5;
 	border: 1px solid black;
 	width: 350px;
-	height: 176px;
-	float: left;
+	min-height: 180px;
+	display: inline-table;
 }
 /* courses */
 .course_heading {
