@@ -86,13 +86,15 @@ function loadContent(general_content) {
 	for (var i = 0; i < object.length; i++) {
 		content.append(gen(processContent(object[i], i)));
 	}
-	content.append(gen({tag:"div", "class":"box", style:"padding:3px;", children:[
-		{tag:"input", type:"button", id:"add", value:"Add"},
-		{tag:"select", id:"type", children:[
-			{tag:"option", value:"file", children:"New File"},
-			{tag:"option", value:"comment", children:"New Comment"},
-		]}
-	]}));
+	if (!read_only) {
+		content.append(gen({tag:"div", "class":"box", style:"padding:3px;", children:[
+			{tag:"input", type:"button", id:"add", value:"Add"},
+			{tag:"select", id:"type", children:[
+				{tag:"option", value:"file", children:"New File"},
+				{tag:"option", value:"comment", children:"New Comment"},
+			]}
+		]}));
+	}
 	$("#add").on("click", function() {
 		if ($("#type").val() == 'comment') {
 			addComment();
