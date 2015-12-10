@@ -299,8 +299,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         page_fail(BAD_REQUEST);
 
     // double check access to content
-    if (!abet_is_admin_authenticated() && !check_assessment_access($_SESSION['id'],$_GET['id'],'general_content'))
+    if (!abet_is_admin_authenticated() && !abet_is_observer()
+        && !check_assessment_access($_SESSION['id'],$_GET['id'],'general_content'))
+    {
         page_fail(UNAUTHORIZED);
+    }
 
     echo get_content($_GET['id']);
 }

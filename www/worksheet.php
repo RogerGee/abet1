@@ -34,6 +34,7 @@ require_once 'abet1-object.php';
 function get_wkst($id) {
     // verify access to worksheet
     if (!abet_is_admin_authenticated()
+        && !abet_is_observer()
         && !check_assessment_access($_SESSION['id'],$id,'assessment_worksheet'))
     {
         page_fail(UNAUTHORIZED);

@@ -39,7 +39,9 @@ require_once 'abet1-misc.php';
 
 function get_rubric($id) {
     // verify access to object
-    if (!abet_is_admin_authenticated() && !check_assessment_access($_SESSION[id],$id,'assessment_worksheet')) {
+    if (!abet_is_admin_authenticated() && !abet_is_observer()
+        && !check_assessment_access($_SESSION[id],$id,'assessment_worksheet'))
+    {
         page_fail(UNAUTHORIZED);
     }
 
