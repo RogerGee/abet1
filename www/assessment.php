@@ -47,6 +47,8 @@ require_once 'abet1-object.php';
     *---------------------*
     | type:'wkst-add' id  | // 'id' is assessment id
     *---------------------*
+
+    This script is an admin script for creating/viewing/editing assessments.
 */
 
 function get_assessment($id) {

@@ -305,6 +305,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     echo get_content($_GET['id']);
 }
 else if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if (abet_is_observer()) // observers can't post data
+        page_fail(UNAUTHORIZED);
+
     if (array_key_exists('id',$_POST) && array_key_exists('type',$_POST)) {
         // make sure user can access general_content entity
         if (!abet_is_admin_authenticated() && !check_assessment_access($_SESSION['id'],$_POST['id'],'general_content'))

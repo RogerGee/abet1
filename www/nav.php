@@ -197,8 +197,9 @@ $qbInfo = array(
     'orderby' => "program.year, program.semester, program.name, abet_criterion.rank, abet_characteristic.level, course.course_number"
 );
 
-// is the user is not an admin, restrict their access according to the ACLs
-if (!$isAdmin) {
+// is the user is not an admin and not an observer, restrict their access
+// according to the ACLs for the given assessments
+if (!$isAdmin && !abet_is_observer()) {
     // join on the acl tables to restrict access
     $qbInfo['joins'][] = "INNER JOIN acl ON abet_assessment.fk_acl = acl.id";
     $qbInfo['joins'][] = "INNER JOIN acl_entry ON acl_entry.fk_acl = acl.id AND acl_entry.fk_profile = '$_SESSION[id]'";

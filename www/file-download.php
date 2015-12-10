@@ -35,7 +35,7 @@ if (!array_key_exists('id',$_GET)) {
 }
 
 // check access to specific file resource
-if (!abet_is_admin_authenticated()
+if (!abet_is_admin_authenticated() && !abet_is_observer()
     && !check_general_content_item_access($_SESSION['id'],$_GET['id'],'file_upload',$found))
 {
     header('Content-Type: text/html');

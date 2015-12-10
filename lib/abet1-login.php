@@ -27,6 +27,15 @@ function abet_is_admin_authenticated() {
     return false;
 }
 
+// abet_is_observer() - determine if user is authenticated observer
+function abet_is_observer() {
+    if (abet_is_authenticated()) {
+        return $_SESSION['role'] == 'observer';
+    }
+
+    return false;
+}
+
 // abet_login() - perform login authentication with the specified
 // user:passwd pair and save the session
 function abet_login($user,$passwd) {

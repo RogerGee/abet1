@@ -143,6 +143,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     echo get_wkst($_GET['id']);
 }
 else if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if (!abet_is_observer()) // refuse POST requests for observers
+        page_fail(UNAUTHORIZED);
+
     if (!array_key_exists('id',$_POST))
         page_fail(BAD_REQUEST);
     if (!array_key_exists('objective',$_POST))

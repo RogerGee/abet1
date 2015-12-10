@@ -269,6 +269,9 @@ if (!abet_is_authenticated())
     page_fail(UNAUTHORIZED);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if (abet_is_observer()) // observers cannot post data
+        page_fail(UNAUTHORIZED);
+
     if (array_key_exists('add',$_POST) && $_POST['add'] == 'row'
             && array_key_exists('id',$_POST))
     {
