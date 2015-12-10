@@ -77,7 +77,7 @@ function loadProfile(profile) {
 	$("#old_pass").on("keydown", function(event) {if (event.which == 13) this.blur();});
 	$("#changepass").on("click", changePass);
 	initPhone();
-	initInputs();
+	initInputs(true);
 }
 
 function submitProfile() {

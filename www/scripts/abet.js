@@ -164,13 +164,19 @@ function assign(o, s, v) {
 	assign(o[f], c.join(':'), v);
 }
 //set handlers on properties of the user object
-function initInputs() {
-	$("#content .property").on("change", function() {
-		assign(obj, $(this).attr("id"), $(this).val());
-		if (!obj._modifs) obj._modifs = {};
-		obj._modifs[$(this).attr("id")] = '';
-		saveState();
-	});
+function initInputs(skip) {
+	if (!skip && read_only) {
+		$("#content .property").attr("disabled", true);
+		$("#content input[type=button]").remove();
+		$("#content select:not(.property)").remove();
+	} else {
+		$("#content .property").on("change", function() {
+			assign(obj, $(this).attr("id"), $(this).val());
+			if (!obj._modifs) obj._modifs = {};
+			obj._modifs[$(this).attr("id")] = '';
+			saveState();
+		});
+	}
 }
 //handle 401 (user not authenticated/logged in) globally, redirect to login
 $(document).ajaxError(function(event, jqxhr) {

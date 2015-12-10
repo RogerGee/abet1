@@ -44,6 +44,7 @@ if (!abet_is_authenticated()) {
 		<link rel="stylesheet" href="stylesheets/confirm.css" />
 		<script type="text/javascript">
 			user = "<?php echo $_SESSION['user']; ?>";
+			read_only = <?php echo abet_is_observer() ? 'true' : 'false'; ?>;
 		</script>
 	</head>
 	<body>

@@ -128,8 +128,10 @@ textarea {
 .box {
 	background-color: #F5F5F5;
 	border: 1px solid black;
+	width: 350px;
+	height: 176px;
+	float: left;
 }
-
 /* courses */
 .course_heading {
 	font-weight: bold;

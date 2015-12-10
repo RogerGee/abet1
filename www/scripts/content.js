@@ -82,14 +82,16 @@ function loadContent(general_content) {
 	//wipe and replace content div
 	var content = $("#content");
 	content.html("");
-	content.append("<h2>Content</h2>");
+	content.append("<h2>Content</h2><br/>");
 	for (var i = 0; i < object.length; i++) {
 		content.append(gen(processContent(object[i], i)));
 	}
-	content.append(gen({tag:"input", type:"button", id:"add", value:"Add"}));
-	content.append(gen({tag:"select", id:"type", children:[
+	content.append(gen({tag:"div", "class":"box", style:"padding:3px;", children:[
+		{tag:"input", type:"button", id:"add", value:"Add"},
+		{tag:"select", id:"type", children:[
 			{tag:"option", value:"file", children:"New File"},
 			{tag:"option", value:"comment", children:"New Comment"},
+		]}
 	]}));
 	$("#add").on("click", function() {
 		if ($("#type").val() == 'comment') {
