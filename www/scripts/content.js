@@ -94,8 +94,7 @@ function loadContent(general_content) {
 				{tag:"select", id:"type", children:[
 					{tag:"option", value:"file", children:"New File"},
 					{tag:"option", value:"comment", children:"New Comment"},
-				]}, {tag:"tr"}, {tag:"tr"}, {tag:"tr"}, {tag:"tr"}, {tag:"tr"},
-					{tag:"tr"}, {tag:"tr"}, {tag:"tr"}, {tag:"tr"}, {tag:"tr"}
+				]}
 			]}}
 		]}));
 	}
