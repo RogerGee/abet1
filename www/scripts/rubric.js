@@ -99,6 +99,7 @@ function loadRubric(rubric) {
 			{tag:"th", children:"Delete"}
 		]}
 	]};
+	var pass_fail = rubric.competency[0] && rubric.competency[0].pass_fail_type;
 	for (var i = 0; i < rubric.competency.length; i++) {
 		var a = getPrettyPercent(rubric.competency[i].unacceptable_tally);
 		var b = getPrettyPercent(rubric.competency[i].marginal_tally);
@@ -136,8 +137,16 @@ function loadRubric(rubric) {
 			{tag:"td", children:{tag:"input", id:i, type:"button", value:"delete"}}
 		]});
 	}
+	if (pass_fail) {
+		for (var i = 0; i < table.children.length; i++) {
+			table.children[i].children.splice(1, 3)
+		}
+	}
 	table.children.push({tag:"tr", children:
-		{tag:"th", colspan:6, children:"<input type='button' value='Add Row'/>"}
+		{tag:"th", colspan:pass_fail ? 3 : 6, children:[
+			{tag:"input", type:"button", value:"Add Row", id:"add"},
+			{tag:"input", type:"button", value:"Toggle Pass/Fail", id:"toggle"}
+		]}
 	});
 	content.append(gen(table));
 	content.append("<input type='button' id='submit' value='Submit'/>");
@@ -165,7 +174,8 @@ function loadRubric(rubric) {
 			deleteRow(id);
 		});
 	});
-	$("input[type=button][value='Add Row']").on("click", addRow)
+	$("#add").on("click", addRow);
+	$("#toggle").on("click", togglePassFail);
 	$("#submit").on("click", submitRubric);
 	initInputs();
 }
@@ -206,6 +216,20 @@ function addRow() {
 			}
 		}
 	});
+}
+
+function togglePassFail() {
+	var npft = !(obj.competency[0] && obj.competency[0].pass_fail_type);
+	for (var i = 0; i < obj.competency.length; i++) {
+		obj.competency[i].pass_fail_type = npft;
+		if (npft) {
+			obj.competency[i].expected_tally = 0;
+			obj.competency[i].marginal_tally = 0;
+			obj.competency[i].unacceptable_tally = 0;
+		}
+	}
+	saveState();
+	loadRubric(obj);
 }
 
 function deleteRow(id) {
