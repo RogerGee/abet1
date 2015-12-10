@@ -87,7 +87,7 @@ function loadContent(general_content) {
 		content.append(gen(processContent(object[i], i)));
 	}
 	if (!read_only) {
-		content.append(gen({tag:"table", "class":"box", children:[
+		content.append(gen({tag:"table", "class":"box", style:"padding:3px", children:[
 			{tag:"tr", children:{tag:"td", children:"Add Item"}},
 			{tag:"tr", children:{tag:"td", children:[
 				{tag:"input", type:"button", id:"add", value:"Add"},
