@@ -87,8 +87,12 @@ function loadContent(general_content) {
 		content.append(gen(processContent(object[i], i)));
 	}
 	if (!read_only) {
-		content.append(gen({tag:"table", "class":"box", style:"padding:3px", children:[
-			{tag:"tr", children:{tag:"td", children:"Add Item"}},
+		content.append(gen({tag:"table", "class":"box", children:[
+			{tag:"tr", children:[
+				{tag:"td", children:"Add Item"},
+				{tag:"td", children:{tag:"input", type:"button", value:"cancel", 
+					id:"cancel", style:"float:right;", disabled:"disabled"}}
+			]},
 			{tag:"tr", children:{tag:"td", children:[
 				{tag:"input", type:"button", id:"add", value:"Add"},
 				{tag:"select", id:"type", children:[
@@ -102,6 +106,7 @@ function loadContent(general_content) {
 		if ($("#type").val() == 'comment') {
 			addComment();
 		} else {
+			$("#cancel").attr("disabled", false);
 			$(this).before(gen({tag:"input", id:"file", type:"file"}));
 			$("#file").on("change", addFile);
 			$("#add").remove();
@@ -118,6 +123,9 @@ function loadContent(general_content) {
 	});
 	$("input[type=button][value=save]").on("click", function() {
 		submitItem($(this).attr("id"), $(this).attr("tp"));
+	});
+	$("#cancel").on("click", function() {
+		loadContent(obj);
 	});
 	initInputs();
 }
@@ -167,6 +175,7 @@ function addFile() {
 	var data = new FormData();
 	$("#file").before(gen({tag:"img", id:"spin", src:"resources/spin-wait.gif"}));
 	$("#file").attr("disabled", true);
+	$("#cancel").attr("disabled", true);
 	data.append("file", $("#file").prop("files")[0]);
 	data.append("type", "file");
 	data.append("id", obj.id)
@@ -181,6 +190,7 @@ function addFile() {
 			400: function() {
 				//this shouldn't happen (but it does)
 				$("#file").attr("disabled", false);
+				$("#cancel").attr("disabled", false);
 			}
 		}
 	}).done(function() {$("#spin").remove();});
