@@ -29,6 +29,7 @@ if (!abet_is_authenticated()) {
 		<script src="scripts/content.js" type="text/javascript"></script>
 		<script src="scripts/rubric.js" type="text/javascript"></script>
 		<script src="scripts/worksheet.js" type="text/javascript"></script>
+		<script src="scripts/search.js" type="text/javascript"></script>
 		<script src="scripts/tree.js" type="text/javascript"></script>
 		<script src="scripts/confirm.js" type="text/javascript"></script>
 		<?php if(abet_is_admin_authenticated()) { ?>
@@ -50,10 +51,13 @@ if (!abet_is_authenticated()) {
 	<body>
 		<div class="top_bar">
 			<a href="loadHome" class="nav_button internal"><h1>ABET</h1></a>
-			<input type="text" placeholder="search" class="search"></input>
+			<input type="text" placeholder="search" class="search" id="search"></input>
 			<div class="top_icons">
 				<img id="notif" src="resources/notif.png" class="icon"></img>
 				<img id="sett" src="resources/settings.png" class="icon"></img>
+			</div>
+			<div id="search_results" class="popup results">
+				Press enter to search
 			</div>
 			<div id="notifications" class="popup">
 				This is where I would put my notifications
