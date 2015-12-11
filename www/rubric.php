@@ -189,7 +189,7 @@ function update_rubric($obj) {
             if (array_key_exists('unacceptable_tally',$comp))
                 $updates['unacceptable_tally'] = "s:$comp[unacceptable_tally]";
             if (array_key_exists('pass_fail_type',$comp))
-                $updates['pass_fail_type'] = "s:$comp[pass_fail_type]";
+                $updates['pass_fail_type'] = $comp['pass_fail_type'] ? "l:1" : "l:0";
             if (array_key_exists('comment',$comp))
                 $updates['comment'] = "s:$comp[comment]";
             generic_update('competency_results',$id,$updates);

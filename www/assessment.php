@@ -60,7 +60,7 @@ function get_assessment($id) {
             'general_content' => 'id'
         ),
         'joins' => array(
-            'INNER JOIN abet_characteristic ON abet_characteristic.id = abet_assessment.fk_characteristic',
+            'LEFT OUTER JOIN abet_characteristic ON abet_characteristic.id = abet_assessment.fk_characteristic',
             'LEFT OUTER JOIN general_content ON general_content.fk_assessment = abet_assessment.id'
         ),
         'where' => 'abet_assessment.id = ?',
