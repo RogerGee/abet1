@@ -128,6 +128,7 @@ $(document).ready(function() {
 			.accept(reloadPage).decline(clearState);
 	}
 	//popup box code
+	initSearch();
 	$("#notif").click(function(event) {
 		$("#notifications").fadeToggle(300);
 	});
@@ -144,6 +145,9 @@ $(document).ready(function() {
 		if (event.target.id != "sett" &&
 			$("#settings").css("display") != "none")
 			$("#settings").fadeToggle(300);
+		if (event.target.id != "search" &&
+			$("#search_results").css("display") != "none")
+			$("#search_results").fadeToggle(300);
 	});
 	$(window).resize(function() {
 		$(".tree").tree();

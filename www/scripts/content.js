@@ -55,7 +55,7 @@ function processContent(content, num) {
 			{tag:"tr", children:[
 				{tag:"td", children:"File Name:"},
 				{tag:"td", children:{tag:"a", href:"file-download.php?id="+content.id,
-					children:content.file_name
+					target:"_blank", children:content.file_name
 				}}
 			]},
 			{tag:"tr", children:[

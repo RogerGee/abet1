@@ -73,6 +73,28 @@ textarea {
 .search {
 	right: 85px;
 }
+.results a {
+	display: block;
+}
+.results a div {
+	width: 100%;
+	border: 1px solid black;
+	background-color: #F8F8F8;
+}
+.results * {
+	color: #000;
+	text-decoration: none;
+	margin: 1px;
+}
+.results input[value=prev] {
+	position: relative;
+	left: 30%;
+}
+.results input[value=next] {
+	float: right;
+	position: relative;
+	right: 30%;
+}
 /* icon area */
 .top_icons {
 	right: 20px;
@@ -86,12 +108,15 @@ textarea {
 	padding: 4px;
 	word-wrap: break-word;
 	border: 1px solid black;
-	position: absolute;
+	position: fixed;
+	min-width: 22em;
 	width: 20%;
+	max-height: 50%;
 	right: 22px;
-	top: 100%;
+	top: 10%;
 	transform: none;
 	color: black;
+	overflow: auto;
 	display: none;
 }
 /* feedback */
